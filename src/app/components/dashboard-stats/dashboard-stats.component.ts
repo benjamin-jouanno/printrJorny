@@ -17,6 +17,7 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
   @Input() printProgress = 0;
   @Input() stats: Array<{ label: string; value: string; detail: string }> = [];
   @Input() prints: IPrint[] = [];
+  @Input() themeMode: 'dark' | 'light' = 'dark';
 
   @ViewChild('chartCanvas', { static: false }) canvas!: ElementRef<HTMLCanvasElement>;
   private chart: any;
@@ -26,7 +27,7 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['prints'] && !changes['prints'].firstChange) {
+    if ((changes['prints'] || changes['themeMode']) && !changes['prints']?.firstChange) {
       this.renderChart();
     }
   }
@@ -50,6 +51,27 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
 
     const maxFilament = filamentData.length ? Math.max(...filamentData) : 0;
     const maxCost = costData.length ? Math.max(...costData) : 0;
+    const chartColors = this.themeMode === 'light'
+      ? {
+          text: '#3d4d63',
+          title: '#142033',
+          tooltipBg: 'rgba(255, 255, 255, 0.96)',
+          tooltipBorder: 'rgba(15, 23, 42, 0.14)',
+          filament: '#0ca678',
+          filamentFill: 'rgba(12, 166, 120, 0.12)',
+          grid: 'rgba(15, 23, 42, 0.1)',
+          axis: 'rgba(15, 23, 42, 0.18)'
+        }
+      : {
+          text: '#c7d0dc',
+          title: '#edf2f7',
+          tooltipBg: 'rgba(12, 18, 28, 0.96)',
+          tooltipBorder: 'rgba(255, 255, 255, 0.12)',
+          filament: '#80ffdb',
+          filamentFill: 'rgba(128, 255, 219, 0.12)',
+          grid: 'rgba(199, 208, 220, 0.1)',
+          axis: 'rgba(199, 208, 220, 0.2)'
+        };
 
     const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -66,11 +88,11 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
           {
             label: 'Filament (g)',
             data: filamentData,
-            borderColor: '#80ffdb',
-            backgroundColor: 'rgba(128,255,219,0.12)',
+            borderColor: chartColors.filament,
+            backgroundColor: chartColors.filamentFill,
             yAxisID: 'y',
             tension: 0.3,
-            fill: true,
+            fill: false,
             borderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 5,
@@ -78,8 +100,8 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
           {
             label: 'Cost (€)',
             data: costData,
-            borderColor: '#f29d38',
-            backgroundColor: 'rgba(242,157,56,0.12)',
+            borderColor: '#ff6b6b',
+            backgroundColor: 'rgba(255,107,107,0.12)',
             yAxisID: 'y1',
             tension: 0.3,
             fill: false,
@@ -100,7 +122,7 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
             labels: {
               boxHeight: 8,
               boxWidth: 8,
-              color: '#c7d0dc',
+              color: chartColors.text,
               font: {
                 family: 'Inter, Avenir, Helvetica, Arial, sans-serif',
                 size: 12,
@@ -115,7 +137,7 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
                 return datasets.map((dataset: any, index: number) => ({
                   datasetIndex: index,
                   fillStyle: dataset.borderColor,
-                  fontColor: '#c7d0dc',
+                  fontColor: chartColors.text,
                   hidden: !chart.isDatasetVisible(index),
                   lineCap: 'round',
                   lineDash: [],
@@ -130,23 +152,38 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
             }
           },
           tooltip: {
-            backgroundColor: 'rgba(12, 18, 28, 0.96)',
-            borderColor: 'rgba(255, 255, 255, 0.12)',
+            backgroundColor: chartColors.tooltipBg,
+            borderColor: chartColors.tooltipBorder,
             borderWidth: 1,
             padding: 12,
-            titleColor: '#edf2f7',
-            bodyColor: '#c7d0dc',
+            titleColor: chartColors.title,
+            bodyColor: chartColors.text,
             displayColors: true,
             boxPadding: 5
           }
         },
         scales: {
-          x: { display: true, title: { display: false } },
+          x: {
+            display: true,
+            title: { display: false },
+            grid: {
+              color: chartColors.grid,
+              tickColor: chartColors.axis
+            },
+            border: { color: chartColors.axis },
+            ticks: { color: chartColors.text }
+          },
           y: {
             type: 'linear',
             display: true,
             position: 'left',
-            title: { display: true, text: 'Filament (g)' },
+            title: { display: true, text: 'Filament (g)', color: chartColors.text },
+            grid: {
+              color: chartColors.grid,
+              tickColor: chartColors.axis
+            },
+            border: { color: chartColors.axis },
+            ticks: { color: chartColors.text },
             beginAtZero: true,
             suggestedMax: Math.ceil(maxFilament * 1.2 || 10)
           },
@@ -154,8 +191,10 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
             type: 'linear',
             display: true,
             position: 'right',
-            title: { display: true, text: 'Cost (€)' },
-            grid: { drawOnChartArea: false },
+            title: { display: true, text: 'Cost (€)', color: chartColors.text },
+            grid: { drawOnChartArea: false, tickColor: chartColors.axis },
+            border: { color: chartColors.axis },
+            ticks: { color: chartColors.text },
             beginAtZero: true,
             suggestedMax: Math.ceil(maxCost * 1.2 || 1)
           }

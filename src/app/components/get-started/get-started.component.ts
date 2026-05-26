@@ -76,6 +76,7 @@ export class GetStartedComponent {
     profilePicture: ''
   };
   customPrinterModel = '';
+  isPrinterMenuOpen = false;
 
   get isCustomPrinterModelSelected(): boolean {
     return this.profile.printerModel === this.customPrinterModelOption;
@@ -86,6 +87,19 @@ export class GetStartedComponent {
     const initials = nameParts.slice(0, 2).map(part => part[0]).join('');
 
     return initials.toUpperCase() || 'ID';
+  }
+
+  togglePrinterMenu(): void {
+    this.isPrinterMenuOpen = !this.isPrinterMenuOpen;
+  }
+
+  closePrinterMenu(): void {
+    this.isPrinterMenuOpen = false;
+  }
+
+  choosePrinterModel(model: string): void {
+    this.profile.printerModel = model;
+    this.closePrinterMenu();
   }
 
   createProfile(): void {

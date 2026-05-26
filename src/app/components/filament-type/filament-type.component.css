@@ -1,0 +1,189 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.panel {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(18px);
+  height: 100%;
+  min-height: 190px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.filament-count {
+  color: var(--accent);
+  font-weight: 700;
+  margin-left: 0.35rem;
+}
+
+.add-filament-button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.add-filament-button:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.filament-list {
+  flex: 1;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.filament-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.filament-list::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 999px;
+}
+
+.filament-list::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--scroll-track);
+}
+
+.filament-list::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+.filament-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 14px;
+}
+
+.filament-topline {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.filament-topline div {
+  min-width: 0;
+  flex: 1;
+}
+
+.filament-color {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.filament-topline h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.filament-topline p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.filament-topline strong {
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.quantity-bar {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--field-bg);
+}
+
+.quantity-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #80ffdb, #48bfe3);
+}
+
+.quantity-bar span.low-quantity {
+  background: linear-gradient(90deg, #ff6b6b, #f29d38);
+}
+
+.quantity-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.empty-inventory {
+  min-height: 180px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--text-muted);
+  border: 1px dashed var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  padding: 20px;
+}
+
+.empty-inventory p {
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 800;
+}
+
+.empty-inventory span {
+  font-size: 0.86rem;
+}

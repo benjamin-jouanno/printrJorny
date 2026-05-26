@@ -17,7 +17,7 @@
 
 .picker-heading {
   margin: -8px 0 4px;
-  color: #c7d0dc;
+  color: var(--text-soft);
   font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 700;
   letter-spacing: 0;
@@ -27,7 +27,7 @@
 .brand-title {
   margin: 0 auto;
   color: transparent;
-  background: linear-gradient(135deg, #80ffdb, #64dfdf 42%, #48bfe3 72%, #f29d38);
+  background: linear-gradient(135deg, var(--accent), #64dfdf 42%, var(--accent-2) 72%, #f29d38);
   background-clip: text;
   font-size: clamp(2.8rem, 8vw, 6.2rem);
   font-weight: 900;
@@ -37,8 +37,10 @@
 }
 
 .profile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
   gap: 16px;
 }
 
@@ -53,22 +55,23 @@
 
 .profile-card {
   position: relative;
+  width: min(100%, 220px);
   min-height: 240px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--panel-border);
   display: grid;
   grid-template-rows: auto 1fr;
   align-items: center;
   justify-items: center;
   gap: 14px;
-  background: rgba(20, 26, 36, 0.78);
-  color: #edf2f7;
+  background: var(--panel-bg);
+  color: var(--text-main);
   padding: 22px 18px;
   text-align: center;
 }
 
 .profile-card:hover {
-  border-color: rgba(128, 255, 219, 0.34);
-  background: rgba(128, 255, 219, 0.1);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
 }
 
 .profile-avatar {
@@ -79,10 +82,10 @@
   place-items: center;
   flex: 0 0 auto;
   overflow: hidden;
-  color: #071018;
+  color: var(--accent-contrast);
   font-size: 1.8rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #80ffdb, #64dfdf 48%, #48bfe3);
+  background: linear-gradient(135deg, var(--accent), #64dfdf 48%, var(--accent-2));
 }
 
 .profile-avatar img {
@@ -107,20 +110,20 @@
 
 .profile-card small {
   margin-top: 6px;
-  color: #9daabc;
+  color: var(--text-muted);
   font-weight: 700;
 }
 
 .profile-stat {
   min-height: 30px;
   margin: 14px auto 0;
-  border: 1px solid rgba(128, 255, 219, 0.24);
+  border: 1px solid var(--accent-border);
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #80ffdb;
-  background: rgba(128, 255, 219, 0.08);
+  color: var(--accent);
+  background: var(--accent-soft);
   font-size: 0.78rem;
   font-weight: 800;
   padding: 0 12px;
@@ -130,34 +133,65 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  min-height: 28px;
-  border: 1px solid rgba(255, 107, 107, 0.24);
+  width: 30px;
+  height: 30px;
+  min-height: 0;
+  border: 0;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #ff9aa2;
-  background: rgba(255, 107, 107, 0.08);
-  font-size: 0.72rem;
-  font-weight: 800;
-  padding: 0 9px;
+  background: transparent;
+  padding: 0;
 }
 
 .delete-profile-button:hover {
-  background: rgba(255, 107, 107, 0.16);
+  color: #ff6b6b;
+}
+
+.trash-icon {
+  position: relative;
+  width: 13px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+}
+
+.trash-icon::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -3px;
+  width: 15px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.trash-icon::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 3px;
+  width: 5px;
+  height: 2px;
+  border-radius: 999px 999px 0 0;
+  background: currentColor;
 }
 
 .create-profile-button {
   min-height: 40px;
-  border: 1px solid rgba(128, 255, 219, 0.34);
-  background: rgba(128, 255, 219, 0.14);
-  color: #edf2f7;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--text-main);
   padding: 0 16px;
   width: fit-content;
 }
 
 .create-profile-button:hover {
-  background: rgba(128, 255, 219, 0.22);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .create-profile-row {
@@ -175,9 +209,9 @@
   left: 24px;
   z-index: 2;
   min-height: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(20, 26, 36, 0.9);
-  color: #edf2f7;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  color: var(--text-main);
   padding: 0 14px;
 }
 
@@ -188,16 +222,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(5, 8, 15, 0.82);
+  background: var(--modal-backdrop);
   padding: 24px;
 }
 
 .confirm-modal {
   width: min(420px, 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--panel-border);
   border-radius: 8px;
-  background: rgba(12, 18, 28, 0.98);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35);
+  background: var(--panel-bg-strong);
+  box-shadow: var(--shadow-modal);
   padding: 24px;
 }
 
@@ -212,13 +246,13 @@
 
 .confirm-modal h2 {
   margin: 0;
-  color: #edf2f7;
+  color: var(--text-main);
   font-size: 1.6rem;
 }
 
 .modal-copy {
   margin: 12px 0 0;
-  color: #c7d0dc;
+  color: var(--text-soft);
   line-height: 1.5;
 }
 
@@ -240,9 +274,9 @@
 }
 
 .modal-secondary-button {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: #edf2f7;
+  border: 1px solid var(--panel-border);
+  background: var(--field-bg);
+  color: var(--text-main);
 }
 
 .modal-danger-button {
@@ -253,5 +287,5 @@
 
 .modal-danger-button:hover {
   background: #ff6b6b;
-  color: #071018;
+  color: var(--accent-contrast);
 }

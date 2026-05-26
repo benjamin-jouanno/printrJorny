@@ -10,9 +10,11 @@
 <main class="dashboard-shell" *ngIf="activeProfileId">
   <prtjry-header
     [data]="headerInfo"
+    [themeMode]="themeMode"
     (addPrint)="openCreatePrintForm()"
     (switchProfile)="showProfileSelection()"
     (editProfile)="openProfileForm()"
+    (toggleTheme)="toggleTheme()"
   ></prtjry-header>
 
   <profile-form
@@ -33,14 +35,45 @@
   <print-form
     *ngIf="isPrintFormOpen"
     [item]="printFormItem"
+    [filaments]="filamentInventory"
     (save)="savePrint($event)"
     (cancel)="closePrintForm()"
   ></print-form>
+
+  <filament-form
+    *ngIf="isFilamentFormOpen"
+    (save)="saveFilament($event)"
+    (cancel)="closeFilamentForm()"
+  ></filament-form>
+
+  <div class="modal-backdrop" *ngIf="emptyFilamentNotification" (click)="closeEmptyFilamentNotification()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow">Filament empty</p>
+      <h2>{{ emptyFilamentNotification.name }}</h2>
+      <p class="modal-copy">This filament has reached 0 g and will be removed from your inventory.</p>
+      <div class="modal-actions">
+        <button type="button" class="primary-modal-button" (click)="closeEmptyFilamentNotification()">OK</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="printPendingDeletion" (click)="cancelPrintDeletion()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow danger">Delete print</p>
+      <h2>{{ printPendingDeletion.name }}</h2>
+      <p class="modal-copy">This print will be removed from your history and its filament usage will be restored to inventory.</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="cancelPrintDeletion()">Cancel</button>
+        <button type="button" class="danger-modal-button" (click)="confirmPrintDeletion()">Delete print</button>
+      </div>
+    </section>
+  </div>
 
   <section class="workspace">
     <prtjry-history
       [items]="printingHistory"
       (select)="selectedPrint = $event"
+      (addPrint)="openCreatePrintForm()"
     ></prtjry-history>
 
     <dashboard-stats
@@ -51,8 +84,12 @@
       [printProgress]="printProgress"
       [stats]="stats"
       [prints]="printingHistory"
+      [themeMode]="themeMode"
     ></dashboard-stats>
 
-    <last-printed [item]="lastPrinted"></last-printed>
+    <aside class="right-rail">
+      <last-printed [item]="lastPrinted"></last-printed>
+      <filament-type [filaments]="filamentInventory" (addFilament)="openCreateFilamentForm()"></filament-type>
+    </aside>
   </section>
 </main>

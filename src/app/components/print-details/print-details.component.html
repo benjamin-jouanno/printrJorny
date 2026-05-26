@@ -21,6 +21,7 @@
       <div>
         <p class="detail-label">Filament</p>
         <strong>{{ item.filament }} g</strong>
+        <span class="detail-note" *ngIf="item.filamentName">{{ item.filamentName }}</span>
       </div>
       <div>
         <p class="detail-label">Cost</p>

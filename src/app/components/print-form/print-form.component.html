@@ -8,37 +8,90 @@
       <button type="button" class="close-button" aria-label="Close form" (click)="cancel.emit()">x</button>
     </div>
 
-    <form class="print-form" #printForm="ngForm" (ngSubmit)="savePrint()">
+    <form class="print-form" #printForm="ngForm" (ngSubmit)="savePrint()" (click)="closeMenus()">
       <label class="field field-wide">
-        <span>Print name</span>
+        <span>Print name <span class="required-mark">*</span></span>
         <input type="text" name="name" [(ngModel)]="formPrint.name" placeholder="Calibration cube" required />
       </label>
 
       <label class="field">
-        <span>Date</span>
+        <span>Date <span class="required-mark">*</span></span>
         <input type="date" name="date" [(ngModel)]="formPrint.date" required />
       </label>
 
       <label class="field">
-        <span>Status</span>
-        <select name="status" [(ngModel)]="formPrint.status" required>
-          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-        </select>
+        <span>Status <span class="required-mark">*</span></span>
+        <input type="text" class="select-hidden-input" name="status" [(ngModel)]="formPrint.status" required />
+        <div class="custom-select" [class.is-open]="isStatusMenuOpen" (click)="$event.stopPropagation()">
+          <button type="button" class="custom-select-button" (click)="toggleStatusMenu()">
+            {{ formPrint.status }}
+          </button>
+          <div class="custom-select-options" *ngIf="isStatusMenuOpen">
+            <button
+              type="button"
+              class="custom-select-option"
+              *ngFor="let status of statuses"
+              [class.is-selected]="status === formPrint.status"
+              (click)="chooseStatus(status)"
+            >
+              {{ status }}
+            </button>
+          </div>
+        </div>
       </label>
 
       <label class="field">
-        <span>Filament (g)</span>
+        <span>Filament used <span class="required-mark">*</span></span>
+        <input type="text" class="filament-hidden-input" name="filamentId" [(ngModel)]="formPrint.filamentId" required />
+        <div class="filament-picker" [class.is-open]="isFilamentMenuOpen" (click)="$event.stopPropagation()">
+          <button type="button" class="filament-picker-button" (click)="toggleFilamentMenu()">
+            <span class="filament-option-content" *ngIf="selectedFilament; else filamentPlaceholder">
+              <span class="filament-dot" [style.background]="selectedFilament.color" aria-hidden="true"></span>
+              <span>{{ selectedFilament.name }} - {{ selectedFilament.quantityGrams }} g left</span>
+            </span>
+            <ng-template #filamentPlaceholder>Select filament</ng-template>
+          </button>
+
+          <div class="filament-options" *ngIf="isFilamentMenuOpen">
+            <button
+              type="button"
+              class="filament-option"
+              *ngFor="let filament of filaments"
+              [class.is-selected]="filament.id === formPrint.filamentId"
+              (click)="chooseFilament(filament)"
+            >
+              <span class="filament-dot" [style.background]="filament.color" aria-hidden="true"></span>
+              <span>{{ filament.name }} - {{ filament.quantityGrams }} g left</span>
+            </button>
+          </div>
+        </div>
+      </label>
+
+      <label class="field">
+        <span>Filament (g) <span class="required-mark">*</span></span>
         <input type="number" name="filament" [(ngModel)]="formPrint.filament" min="0" step="0.1" required />
       </label>
 
       <label class="field">
-        <span>Cost</span>
-        <input type="number" name="cost" [(ngModel)]="formPrint.cost" min="0" step="0.01" required />
+        <span>Cost <span class="required-mark">*</span></span>
+        <span class="currency-input">
+          <input type="number" name="cost" [(ngModel)]="formPrint.cost" min="0" step="0.01" required />
+          <span aria-hidden="true">€</span>
+        </span>
       </label>
 
       <label class="field field-wide">
-        <span>Duration</span>
-        <input type="text" name="time" [(ngModel)]="formPrint.time" placeholder="1h 12m" required />
+        <span>Duration <span class="required-mark">*</span></span>
+        <span class="duration-inputs">
+          <label>
+            <input type="number" name="durationHours" [(ngModel)]="durationHours" min="0" step="1" required />
+            <span>Hours</span>
+          </label>
+          <label>
+            <input type="number" name="durationMinutes" [(ngModel)]="durationMinutes" min="0" max="59" step="1" required />
+            <span>Minutes</span>
+          </label>
+        </span>
       </label>
 
       <label class="field field-wide">
@@ -53,7 +106,7 @@
 
       <div class="form-actions">
         <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
-        <button type="submit" class="primary-button" [disabled]="printForm.invalid">Save print</button>
+        <button type="submit" class="primary-button" [disabled]="printForm.invalid || !hasDuration">Save print</button>
       </div>
     </form>
   </section>

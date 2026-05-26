@@ -8,7 +8,7 @@
       <button type="button" class="close-button" aria-label="Close profile editor" (click)="cancel.emit()">x</button>
     </div>
 
-    <form class="profile-form" #profileForm="ngForm" (ngSubmit)="saveProfile()">
+    <form class="profile-form" #profileForm="ngForm" (ngSubmit)="saveProfile()" (click)="closePrinterMenu()">
       <div class="picture-field">
         <div class="picture-preview" aria-hidden="true">
           <img *ngIf="formProfile.profilePicture" [src]="formProfile.profilePicture" alt="" />
@@ -24,22 +24,36 @@
       </div>
 
       <label class="field">
-        <span>Your name</span>
+        <span>Your name <span class="required-mark">*</span></span>
         <input type="text" name="userName" [(ngModel)]="formProfile.userName" autocomplete="name" required />
       </label>
 
       <label class="field">
-        <span>3D printer model</span>
-        <select name="printerModel" [(ngModel)]="formProfile.printerModel" required>
-          <option value="" disabled>Select your printer</option>
-          <optgroup *ngFor="let printerBrand of printerBrands" [label]="printerBrand.brand">
-            <option *ngFor="let model of printerBrand.models" [value]="model">{{ model }}</option>
-          </optgroup>
-        </select>
+        <span>3D printer model <span class="required-mark">*</span></span>
+        <input type="text" class="select-hidden-input" name="printerModel" [(ngModel)]="formProfile.printerModel" required />
+        <div class="custom-select" [class.is-open]="isPrinterMenuOpen" (click)="$event.stopPropagation()">
+          <button type="button" class="custom-select-button" (click)="togglePrinterMenu()">
+            {{ formProfile.printerModel || 'Select your printer' }}
+          </button>
+          <div class="custom-select-options" *ngIf="isPrinterMenuOpen">
+            <div class="custom-select-group" *ngFor="let printerBrand of printerBrands">
+              <p>{{ printerBrand.brand }}</p>
+              <button
+                type="button"
+                class="custom-select-option"
+                *ngFor="let model of printerBrand.models"
+                [class.is-selected]="model === formProfile.printerModel"
+                (click)="choosePrinterModel(model)"
+              >
+                {{ model }}
+              </button>
+            </div>
+          </div>
+        </div>
       </label>
 
       <label class="field" *ngIf="isCustomPrinterModelSelected">
-        <span>Custom printer model</span>
+        <span>Custom printer model <span class="required-mark">*</span></span>
         <input type="text" name="customPrinterModel" [(ngModel)]="customPrinterModel" autocomplete="off" required />
       </label>
 

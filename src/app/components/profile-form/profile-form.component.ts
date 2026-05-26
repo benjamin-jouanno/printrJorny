@@ -40,6 +40,7 @@ export class ProfileFormComponent implements OnChanges {
     profilePicture: ''
   };
   customPrinterModel = '';
+  isPrinterMenuOpen = false;
 
   get isCustomPrinterModelSelected(): boolean {
     return this.formProfile.printerModel === this.customPrinterModelOption;
@@ -64,7 +65,21 @@ export class ProfileFormComponent implements OnChanges {
         printerModel
       };
       this.customPrinterModel = printerModel === this.customPrinterModelOption ? this.profile.printerModel : '';
+      this.isPrinterMenuOpen = false;
     }
+  }
+
+  togglePrinterMenu(): void {
+    this.isPrinterMenuOpen = !this.isPrinterMenuOpen;
+  }
+
+  closePrinterMenu(): void {
+    this.isPrinterMenuOpen = false;
+  }
+
+  choosePrinterModel(model: string): void {
+    this.formProfile.printerModel = model;
+    this.closePrinterMenu();
   }
 
   saveProfile(): void {

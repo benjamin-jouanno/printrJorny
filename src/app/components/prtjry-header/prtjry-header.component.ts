@@ -15,14 +15,20 @@ export class PrtjryHeaderComponent {
     printerModel: '',
     profilePicture: '',
   };
+  @Input() themeMode: 'dark' | 'light' = 'dark';
   @Output() addPrint = new EventEmitter<void>();
   @Output() switchProfile = new EventEmitter<void>();
   @Output() editProfile = new EventEmitter<void>();
+  @Output() toggleTheme = new EventEmitter<void>();
 
   get initials(): string {
     const nameParts = this.data.userName.trim().split(/\s+/).filter(Boolean);
     const initials = nameParts.slice(0, 2).map(part => part[0]).join('');
 
     return initials.toUpperCase() || 'ID';
+  }
+
+  get themeToggleLabel(): string {
+    return this.themeMode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
   }
 }

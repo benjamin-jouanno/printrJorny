@@ -1,0 +1,55 @@
+<div class="modal-backdrop" (click)="cancel.emit()">
+  <section class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Filament inventory</p>
+        <h2>Add filament</h2>
+      </div>
+      <button type="button" class="close-button" aria-label="Close filament form" (click)="cancel.emit()">x</button>
+    </div>
+
+    <form class="filament-form" #filamentForm="ngForm" (ngSubmit)="saveFilament()" (click)="closeFilamentMenu()">
+      <label class="field">
+        <span>Name <span class="required-mark">*</span></span>
+        <input type="text" class="select-hidden-input" name="filamentName" [(ngModel)]="selectedFilament" required />
+        <div class="custom-select" [class.is-open]="isFilamentMenuOpen" (click)="$event.stopPropagation()">
+          <button type="button" class="custom-select-button" (click)="toggleFilamentMenu()">
+            {{ selectedFilamentLabel || 'Select filament' }}
+          </button>
+          <div class="custom-select-options" *ngIf="isFilamentMenuOpen">
+            <div class="custom-select-group" *ngFor="let filamentBrand of filamentBrands">
+              <p>{{ filamentBrand.brand }}</p>
+              <button
+                type="button"
+                class="custom-select-option"
+                *ngFor="let filamentName of filamentBrand.names"
+                [class.is-selected]="filamentName === selectedFilament"
+                (click)="chooseFilament(filamentName)"
+              >
+                {{ filamentBrand.brand }} - {{ filamentName }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </label>
+
+      <label class="field">
+        <span>Color <span class="required-mark">*</span></span>
+        <div class="color-control">
+          <input type="color" name="color" [(ngModel)]="color" required />
+          <strong>{{ color }}</strong>
+        </div>
+      </label>
+
+      <label class="field">
+        <span>Quantity in grams <span class="required-mark">*</span></span>
+        <input type="number" name="quantityGrams" [(ngModel)]="quantityGrams" min="1" step="1" required />
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
+        <button type="submit" class="primary-button" [disabled]="filamentForm.invalid">Add filament</button>
+      </div>
+    </form>
+  </section>
+</div>

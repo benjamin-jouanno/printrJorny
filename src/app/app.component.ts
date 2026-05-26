@@ -1,21 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrtjryHeaderComponent } from './components/prtjry-header/prtjry-header.component';
 import { PrtjryHistoryComponent } from './components/prtjry-history/prtjry-history.component';
 import { PrintDetailsComponent } from './components/print-details/print-details.component';
 import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-stats.component';
 import { LastPrintedComponent } from './components/last-printed/last-printed.component';
+import { FilamentTypeComponent } from './components/filament-type/filament-type.component';
+import { FilamentFormComponent } from './components/filament-form/filament-form.component';
 import { GetStartedComponent } from './components/get-started/get-started.component';
 import { PrintFormComponent } from './components/print-form/print-form.component';
 import { ProfileSelectionComponent } from './components/profile-selection/profile-selection.component';
 import { ProfileFormComponent } from './components/profile-form/profile-form.component';
 import { IHeader } from './interfaces/header.interface';
 import { IPrint } from './interfaces/print.interface';
+import { IFilament } from './interfaces/filament.interface';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, GetStartedComponent, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, DashboardStatsComponent, LastPrintedComponent, PrintDetailsComponent, PrintFormComponent],
+  imports: [CommonModule, GetStartedComponent, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -24,13 +27,18 @@ export class AppComponent {
   private readonly profilesStorageKey = 'printr-jorny-profiles';
   private readonly activeProfileStorageKey = 'printr-jorny-active-profile';
   private readonly printingHistoryStorageKey = 'printr-jorny-printing-history';
+  private readonly filamentInventoryStorageKey = 'printr-jorny-filament-inventory';
+  private readonly themeStorageKey = 'printr-jorny-theme';
 
   profiles: IHeader[] = [];
   profilePrintCounts: Record<string, number> = {};
   selectedPrint: IPrint | null = null;
   printFormItem: IPrint | null = null;
   isPrintFormOpen = false;
+  isFilamentFormOpen = false;
   isProfileFormOpen = false;
+  emptyFilamentNotification: IFilament | null = null;
+  printPendingDeletion: IPrint | null = null;
   headerInfo: IHeader = {
     id: '',
     userName: '',
@@ -38,34 +46,37 @@ export class AppComponent {
     profilePicture: '',
   };
   activeProfileId = '';
+  themeMode: 'dark' | 'light' = 'dark';
+
+  @HostBinding('class.light-theme')
+  get isLightTheme(): boolean {
+    return this.themeMode === 'light';
+  }
   activeMaterial = 'PLA Matte Black';
+  filamentInventory: IFilament[] = [];
   nozzleTemperature = 215;
   bedTemperature = 60;
   printProgress = 68;
   currentJob = 'Calibration cube';
 
-  stats = [
-    { label: 'Nozzle', value: `${this.nozzleTemperature}°C`, detail: 'Target 215°C' },
-    { label: 'Bed', value: `${this.bedTemperature}°C`, detail: 'Target 60°C' },
-    { label: 'Progress', value: `${this.printProgress}%`, detail: this.currentJob },
-    { label: 'Material', value: 'PLA', detail: this.activeMaterial }
-  ];
+  stats = [];
 
-  printingHistory: IPrint[] = [
-    { id: 'sample-1', name: 'Calibration cube', filament: 12, cost: 0.48, time: '1h 12m', status: 'success', date: '2026-05-21', description: 'Baseline calibration object used for leveling and flow tuning.' },
-    { id: 'sample-2', name: 'Phone holder', filament: 28, cost: 1.12, time: '2h 03m', status: 'passed poorly', date: '2026-05-22', description: 'Utility phone mount with thin walls, had slight underextrusion near the clip.', errorDescription: 'Thin walls and inconsistent extrusion around the clip led to poorer-than-expected part quality.' },
-    { id: 'sample-3', name: 'Enclosure hinge', filament: 6, cost: 0.24, time: '0h 35m', status: 'failed', date: '2026-05-23', description: 'Small hinge print that failed due to a loose bed attachment midway.', errorDescription: 'The part detached from the bed mid-print, causing the hinge to collapse and fail.' },
-    { id: 'sample-4', name: 'Cable clip', filament: 3, cost: 0.12, time: '0h 12m', status: 'success', date: '2026-05-24', description: 'Simple cable management clip printed cleanly with no issues.' }
-  ];
+  printingHistory: IPrint[] = [];
 
   get lastPrinted(): IPrint | null {
     return this.printingHistory.length ? this.printingHistory[0] : null;
   }
 
   constructor() {
+    this.loadTheme();
     this.loadProfiles();
     this.loadProfilePrintCounts();
     this.loadActiveProfile();
+  }
+
+  toggleTheme(): void {
+    this.themeMode = this.themeMode === 'dark' ? 'light' : 'dark';
+    localStorage.setItem(this.themeStorageKey, this.themeMode);
   }
 
   saveProfile(profile: IHeader): void {
@@ -96,6 +107,7 @@ export class AppComponent {
     this.selectedPrint = null;
     this.closePrintForm();
     this.loadPrintingHistory();
+    this.loadFilamentInventory();
     this.loadProfilePrintCounts();
   }
 
@@ -108,6 +120,9 @@ export class AppComponent {
       profilePicture: ''
     };
     this.printingHistory = [];
+    this.filamentInventory = [];
+    this.emptyFilamentNotification = null;
+    this.printPendingDeletion = null;
     this.selectedPrint = null;
     this.closePrintForm();
     this.closeProfileForm();
@@ -138,6 +153,26 @@ export class AppComponent {
     this.closeProfileForm();
   }
 
+  openCreateFilamentForm(): void {
+    this.isFilamentFormOpen = true;
+  }
+
+  closeFilamentForm(): void {
+    this.isFilamentFormOpen = false;
+  }
+
+  saveFilament(filament: Omit<IFilament, 'id'>): void {
+    this.filamentInventory = [
+      ...this.filamentInventory,
+      {
+        ...filament,
+        id: this.createFilamentId()
+      }
+    ];
+    this.persistFilamentInventory();
+    this.closeFilamentForm();
+  }
+
   openCreatePrintForm(): void {
     this.printFormItem = null;
     this.isPrintFormOpen = true;
@@ -156,6 +191,7 @@ export class AppComponent {
   }
 
   savePrint(print: IPrint): void {
+    const previousPrint = this.printingHistory.find(item => item.id === print.id);
     const savedPrint: IPrint = {
       ...print,
       id: print.id || this.createPrintId()
@@ -173,20 +209,33 @@ export class AppComponent {
       this.printingHistory = this.sortPrints([savedPrint, ...this.printingHistory]);
     }
 
+    this.applyFilamentUsage(savedPrint, previousPrint);
+    this.notifyEmptyFilament();
     this.persistPrintingHistory();
     this.updateActiveProfilePrintCount();
     this.closePrintForm();
   }
 
   deletePrint(print: IPrint): void {
-    if (!confirm(`Delete "${print.name}" from your printing history?`)) {
+    this.printPendingDeletion = print;
+  }
+
+  confirmPrintDeletion(): void {
+    if (!this.printPendingDeletion) {
       return;
     }
 
+    const print = this.printPendingDeletion;
+    this.restoreFilamentUsage(print);
     this.printingHistory = this.printingHistory.filter(item => item.id !== print.id);
     this.selectedPrint = null;
+    this.printPendingDeletion = null;
     this.persistPrintingHistory();
     this.updateActiveProfilePrintCount();
+  }
+
+  cancelPrintDeletion(): void {
+    this.printPendingDeletion = null;
   }
 
   deleteProfile(profileId: string): void {
@@ -199,6 +248,7 @@ export class AppComponent {
     this.profiles = this.profiles.filter(item => item.id !== profile.id);
     this.persistProfiles();
     localStorage.removeItem(`${this.printingHistoryStorageKey}-${profile.id}`);
+    localStorage.removeItem(`${this.filamentInventoryStorageKey}-${profile.id}`);
 
     const { [profile.id]: _removedCount, ...remainingCounts } = this.profilePrintCounts;
     this.profilePrintCounts = remainingCounts;
@@ -234,6 +284,14 @@ export class AppComponent {
       }
     } catch {
       localStorage.removeItem(this.profileStorageKey);
+    }
+  }
+
+  private loadTheme(): void {
+    const savedTheme = localStorage.getItem(this.themeStorageKey);
+
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      this.themeMode = savedTheme;
     }
   }
 
@@ -310,12 +368,45 @@ export class AppComponent {
     }
   }
 
+  private loadFilamentInventory(): void {
+    if (!this.activeProfileId) {
+      this.filamentInventory = [];
+      return;
+    }
+
+    const storageKey = this.getFilamentInventoryStorageKey();
+    const savedInventory = localStorage.getItem(storageKey);
+
+    if (!savedInventory) {
+      this.filamentInventory = [];
+      this.persistFilamentInventory();
+      return;
+    }
+
+    try {
+      this.filamentInventory = (JSON.parse(savedInventory) as IFilament[]).map(filament => ({
+        ...filament,
+        initialQuantityGrams: filament.initialQuantityGrams || filament.quantityGrams
+      }));
+    } catch {
+      localStorage.removeItem(storageKey);
+    }
+  }
+
   private persistPrintingHistory(): void {
     if (!this.activeProfileId) {
       return;
     }
 
     localStorage.setItem(this.getPrintingHistoryStorageKey(), JSON.stringify(this.printingHistory));
+  }
+
+  private persistFilamentInventory(): void {
+    if (!this.activeProfileId) {
+      return;
+    }
+
+    localStorage.setItem(this.getFilamentInventoryStorageKey(), JSON.stringify(this.filamentInventory));
   }
 
   private loadProfilePrintCounts(): void {
@@ -356,6 +447,66 @@ export class AppComponent {
     return `${this.printingHistoryStorageKey}-${this.activeProfileId}`;
   }
 
+  private getFilamentInventoryStorageKey(): string {
+    return `${this.filamentInventoryStorageKey}-${this.activeProfileId}`;
+  }
+
+  private applyFilamentUsage(savedPrint: IPrint, previousPrint?: IPrint): void {
+    this.filamentInventory = this.filamentInventory.map(filament => {
+      let quantityGrams = filament.quantityGrams;
+
+      if (previousPrint?.filamentId === filament.id) {
+        quantityGrams += Number(previousPrint.filament) || 0;
+      }
+
+      if (savedPrint.filamentId === filament.id) {
+        quantityGrams -= Number(savedPrint.filament) || 0;
+      }
+
+      return {
+        ...filament,
+        quantityGrams: Math.max(0, Math.round(quantityGrams * 10) / 10)
+      };
+    });
+    this.persistFilamentInventory();
+  }
+
+  closeEmptyFilamentNotification(): void {
+    if (!this.emptyFilamentNotification) {
+      return;
+    }
+
+    this.filamentInventory = this.filamentInventory.filter(filament => filament.id !== this.emptyFilamentNotification?.id);
+    this.persistFilamentInventory();
+    this.emptyFilamentNotification = null;
+  }
+
+  private restoreFilamentUsage(print: IPrint): void {
+    if (!print.filamentId) {
+      return;
+    }
+
+    this.filamentInventory = this.filamentInventory.map(filament => {
+      if (filament.id !== print.filamentId) {
+        return filament;
+      }
+
+      return {
+        ...filament,
+        quantityGrams: Math.round((filament.quantityGrams + (Number(print.filament) || 0)) * 10) / 10
+      };
+    });
+    this.persistFilamentInventory();
+  }
+
+  private notifyEmptyFilament(): void {
+    const emptyFilament = this.filamentInventory.find(filament => filament.quantityGrams <= 0);
+
+    if (emptyFilament) {
+      this.emptyFilamentNotification = emptyFilament;
+    }
+  }
+
   private sortPrints(prints: IPrint[]): IPrint[] {
     return [...prints].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
@@ -366,5 +517,9 @@ export class AppComponent {
 
   private createProfileId(): string {
     return `profile-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private createFilamentId(): string {
+    return `filament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 }

@@ -12,4 +12,5 @@ import { IPrint } from '../../interfaces/print.interface';
 export class PrtjryHistoryComponent {
   @Input() items: IPrint[] = [];
   @Output() select = new EventEmitter<IPrint>();
+  @Output() addPrint = new EventEmitter<void>();
 }

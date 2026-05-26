@@ -12,6 +12,23 @@
       <button type="button" class="profile-action" (click)="editProfile.emit()">Edit profile</button>
       <button type="button" class="profile-action" (click)="switchProfile.emit()">Change profile</button>
     </div>
+    <div class="theme-switch-wrap">
+      <button
+        type="button"
+        class="theme-switch"
+        [class.is-light]="themeMode === 'light'"
+        role="switch"
+        [attr.aria-checked]="themeMode === 'light'"
+        [attr.aria-label]="themeToggleLabel"
+        (click)="toggleTheme.emit()"
+      >
+        <span class="theme-icon moon-icon" aria-hidden="true"></span>
+        <span class="theme-track" aria-hidden="true">
+          <span class="theme-thumb"></span>
+        </span>
+        <span class="theme-icon sun-icon" aria-hidden="true"></span>
+      </button>
+    </div>
   </section>
 
   <section class="printer-summary" aria-label="Current printer">

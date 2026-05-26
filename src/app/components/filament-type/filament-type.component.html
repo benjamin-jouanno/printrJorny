@@ -1,0 +1,35 @@
+<section class="panel filament-panel">
+  <div class="panel-heading">
+    <p class="eyebrow">Filament inventory <span class="filament-count">({{ filaments.length }})</span></p>
+    <button type="button" class="add-filament-button" aria-label="Add filament" (click)="addFilament.emit()">+</button>
+  </div>
+
+  <div class="empty-inventory" *ngIf="!filaments.length; else filamentList">
+    <p>No filament tracked yet.</p>
+    <span>Add your spools here soon.</span>
+  </div>
+
+  <ng-template #filamentList>
+    <div class="filament-list">
+      <article class="filament-card" *ngFor="let filament of filaments">
+        <div class="filament-topline">
+          <span class="filament-color" [style.background]="filament.color" aria-hidden="true"></span>
+          <div>
+            <h3>{{ filament.name }}</h3>
+            <p>{{ filament.brand }}</p>
+          </div>
+          <strong>{{ filament.quantityGrams }} g</strong>
+        </div>
+
+        <div class="quantity-bar" aria-hidden="true">
+          <span [class.low-quantity]="isLowQuantity(filament)" [style.width.%]="getQuantityPercent(filament)"></span>
+        </div>
+
+        <div class="quantity-meta">
+          <span>{{ filament.quantityGrams }} g available</span>
+          <span>{{ getQuantityPercent(filament) }}% left</span>
+        </div>
+      </article>
+    </div>
+  </ng-template>
+</section>

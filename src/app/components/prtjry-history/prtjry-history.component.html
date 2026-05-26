@@ -1,6 +1,7 @@
 <article class="panel history-panel">
   <div class="panel-heading">
     <p class="eyebrow">Printing history <span class="history-count">({{ items.length }})</span></p>
+    <button type="button" class="add-history-button" aria-label="Add print" (click)="addPrint.emit()">+</button>
   </div>
 
   <div class="history-list">
@@ -16,6 +17,10 @@
           <div>
             <h3 class="card-title">{{ item.name }}</h3>
             <p class="card-date">{{ item.date | date:'d MMMM y' }}</p>
+            <p class="card-filament" *ngIf="item.filamentName">
+              <span class="filament-color" [style.background]="item.filamentColor" aria-hidden="true"></span>
+              {{ item.filamentName }}
+            </p>
           </div>
           <div class="status-graphic status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
             <span class="status-dot"></span>
