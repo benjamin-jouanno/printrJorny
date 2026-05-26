@@ -1,0 +1,24 @@
+<article class="panel history-panel">
+  <div class="panel-heading">
+    <p class="eyebrow">Printing history <span class="history-count">({{ items.length }})</span></p>
+  </div>
+
+  <div class="history-list">
+    <div class="history-grid">
+      <article class="history-card" *ngFor="let item of items" (click)="select.emit(item)" tabindex="0" role="button" (keydown.enter)="select.emit(item)">
+        <div class="card-top">
+          <h3 class="card-title">{{ item.name }}</h3>
+          <div class="status-graphic status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
+            <span class="status-dot"></span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="meta"><small class="meta-label">Filament</small><strong>{{ item.filament }} g</strong></div>
+          <div class="meta"><small class="meta-label">Cost</small><strong>€{{ item.cost | number:'1.2-2' }}</strong></div>
+          <div class="meta"><small class="meta-label">Time</small><strong>{{ item.time }}</strong></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</article>

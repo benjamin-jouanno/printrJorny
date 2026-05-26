@@ -1,0 +1,35 @@
+<div class="modal-backdrop" (click)="closeModal()">
+  <section class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Print details</p>
+        <h2>{{ item.name }}</h2>
+      </div>
+      <button type="button" class="close-button" aria-label="Close details" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="details-grid">
+      <div>
+        <p class="detail-label">Filament</p>
+        <strong>{{ item.filament }} g</strong>
+      </div>
+      <div>
+        <p class="detail-label">Cost</p>
+        <strong>€{{ item.cost | number:'1.2-2' }}</strong>
+      </div>
+      <div>
+        <p class="detail-label">Time</p>
+        <strong>{{ item.time }}</strong>
+      </div>
+      <div>
+        <p class="detail-label">Status</p>
+        <strong>{{ item.status }}</strong>
+      </div>
+    </div>
+
+    <div class="description-block">
+      <p class="detail-label">Description</p>
+      <p class="description-text">{{ item.description || 'No additional details available.' }}</p>
+    </div>
+  </section>
+</div>

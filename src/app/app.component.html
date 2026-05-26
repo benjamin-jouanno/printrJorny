@@ -1,0 +1,13 @@
+<main class="dashboard-shell">
+  <prtjry-header
+    [userName]="userName"
+    [printerName]="printerName"
+    [printerStatus]="printerStatus"
+  ></prtjry-header>
+
+  <print-details *ngIf="selectedPrint" [item]="selectedPrint" (close)="selectedPrint = null"></print-details>
+
+  <section class="workspace">
+    <prtjry-history [items]="printingHistory" (select)="selectedPrint = $event"></prtjry-history>
+  </section>
+</main>
