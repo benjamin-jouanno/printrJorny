@@ -1,17 +1,29 @@
 <header class="topbar">
   <section class="profile">
-    <div class="avatar" aria-hidden="true">BJ</div>
+    <div class="avatar" aria-hidden="true">
+      <img *ngIf="data.profilePicture; else initialsAvatar" [src]="data.profilePicture" alt="" />
+      <ng-template #initialsAvatar>{{ initials }}</ng-template>
+    </div>
     <div>
       <p class="eyebrow">Active profile</p>
-      <h1>{{ userName }}</h1>
+      <h1>{{ data.userName }}</h1>
+    </div>
+    <div class="profile-actions">
+      <button type="button" class="profile-action" (click)="editProfile.emit()">Edit profile</button>
+      <button type="button" class="profile-action" (click)="switchProfile.emit()">Change profile</button>
     </div>
   </section>
 
   <section class="printer-summary" aria-label="Current printer">
     <div>
-      <p class="eyebrow">3D printer</p>
-      <h2>{{ printerName }}</h2>
+      <p class="eyebrow">3D printer model</p>
+      <h2>{{ data.printerModel }}</h2>
     </div>
-    <span class="status-pill">{{ printerStatus }}</span>
+    <span class="printer-icon" aria-hidden="true"></span>
   </section>
+
+  <button type="button" class="add-print-action" (click)="addPrint.emit()">
+    <span class="add-print-icon" aria-hidden="true">+</span>
+    <span>Add print</span>
+  </button>
 </header>

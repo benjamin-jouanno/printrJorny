@@ -42,6 +42,58 @@ h2 {
   font-size: 1.75rem;
 }
 
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.status-graphic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.status-graphic.status-success .status-dot {
+  background: #2ecc71;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+.status-graphic.status-failed .status-dot {
+  background: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+.status-graphic.status-passed-poorly .status-dot {
+  background: #f29d38;
+  box-shadow: 0 0 10px rgba(242, 157, 56, 0.2);
+}
+
+.error-block {
+  margin-top: 18px;
+  background: rgba(255, 91, 113, 0.08);
+  border: 1px solid rgba(255, 91, 113, 0.18);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.error-block .description-text {
+  color: #ffdde0;
+}
+
 .close-button {
   appearance: none;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -96,6 +148,45 @@ strong {
   margin: 8px 0 0;
   color: #c7d0dc;
   line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.secondary-button,
+.danger-button {
+  min-height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0 16px;
+}
+
+.secondary-button {
+  border: 1px solid rgba(128, 255, 219, 0.36);
+  background: rgba(128, 255, 219, 0.12);
+  color: #80ffdb;
+}
+
+.secondary-button:hover {
+  background: #80ffdb;
+  color: #071018;
+}
+
+.danger-button {
+  border: 1px solid rgba(255, 107, 107, 0.34);
+  background: rgba(255, 107, 107, 0.12);
+  color: #ff9aa2;
+}
+
+.danger-button:hover {
+  background: #ff6b6b;
+  color: #071018;
 }
 
 @media (max-width: 520px) {

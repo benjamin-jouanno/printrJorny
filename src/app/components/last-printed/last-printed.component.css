@@ -1,0 +1,125 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(20, 26, 36, 0.78);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+  height: 100%;
+  min-height: 0;
+  padding: 22px;
+  overflow: auto;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #9daabc;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.08;
+}
+
+.muted {
+  margin: 8px 0 0;
+  color: #9daabc;
+  line-height: 1.6;
+}
+
+.last-details {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.last-details div {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.last-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-graphic {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.status-graphic.title-status {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.20);
+}
+
+.status-graphic.status-success .status-dot {
+  background: #2ecc71;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+.status-graphic.status-failed .status-dot {
+  background: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+.status-graphic.status-passed-poorly .status-dot {
+  background: #f29d38;
+  box-shadow: 0 0 10px rgba(242, 157, 56, 0.2);
+}
+
+.detail-label {
+  margin: 0 0 8px;
+  color: #9daabc;
+  font-size: 0.82rem;
+}
+
+strong {
+  display: block;
+  color: #edf2f7;
+  font-size: 1.05rem;
+}
+
+.description-block {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.description-text {
+  margin: 8px 0 0;
+  color: #c7d0dc;
+  line-height: 1.6;
+}

@@ -11,8 +11,11 @@
   /* leave a 10em gutter on both sides when there's enough space */
   width: calc(100% - 20em);
   max-width: 1800px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 28px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar {
@@ -119,77 +122,13 @@ h3 {
   font-weight: 700;
 }
 
-.hero-panel {
-  min-height: 260px;
-  padding: 28px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
-  gap: 24px;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.job-copy .muted {
-  max-width: 620px;
-  margin: 16px 0 0;
-  font-size: 1.02rem;
-  line-height: 1.6;
-}
-
-.progress-block {
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-}
-
-.progress-ring {
-  --progress: 0;
-  width: 180px;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle closest-side, #141a24 76%, transparent 77%),
-    conic-gradient(#80ffdb calc(var(--progress) * 1%), rgba(255, 255, 255, 0.12) 0);
-}
-
-.progress-ring span {
-  font-size: 2.1rem;
-  font-weight: 800;
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.stat-card {
-  min-height: 132px;
-  padding: 18px;
-  display: grid;
-  align-content: space-between;
-}
-
-.stat-card p,
-.stat-card span {
-  margin: 0;
-  font-size: 0.88rem;
-}
-
-.stat-card strong {
-  display: block;
-  margin: 14px 0 10px;
-  font-size: 2rem;
-  line-height: 1;
-}
-
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr) minmax(260px, 320px);
   gap: 16px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
 
 .panel {

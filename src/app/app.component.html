@@ -1,13 +1,58 @@
-<main class="dashboard-shell">
+<profile-selection
+  *ngIf="!activeProfileId"
+  [profiles]="profiles"
+  [printCounts]="profilePrintCounts"
+  (selectProfile)="selectProfile($event)"
+  (createProfile)="saveProfile($event)"
+  (deleteProfile)="deleteProfile($event)"
+></profile-selection>
+
+<main class="dashboard-shell" *ngIf="activeProfileId">
   <prtjry-header
-    [userName]="userName"
-    [printerName]="printerName"
-    [printerStatus]="printerStatus"
+    [data]="headerInfo"
+    (addPrint)="openCreatePrintForm()"
+    (switchProfile)="showProfileSelection()"
+    (editProfile)="openProfileForm()"
   ></prtjry-header>
 
-  <print-details *ngIf="selectedPrint" [item]="selectedPrint" (close)="selectedPrint = null"></print-details>
+  <profile-form
+    *ngIf="isProfileFormOpen"
+    [profile]="headerInfo"
+    (save)="updateProfile($event)"
+    (cancel)="closeProfileForm()"
+  ></profile-form>
+
+  <print-details
+    *ngIf="selectedPrint"
+    [item]="selectedPrint"
+    (close)="selectedPrint = null"
+    (edit)="openEditPrintForm($event)"
+    (delete)="deletePrint($event)"
+  ></print-details>
+
+  <print-form
+    *ngIf="isPrintFormOpen"
+    [item]="printFormItem"
+    (save)="savePrint($event)"
+    (cancel)="closePrintForm()"
+  ></print-form>
 
   <section class="workspace">
-    <prtjry-history [items]="printingHistory" (select)="selectedPrint = $event"></prtjry-history>
+    <prtjry-history
+      [items]="printingHistory"
+      (select)="selectedPrint = $event"
+    ></prtjry-history>
+
+    <dashboard-stats
+      [currentJob]="currentJob"
+      [activeMaterial]="activeMaterial"
+      [nozzleTemperature]="nozzleTemperature"
+      [bedTemperature]="bedTemperature"
+      [printProgress]="printProgress"
+      [stats]="stats"
+      [prints]="printingHistory"
+    ></dashboard-stats>
+
+    <last-printed [item]="lastPrinted"></last-printed>
   </section>
 </main>

@@ -1,0 +1,64 @@
+<main class="get-started-page">
+  <p class="brand-title">Printr Jorny</p>
+
+  <section class="intro-panel">
+    <h1>Create your profile</h1>
+    <p class="intro-copy">Set up the profile and printer model shown on your dashboard.</p>
+  </section>
+
+  <form class="profile-form" #profileForm="ngForm" (ngSubmit)="createProfile()">
+    <div class="picture-field">
+      <div class="picture-preview" aria-hidden="true">
+        <img *ngIf="profile.profilePicture" [src]="profile.profilePicture" alt="" />
+        <span *ngIf="!profile.profilePicture">{{ profileInitials }}</span>
+      </div>
+      <div class="picture-actions">
+        <label class="picture-button">
+          <input type="file" accept="image/*" (change)="onProfilePictureSelected($event)" />
+          <span>Choose profile picture</span>
+        </label>
+        <button *ngIf="profile.profilePicture" type="button" class="remove-picture-button" (click)="removeProfilePicture()">Remove</button>
+      </div>
+    </div>
+
+    <label class="field">
+      <span>Your name</span>
+      <input
+        type="text"
+        name="userName"
+        [(ngModel)]="profile.userName"
+        autocomplete="name"
+        placeholder="Benjamin Jouanno"
+        required
+      />
+    </label>
+
+    <label class="field">
+      <span>3D printer model</span>
+      <select
+        name="printerModel"
+        [(ngModel)]="profile.printerModel"
+        required
+      >
+        <option value="" disabled>Select your printer</option>
+        <optgroup *ngFor="let printerBrand of printerBrands" [label]="printerBrand.brand">
+          <option *ngFor="let model of printerBrand.models" [value]="model">{{ model }}</option>
+        </optgroup>
+      </select>
+    </label>
+
+    <label class="field" *ngIf="isCustomPrinterModelSelected">
+      <span>Custom printer model</span>
+      <input
+        type="text"
+        name="customPrinterModel"
+        [(ngModel)]="customPrinterModel"
+        autocomplete="off"
+        placeholder="Enter your printer model"
+        required
+      />
+    </label>
+
+    <button type="submit" [disabled]="profileForm.invalid">Create profile</button>
+  </form>
+</main>

@@ -4,10 +4,19 @@
   </div>
 
   <div class="history-list">
+    <div class="empty-history" *ngIf="!items.length; else printHistoryList">
+      <p>No prints recorded yet.</p>
+      <span>Add your first print from the header.</span>
+    </div>
+
+    <ng-template #printHistoryList>
     <div class="history-grid">
       <article class="history-card" *ngFor="let item of items" (click)="select.emit(item)" tabindex="0" role="button" (keydown.enter)="select.emit(item)">
         <div class="card-top">
-          <h3 class="card-title">{{ item.name }}</h3>
+          <div>
+            <h3 class="card-title">{{ item.name }}</h3>
+            <p class="card-date">{{ item.date | date:'d MMMM y' }}</p>
+          </div>
           <div class="status-graphic status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
             <span class="status-dot"></span>
           </div>
@@ -20,5 +29,6 @@
         </div>
       </article>
     </div>
+    </ng-template>
   </div>
 </article>

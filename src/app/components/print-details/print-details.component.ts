@@ -12,6 +12,8 @@ import { IPrint } from '../../interfaces/print.interface';
 export class PrintDetailsComponent {
   @Input() item!: IPrint;
   @Output() close = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<IPrint>();
+  @Output() delete = new EventEmitter<IPrint>();
 
   closeModal() {
     this.close.emit();

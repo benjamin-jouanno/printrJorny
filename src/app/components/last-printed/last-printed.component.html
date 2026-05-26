@@ -1,0 +1,39 @@
+<section class="panel last-printed">
+  <div class="panel-heading">
+    <p class="eyebrow">Last printed</p>
+  </div>
+
+  <div *ngIf="item; else noPrint">
+    <div class="last-title-row">
+      <h3>{{ item.name }}</h3>
+      <div class="status-graphic title-status status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
+        <span class="status-dot"></span>
+      </div>
+    </div>
+    <p class="muted">{{ item.date | date:'d MMMM y' }}</p>
+
+    <div class="last-details">
+      <div>
+        <p class="detail-label">Duration</p>
+        <strong>{{ item.time }}</strong>
+      </div>
+      <div>
+        <p class="detail-label">Filament</p>
+        <strong>{{ item.filament }} g</strong>
+      </div>
+      <div>
+        <p class="detail-label">Cost</p>
+        <strong>€{{ item.cost | number:'1.2-2' }}</strong>
+      </div>
+    </div>
+
+    <div class="description-block">
+      <p class="detail-label">Summary</p>
+      <p class="description-text">{{ item.description }}</p>
+    </div>
+  </div>
+
+  <ng-template #noPrint>
+    <p class="muted">No printed items available yet.</p>
+  </ng-template>
+</section>

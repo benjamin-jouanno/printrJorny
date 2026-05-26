@@ -1,0 +1,49 @@
+<main class="profile-selection-page">
+  <section class="profile-picker" *ngIf="!shouldShowCreationForm">
+    <p class="brand-title">Printr Jorny</p>
+
+    <h1 class="picker-heading">Select a profile</h1>
+
+    <div class="profile-grid">
+      <button
+        type="button"
+        class="profile-card"
+        *ngFor="let profile of profiles"
+        (click)="chooseProfile(profile)"
+      >
+        <span class="profile-avatar" aria-hidden="true">
+          <img *ngIf="profile.profilePicture; else profileInitials" [src]="profile.profilePicture" alt="" />
+          <ng-template #profileInitials>{{ getInitials(profile) }}</ng-template>
+        </span>
+        <span class="profile-card-info">
+          <strong>{{ profile.userName }}</strong>
+          <small>{{ profile.printerModel }}</small>
+          <span class="profile-stat">{{ getPrintCount(profile) }} prints tracked</span>
+        </span>
+        <span class="delete-profile-button" role="button" tabindex="0" (click)="removeProfile($event, profile)" (keydown.enter)="removeProfile($event, profile)">Delete</span>
+      </button>
+    </div>
+
+    <div class="create-profile-row">
+      <button type="button" class="create-profile-button" (click)="isCreatingProfile = true">Create new profile</button>
+    </div>
+
+    <div class="modal-backdrop" *ngIf="profilePendingDeletion" (click)="cancelProfileDeletion()">
+      <section class="confirm-modal" (click)="$event.stopPropagation()">
+        <p class="modal-eyebrow">Delete profile</p>
+        <h2>{{ profilePendingDeletion.userName }}</h2>
+        <p class="modal-copy">This will remove the profile and its print history.</p>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-secondary-button" (click)="cancelProfileDeletion()">Cancel</button>
+          <button type="button" class="modal-danger-button" (click)="confirmProfileDeletion()">Delete profile</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="creation-panel" *ngIf="shouldShowCreationForm">
+    <button *ngIf="profiles.length" type="button" class="back-button" (click)="isCreatingProfile = false">Back to profiles</button>
+    <get-started (profileCreated)="saveNewProfile($event)"></get-started>
+  </section>
+</main>

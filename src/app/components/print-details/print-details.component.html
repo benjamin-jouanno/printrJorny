@@ -3,12 +3,21 @@
     <div class="modal-header">
       <div>
         <p class="eyebrow">Print details</p>
-        <h2>{{ item.name }}</h2>
+        <div class="modal-title-row">
+          <h2>{{ item.name }}</h2>
+          <div class="status-graphic status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
+            <span class="status-dot"></span>
+          </div>
+        </div>
       </div>
       <button type="button" class="close-button" aria-label="Close details" (click)="closeModal()">×</button>
     </div>
 
     <div class="details-grid">
+      <div>
+        <p class="detail-label">Date</p>
+        <strong>{{ item.date | date:'d MMMM y' }}</strong>
+      </div>
       <div>
         <p class="detail-label">Filament</p>
         <strong>{{ item.filament }} g</strong>
@@ -21,15 +30,21 @@
         <p class="detail-label">Time</p>
         <strong>{{ item.time }}</strong>
       </div>
-      <div>
-        <p class="detail-label">Status</p>
-        <strong>{{ item.status }}</strong>
-      </div>
     </div>
 
     <div class="description-block">
       <p class="detail-label">Description</p>
       <p class="description-text">{{ item.description || 'No additional details available.' }}</p>
+    </div>
+
+    <div *ngIf="item.errorDescription && (item.status === 'failed' || item.status === 'passed poorly')" class="error-block">
+      <p class="detail-label">Error details</p>
+      <p class="description-text">{{ item.errorDescription }}</p>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary-button" (click)="edit.emit(item)">Edit</button>
+      <button type="button" class="danger-button" (click)="delete.emit(item)">Delete</button>
     </div>
   </section>
 </div>

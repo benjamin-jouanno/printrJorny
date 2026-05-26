@@ -1,0 +1,257 @@
+.profile-selection-page {
+  min-height: 100vh;
+  position: relative;
+}
+
+.profile-picker {
+  width: min(100% - 32px, 900px);
+  min-height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  padding: 32px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.picker-heading {
+  margin: -8px 0 4px;
+  color: #c7d0dc;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.brand-title {
+  margin: 0 auto;
+  color: transparent;
+  background: linear-gradient(135deg, #80ffdb, #64dfdf 42%, #48bfe3 72%, #f29d38);
+  background-clip: text;
+  font-size: clamp(2.8rem, 8vw, 6.2rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.profile-card,
+.create-profile-button,
+.back-button {
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.profile-card {
+  position: relative;
+  min-height: 240px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 14px;
+  background: rgba(20, 26, 36, 0.78);
+  color: #edf2f7;
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.profile-card:hover {
+  border-color: rgba(128, 255, 219, 0.34);
+  background: rgba(128, 255, 219, 0.1);
+}
+
+.profile-avatar {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  color: #071018;
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #80ffdb, #64dfdf 48%, #48bfe3);
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card-info,
+.profile-card strong,
+.profile-card small {
+  display: block;
+}
+
+.profile-card-info {
+  align-self: start;
+}
+
+.profile-card strong {
+  font-size: 1.1rem;
+}
+
+.profile-card small {
+  margin-top: 6px;
+  color: #9daabc;
+  font-weight: 700;
+}
+
+.profile-stat {
+  min-height: 30px;
+  margin: 14px auto 0;
+  border: 1px solid rgba(128, 255, 219, 0.24);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #80ffdb;
+  background: rgba(128, 255, 219, 0.08);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0 12px;
+}
+
+.delete-profile-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  min-height: 28px;
+  border: 1px solid rgba(255, 107, 107, 0.24);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff9aa2;
+  background: rgba(255, 107, 107, 0.08);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0 9px;
+}
+
+.delete-profile-button:hover {
+  background: rgba(255, 107, 107, 0.16);
+}
+
+.create-profile-button {
+  min-height: 40px;
+  border: 1px solid rgba(128, 255, 219, 0.34);
+  background: rgba(128, 255, 219, 0.14);
+  color: #edf2f7;
+  padding: 0 16px;
+  width: fit-content;
+}
+
+.create-profile-button:hover {
+  background: rgba(128, 255, 219, 0.22);
+}
+
+.create-profile-row {
+  display: flex;
+  justify-content: center;
+}
+
+.creation-panel {
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 2;
+  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 26, 36, 0.9);
+  color: #edf2f7;
+  padding: 0 14px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 15, 0.82);
+  padding: 24px;
+}
+
+.confirm-modal {
+  width: min(420px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(12, 18, 28, 0.98);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35);
+  padding: 24px;
+}
+
+.modal-eyebrow {
+  margin: 0 0 8px;
+  color: #ff9aa2;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.confirm-modal h2 {
+  margin: 0;
+  color: #edf2f7;
+  font-size: 1.6rem;
+}
+
+.modal-copy {
+  margin: 12px 0 0;
+  color: #c7d0dc;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-secondary-button,
+.modal-danger-button {
+  min-height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0 14px;
+}
+
+.modal-secondary-button {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #edf2f7;
+}
+
+.modal-danger-button {
+  border: 1px solid rgba(255, 107, 107, 0.34);
+  background: rgba(255, 107, 107, 0.12);
+  color: #ff9aa2;
+}
+
+.modal-danger-button:hover {
+  background: #ff6b6b;
+  color: #071018;
+}

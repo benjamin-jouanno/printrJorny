@@ -1,0 +1,60 @@
+<div class="modal-backdrop" (click)="cancel.emit()">
+  <section class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">{{ isEditing ? 'Edit print' : 'New print' }}</p>
+        <h2>{{ isEditing ? formPrint.name : 'Add print history' }}</h2>
+      </div>
+      <button type="button" class="close-button" aria-label="Close form" (click)="cancel.emit()">x</button>
+    </div>
+
+    <form class="print-form" #printForm="ngForm" (ngSubmit)="savePrint()">
+      <label class="field field-wide">
+        <span>Print name</span>
+        <input type="text" name="name" [(ngModel)]="formPrint.name" placeholder="Calibration cube" required />
+      </label>
+
+      <label class="field">
+        <span>Date</span>
+        <input type="date" name="date" [(ngModel)]="formPrint.date" required />
+      </label>
+
+      <label class="field">
+        <span>Status</span>
+        <select name="status" [(ngModel)]="formPrint.status" required>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Filament (g)</span>
+        <input type="number" name="filament" [(ngModel)]="formPrint.filament" min="0" step="0.1" required />
+      </label>
+
+      <label class="field">
+        <span>Cost</span>
+        <input type="number" name="cost" [(ngModel)]="formPrint.cost" min="0" step="0.01" required />
+      </label>
+
+      <label class="field field-wide">
+        <span>Duration</span>
+        <input type="text" name="time" [(ngModel)]="formPrint.time" placeholder="1h 12m" required />
+      </label>
+
+      <label class="field field-wide">
+        <span>Description</span>
+        <textarea name="description" [(ngModel)]="formPrint.description" rows="3" placeholder="What was printed?"></textarea>
+      </label>
+
+      <label class="field field-wide" *ngIf="formPrint.status === 'failed' || formPrint.status === 'passed poorly'">
+        <span>Error details</span>
+        <textarea name="errorDescription" [(ngModel)]="formPrint.errorDescription" rows="3" placeholder="What went wrong?"></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
+        <button type="submit" class="primary-button" [disabled]="printForm.invalid">Save print</button>
+      </div>
+    </form>
+  </section>
+</div>

@@ -1,13 +1,20 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
 .history-panel {
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 8px;
 	background: rgba(20, 26, 36, 0.78);
 	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
 	backdrop-filter: blur(18px);
-	min-height: 190px;
+	height: 100%;
+	min-height: 0;
 	padding: 22px;
-	width: max-content;
-	max-width: 320px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .panel-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
@@ -16,9 +23,10 @@
 .history-count { color: #80ffdb; font-weight: 700; margin-left: 0.35rem; }
 
 .history-list {
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 520px;
+  max-height: none;
   min-height: 0;
   padding-right: 12px;
   scrollbar-width: thin;
@@ -51,6 +59,30 @@
   flex-direction: column;
   gap: 14px;
 }
+
+.empty-history {
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+  color: #9daabc;
+  border: 1px dashed rgba(128, 255, 219, 0.24);
+  border-radius: 8px;
+  background: rgba(128, 255, 219, 0.04);
+  padding: 20px;
+}
+
+.empty-history p {
+  margin: 0;
+  color: #edf2f7;
+  font-weight: 800;
+}
+
+.empty-history span {
+  font-size: 0.86rem;
+}
+
 .history-card {
   border: 1px solid rgba(255,255,255,0.16);
   border-radius: 16px;
@@ -61,7 +93,6 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 140px;
-  max-width: 280px;
   box-shadow: 0 24px 45px rgba(0,0,0,0.22);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }

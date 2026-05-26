@@ -1,0 +1,52 @@
+<div class="modal-backdrop" (click)="cancel.emit()">
+  <section class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Profile settings</p>
+        <h2>Edit profile</h2>
+      </div>
+      <button type="button" class="close-button" aria-label="Close profile editor" (click)="cancel.emit()">x</button>
+    </div>
+
+    <form class="profile-form" #profileForm="ngForm" (ngSubmit)="saveProfile()">
+      <div class="picture-field">
+        <div class="picture-preview" aria-hidden="true">
+          <img *ngIf="formProfile.profilePicture" [src]="formProfile.profilePicture" alt="" />
+          <span *ngIf="!formProfile.profilePicture">{{ profileInitials }}</span>
+        </div>
+        <div class="picture-actions">
+          <label class="picture-button">
+            <input type="file" accept="image/*" (change)="onProfilePictureSelected($event)" />
+            <span>Choose profile picture</span>
+          </label>
+          <button *ngIf="formProfile.profilePicture" type="button" class="remove-picture-button" (click)="removeProfilePicture()">Remove</button>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" name="userName" [(ngModel)]="formProfile.userName" autocomplete="name" required />
+      </label>
+
+      <label class="field">
+        <span>3D printer model</span>
+        <select name="printerModel" [(ngModel)]="formProfile.printerModel" required>
+          <option value="" disabled>Select your printer</option>
+          <optgroup *ngFor="let printerBrand of printerBrands" [label]="printerBrand.brand">
+            <option *ngFor="let model of printerBrand.models" [value]="model">{{ model }}</option>
+          </optgroup>
+        </select>
+      </label>
+
+      <label class="field" *ngIf="isCustomPrinterModelSelected">
+        <span>Custom printer model</span>
+        <input type="text" name="customPrinterModel" [(ngModel)]="customPrinterModel" autocomplete="off" required />
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
+        <button type="submit" class="primary-button" [disabled]="profileForm.invalid">Save profile</button>
+      </div>
+    </form>
+  </section>
+</div>

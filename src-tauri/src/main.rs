@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    tauri_appprintr_jorny_lib::run()
+    printr_jorny_lib::run()
 }
