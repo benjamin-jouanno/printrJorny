@@ -50,7 +50,8 @@ app-root.light-theme .settings-menu {
   box-shadow: 0 24px 70px rgba(58, 75, 95, 0.18);
 }
 
-app-root .modal-card .modal-header .close-button {
+app-root .modal-card .modal-header .close-button,
+app-root .printer-details-header .close-button {
   position: relative;
   width: 14px;
   height: 14px;
@@ -72,7 +73,9 @@ app-root .modal-card .modal-header .close-button {
 }
 
 app-root .modal-card .modal-header .close-button::before,
-app-root .modal-card .modal-header .close-button::after {
+app-root .modal-card .modal-header .close-button::after,
+app-root .printer-details-header .close-button::before,
+app-root .printer-details-header .close-button::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -86,20 +89,25 @@ app-root .modal-card .modal-header .close-button::after {
   transform-origin: center;
 }
 
-app-root .modal-card .modal-header .close-button::before {
+app-root .modal-card .modal-header .close-button::before,
+app-root .printer-details-header .close-button::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-app-root .modal-card .modal-header .close-button::after {
+app-root .modal-card .modal-header .close-button::after,
+app-root .printer-details-header .close-button::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-app-root .modal-card .modal-header .close-button:hover {
+app-root .modal-card .modal-header .close-button:hover,
+app-root .printer-details-header .close-button:hover {
   filter: brightness(1.06);
 }
 
 app-root .modal-card .modal-header .close-button:hover::before,
-app-root .modal-card .modal-header .close-button:hover::after {
+app-root .modal-card .modal-header .close-button:hover::after,
+app-root .printer-details-header .close-button:hover::before,
+app-root .printer-details-header .close-button:hover::after {
   opacity: 1;
 }
 
@@ -243,10 +251,236 @@ app-root .modal-card .modal-header .close-button:hover::after {
   box-sizing: border-box;
 }
 
+.printer-status.is-offline,
+.printer-status.is-error {
+  color: #ff6fd8;
+}
+
+.printer-status.is-checking {
+  color: var(--accent-2);
+}
+
+.printer-status.is-reachable,
+.printer-status.is-ready,
+.printer-status.is-printing {
+  color: var(--accent);
+}
+
+.printer-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.printer-status.is-checking .printer-status-dot {
+  animation: status-pulse 1.2s ease-in-out infinite;
+}
+
+app-root .printer-progress {
+  width: 100%;
+  height: 7px;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  display: block;
+  overflow: hidden;
+  background: var(--field-bg);
+}
+
+app-root .printer-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  display: block;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+app-root .printer-progress-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+app-root .printer-progress-row strong {
+  color: var(--text-main);
+  font-size: 0.82rem;
+}
+
+app-root .connection-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+app-root .connection-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+app-root .connection-switch {
+  width: 38px;
+  height: 22px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  background: var(--field-bg);
+  padding: 3px;
+}
+
+app-root .connection-switch-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transform: translateX(0);
+  transition: transform 180ms ease, background 160ms ease;
+}
+
+app-root .connection-toggle input:checked + .connection-switch {
+  background: var(--accent-soft);
+}
+
+app-root .connection-toggle input:checked + .connection-switch .connection-switch-thumb {
+  background: var(--accent);
+  transform: translateX(16px);
+}
+
+app-root .connection-toggle input:focus-visible + .connection-switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+app-root .printer-summary {
+  color: inherit;
+  cursor: pointer;
+}
+
+app-root .printer-summary:hover {
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel-bg));
+  transform: translateY(-1px);
+}
+
+app-root .printer-summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+app-root .printer-details-modal {
+  width: min(520px, 100%);
+}
+
+app-root .printer-details-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+app-root .printer-details-status {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px;
+}
+
+app-root .printer-details-status p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+app-root .printer-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+app-root .printer-details-grid div {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--field-bg);
+  padding: 12px;
+}
+
+app-root .printer-details-grid dt {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+app-root .printer-details-grid dd {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-weight: 750;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+app-root .github-menu-item {
+  border-top: 1px solid var(--panel-border);
+  margin-top: 2px;
+  padding-top: 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #64dfdf 48%, var(--accent-2));
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(72, 191, 227, 0.24);
+}
+
+app-root .github-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: block;
+}
+
+app-root .github-menu-item:hover {
+  background: linear-gradient(135deg, var(--accent), #72efdd 48%, var(--accent-2));
+}
+
+app-root.light-theme .github-menu-item {
+  background: linear-gradient(135deg, #0ca678, #20c997);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(12, 166, 120, 0.18);
+}
+
+app-root.light-theme .github-menu-item:hover {
+  background: linear-gradient(135deg, #0fbf8a, #38d9a9);
+}
+
 @keyframes star-twinkle {
   50% {
     opacity: 0.35;
     transform: scale(0.82);
+  }
+}
+
+@media (max-width: 800px) {
+  app-root .printer-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes status-pulse {
+  50% {
+    opacity: 0.38;
   }
 }
 

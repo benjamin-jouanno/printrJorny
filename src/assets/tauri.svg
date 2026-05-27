@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="3D printer">
-  <rect width="64" height="64" rx="14" fill="#10151f"/>
-  <path d="M15 16h34v6H15z" fill="#80ffdb"/>
-  <path d="M18 22v27M46 22v27" fill="none" stroke="#c7d0dc" stroke-width="4" stroke-linecap="round"/>
-  <path d="M14 49h36" fill="none" stroke="#c7d0dc" stroke-width="4" stroke-linecap="round"/>
-  <path d="M23 29h18" fill="none" stroke="#48bfe3" stroke-width="4" stroke-linecap="round"/>
-  <path d="M28 29h8v7l-4 5-4-5z" fill="#edf2f7"/>
-  <path d="M24 45h16" fill="none" stroke="#f29d38" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="32" cy="19" r="2" fill="#10151f"/>
+  <defs>
+    <linearGradient id="bg" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d131e"/>
+      <stop offset="1" stop-color="#151c2b"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="url(#bg)"/>
+  <rect x="16" y="21" width="32" height="24" rx="4" fill="#80ffdb" fill-opacity=".1" stroke="#80ffdb" stroke-width="4"/>
+  <path d="M18 15h28" fill="none" stroke="#48bfe3" stroke-width="4" stroke-linecap="round"/>
+  <path d="M23 31h18" fill="none" stroke="#edf2f7" stroke-width="3" stroke-linecap="round"/>
+  <path d="M28 32h8l-2 8-2 3-2-3z" fill="#edf2f7"/>
 </svg>

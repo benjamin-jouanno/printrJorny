@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IHeader } from '../../interfaces/header.interface';
+import { IPrinterConnection } from '../../interfaces/printer-status.interface';
 
 @Component({
   selector: 'profile-form',
@@ -39,6 +40,7 @@ export class ProfileFormComponent implements OnChanges {
     printerModel: '',
     profilePicture: ''
   };
+  printerConnection = this.createDefaultPrinterConnection();
   customPrinterModel = '';
   isPrinterMenuOpen = false;
 
@@ -53,6 +55,14 @@ export class ProfileFormComponent implements OnChanges {
     return initials.toUpperCase() || 'ID';
   }
 
+  get isBambuPrinterSelected(): boolean {
+    const printerModel = this.isCustomPrinterModelSelected
+      ? this.customPrinterModel
+      : this.formProfile.printerModel;
+
+    return printerModel.trim().toLowerCase().startsWith('bambu');
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['profile'] && this.profile) {
       const knownModels = this.printerBrands.flatMap(group => group.models);
@@ -64,6 +74,7 @@ export class ProfileFormComponent implements OnChanges {
         ...this.profile,
         printerModel
       };
+      this.printerConnection = this.normalizePrinterConnection(this.profile.printerConnection);
       this.customPrinterModel = printerModel === this.customPrinterModelOption ? this.profile.printerModel : '';
       this.isPrinterMenuOpen = false;
     }
@@ -95,7 +106,10 @@ export class ProfileFormComponent implements OnChanges {
     this.save.emit({
       ...this.formProfile,
       userName,
-      printerModel
+      printerModel,
+      printerConnection: this.isBambuPrinterSelected
+        ? this.normalizePrinterConnection(this.printerConnection)
+        : this.createDefaultPrinterConnection()
     });
   }
 
@@ -116,5 +130,28 @@ export class ProfileFormComponent implements OnChanges {
 
   removeProfilePicture(): void {
     this.formProfile.profilePicture = '';
+  }
+
+  private createDefaultPrinterConnection(): IPrinterConnection {
+    return {
+      enabled: false,
+      type: 'bambu-local',
+      host: '',
+      port: 8883,
+      serialNumber: '',
+      accessCode: ''
+    };
+  }
+
+  private normalizePrinterConnection(connection?: Partial<IPrinterConnection>): IPrinterConnection {
+    return {
+      ...this.createDefaultPrinterConnection(),
+      ...connection,
+      type: 'bambu-local',
+      host: connection?.host?.trim() || '',
+      port: Number(connection?.port) || 8883,
+      serialNumber: connection?.serialNumber?.trim() || '',
+      accessCode: connection?.accessCode?.trim() || ''
+    };
   }
 }

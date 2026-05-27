@@ -69,13 +69,15 @@
   gap: 14px;
   padding: 12px;
   border-color: var(--accent-border);
+  font: inherit;
+  text-align: left;
 }
 
 .printer-copy {
   min-width: 0;
   display: grid;
   align-content: center;
-  gap: 7px;
+  gap: 6px;
 }
 
 .printer-kicker,
@@ -110,11 +112,14 @@
   color: var(--accent);
 }
 
-.printer-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
+.printer-status-detail {
+  max-width: 190px;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .add-print-action {
@@ -208,12 +213,14 @@
 }
 
 .settings-menu-item {
-  justify-content: center;
   border: 0;
   background: transparent;
   cursor: pointer;
   padding: 0 10px;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .settings-menu-row {
@@ -375,4 +382,9 @@
   .topbar {
     grid-template-columns: 1fr;
   }
+}
+
+.github-menu-item {
+  background: linear-gradient(135deg, var(--accent), #64dfdf 48%, var(--accent-2));
+  color: var(--accent-contrast);
 }

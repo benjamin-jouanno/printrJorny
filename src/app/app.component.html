@@ -32,11 +32,13 @@
     *ngIf="activeView === 'dashboard'"
     [data]="headerInfo"
     [themeMode]="themeMode"
+    [printerStatus]="printerStatus"
     (addPrint)="openCreatePrintForm()"
     (switchProfile)="showProfileSelection()"
     (editProfile)="openProfileForm()"
     (exportProfile)="exportActiveProfile()"
     (toggleTheme)="toggleTheme()"
+    (openPrinterDetails)="openPrinterDetails()"
   ></prtjry-header>
 
   <profile-form
@@ -67,6 +69,64 @@
     (save)="saveFilament($event)"
     (cancel)="closeFilamentForm()"
   ></filament-form>
+
+  <div class="modal-backdrop" *ngIf="isPrinterDetailsOpen" (click)="closePrinterDetails()">
+    <section class="notification-modal printer-details-modal" (click)="$event.stopPropagation()">
+      <div class="printer-details-header">
+        <div>
+          <p class="modal-eyebrow">Printer details</p>
+          <h2>{{ headerInfo.printerModel }}</h2>
+        </div>
+        <button type="button" class="close-button" aria-label="Close printer details" (click)="closePrinterDetails()">x</button>
+      </div>
+
+      <div class="printer-details-status">
+        <span class="printer-status" [ngClass]="'is-' + printerStatus.state">
+          <span class="printer-status-dot" aria-hidden="true"></span>
+          {{ printerStatus.label }}
+        </span>
+        <p>{{ printerStatus.detail }}</p>
+        <div class="printer-progress-row" *ngIf="hasPrinterProgress()">
+          <span class="printer-progress">
+            <span class="printer-progress-fill" [style.width.%]="getPrinterProgress()"></span>
+          </span>
+          <strong>{{ getPrinterProgress() }}%</strong>
+        </div>
+      </div>
+
+      <dl class="printer-details-grid">
+        <div>
+          <dt>Live status</dt>
+          <dd>{{ headerInfo.printerConnection?.enabled ? 'Enabled' : 'Disabled' }}</dd>
+        </div>
+        <div>
+          <dt>Connection</dt>
+          <dd>{{ headerInfo.printerConnection?.type === 'bambu-local' ? 'Bambu local' : 'Manual tracking' }}</dd>
+        </div>
+        <div>
+          <dt>IP address</dt>
+          <dd>{{ headerInfo.printerConnection?.host || 'Not set' }}</dd>
+        </div>
+        <div>
+          <dt>Port</dt>
+          <dd>{{ headerInfo.printerConnection?.port || '8883' }}</dd>
+        </div>
+        <div>
+          <dt>Serial</dt>
+          <dd>{{ headerInfo.printerConnection?.serialNumber || 'Not set' }}</dd>
+        </div>
+        <div>
+          <dt>Access code</dt>
+          <dd>{{ headerInfo.printerConnection?.accessCode ? 'Saved' : 'Not set' }}</dd>
+        </div>
+      </dl>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="closePrinterDetails()">Close</button>
+        <button type="button" class="primary-modal-button" (click)="closePrinterDetails(); openProfileForm()">Edit profile</button>
+      </div>
+    </section>
+  </div>
 
   <div class="modal-backdrop" *ngIf="emptyFilamentNotification" (click)="closeEmptyFilamentNotification()">
     <section class="notification-modal" (click)="$event.stopPropagation()">

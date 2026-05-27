@@ -1,5 +1,6 @@
-import { Component, HostBinding } from '@angular/core';
+import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow, type Window as TauriWindow } from '@tauri-apps/api/window';
 import { PrtjryHeaderComponent } from './components/prtjry-header/prtjry-header.component';
 import { PrtjryHistoryComponent } from './components/prtjry-history/prtjry-history.component';
@@ -16,6 +17,7 @@ import { ProfileFormComponent } from './components/profile-form/profile-form.com
 import { IHeader } from './interfaces/header.interface';
 import { IPrint } from './interfaces/print.interface';
 import { IFilament } from './interfaces/filament.interface';
+import { IPrinterConnection, IPrinterLiveStatus } from './interfaces/printer-status.interface';
 
 interface IPrintrJornyProfileFile {
   format: 'printr-jorny-profile';
@@ -33,7 +35,7 @@ interface IPrintrJornyProfileFile {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   private readonly profileStorageKey = 'printr-jorny-profile';
   private readonly profilesStorageKey = 'printr-jorny-profiles';
   private readonly activeProfileStorageKey = 'printr-jorny-active-profile';
@@ -48,6 +50,7 @@ export class AppComponent {
   isPrintFormOpen = false;
   isFilamentFormOpen = false;
   isProfileFormOpen = false;
+  isPrinterDetailsOpen = false;
   emptyFilamentNotification: IFilament | null = null;
   printPendingDeletion: IPrint | null = null;
   headerInfo: IHeader = {
@@ -55,10 +58,13 @@ export class AppComponent {
     userName: '',
     printerModel: '',
     profilePicture: '',
+    printerConnection: this.normalizePrinterConnection()
   };
   activeProfileId = '';
   activeView: 'dashboard' | 'calendar' = 'dashboard';
   themeMode: 'dark' | 'light' = 'dark';
+  printerStatus: IPrinterLiveStatus = this.createManualPrinterStatus();
+  private printerStatusTimer: number | null = null;
 
   @HostBinding('class.light-theme')
   get isLightTheme(): boolean {
@@ -84,6 +90,10 @@ export class AppComponent {
     this.loadProfiles();
     this.loadProfilePrintCounts();
     this.loadActiveProfile();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPrinterStatusPolling();
   }
 
   startWindowDrag(event: MouseEvent): void {
@@ -123,7 +133,8 @@ export class AppComponent {
   saveProfile(profile: IHeader): void {
     const savedProfile: IHeader = {
       ...profile,
-      id: profile.id || this.createProfileId()
+      id: profile.id || this.createProfileId(),
+      printerConnection: this.normalizePrinterConnection(profile.printerConnection)
     };
 
     this.profiles = [...this.profiles, savedProfile];
@@ -141,7 +152,8 @@ export class AppComponent {
       const profileId = this.createProfileId();
       const profile: IHeader = {
         ...importedProfile.profile,
-        id: profileId
+        id: profileId,
+        printerConnection: this.normalizePrinterConnection(importedProfile.profile.printerConnection)
       };
 
       this.profiles = [...this.profiles, profile];
@@ -194,6 +206,7 @@ export class AppComponent {
     this.loadPrintingHistory();
     this.loadFilamentInventory();
     this.loadProfilePrintCounts();
+    this.startPrinterStatusPolling();
   }
 
   showProfileSelection(): void {
@@ -202,7 +215,8 @@ export class AppComponent {
       id: '',
       userName: '',
       printerModel: '',
-      profilePicture: ''
+      profilePicture: '',
+      printerConnection: this.normalizePrinterConnection()
     };
     this.printingHistory = [];
     this.filamentInventory = [];
@@ -212,6 +226,7 @@ export class AppComponent {
     this.selectedPrint = null;
     this.closePrintForm();
     this.closeProfileForm();
+    this.stopPrinterStatusPolling();
     localStorage.removeItem(this.activeProfileStorageKey);
   }
 
@@ -223,6 +238,22 @@ export class AppComponent {
     this.isProfileFormOpen = false;
   }
 
+  openPrinterDetails(): void {
+    this.isPrinterDetailsOpen = true;
+  }
+
+  closePrinterDetails(): void {
+    this.isPrinterDetailsOpen = false;
+  }
+
+  hasPrinterProgress(): boolean {
+    return typeof this.printerStatus.progress === 'number';
+  }
+
+  getPrinterProgress(): number {
+    return Math.max(0, Math.min(100, this.printerStatus.progress ?? 0));
+  }
+
   updateProfile(profile: IHeader): void {
     if (!this.activeProfileId) {
       return;
@@ -230,12 +261,14 @@ export class AppComponent {
 
     const updatedProfile: IHeader = {
       ...profile,
-      id: this.activeProfileId
+      id: this.activeProfileId,
+      printerConnection: this.normalizePrinterConnection(profile.printerConnection)
     };
 
     this.profiles = this.profiles.map(item => item.id === this.activeProfileId ? updatedProfile : item);
     this.headerInfo = updatedProfile;
     this.persistProfiles();
+    this.startPrinterStatusPolling();
     this.closeProfileForm();
   }
 
@@ -360,7 +393,8 @@ export class AppComponent {
           id: profile.id || this.createProfileId(),
           userName: profile.userName,
           printerModel,
-          profilePicture: profile.profilePicture || ''
+          profilePicture: profile.profilePicture || '',
+          printerConnection: this.normalizePrinterConnection(profile.printerConnection)
         };
 
         this.profiles = [migratedProfile];
@@ -390,7 +424,8 @@ export class AppComponent {
           .filter(profile => profile.userName && profile.printerModel)
           .map(profile => ({
             ...profile,
-            id: profile.id || this.createProfileId()
+            id: profile.id || this.createProfileId(),
+            printerConnection: this.normalizePrinterConnection(profile.printerConnection)
           }));
         this.persistProfiles();
         return;
@@ -413,6 +448,73 @@ export class AppComponent {
 
   private persistProfiles(): void {
     localStorage.setItem(this.profilesStorageKey, JSON.stringify(this.profiles));
+  }
+
+  private startPrinterStatusPolling(): void {
+    this.stopPrinterStatusPolling();
+    this.refreshPrinterStatus();
+    this.printerStatusTimer = window.setInterval(() => this.refreshPrinterStatus(), 15000);
+  }
+
+  private stopPrinterStatusPolling(): void {
+    if (this.printerStatusTimer !== null) {
+      window.clearInterval(this.printerStatusTimer);
+      this.printerStatusTimer = null;
+    }
+
+    this.printerStatus = this.createManualPrinterStatus();
+  }
+
+  private async refreshPrinterStatus(): Promise<void> {
+    const profileId = this.activeProfileId;
+    const connection = this.headerInfo.printerConnection;
+
+    if (!connection?.enabled || !connection.host.trim()) {
+      this.printerStatus = this.createManualPrinterStatus();
+      return;
+    }
+
+    this.printerStatus = {
+      state: 'checking',
+      label: 'Checking',
+      detail: `Connecting to ${connection.host.trim()}`,
+      isLive: false
+    };
+
+    if (!('__TAURI_INTERNALS__' in window)) {
+      this.printerStatus = {
+        state: 'offline',
+        label: 'Desktop only',
+        detail: 'Live printer status is available in the installed app.',
+        isLive: false
+      };
+      return;
+    }
+
+    try {
+      const status = await invoke<IPrinterLiveStatus>('get_bambu_printer_status', {
+        config: {
+          host: connection.host.trim(),
+          port: connection.port || 8883
+        }
+      });
+
+      if (profileId === this.activeProfileId) {
+        this.printerStatus = {
+          ...status,
+          updatedAt: new Date().toISOString()
+        };
+      }
+    } catch {
+      if (profileId === this.activeProfileId) {
+        this.printerStatus = {
+          state: 'offline',
+          label: 'Offline',
+          detail: 'Could not reach the printer on the local network.',
+          isLive: false
+        };
+      }
+    }
   }
 
   private loadPrintingHistory(): void {
@@ -607,6 +709,26 @@ export class AppComponent {
 
   private createFilamentId(): string {
     return `filament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private createManualPrinterStatus(): IPrinterLiveStatus {
+    return {
+      state: 'not-configured',
+      label: 'Manual',
+      detail: 'Live status disabled',
+      isLive: false
+    };
+  }
+
+  private normalizePrinterConnection(connection?: Partial<IPrinterConnection>): IPrinterConnection {
+    return {
+      enabled: Boolean(connection?.enabled),
+      type: 'bambu-local',
+      host: connection?.host || '',
+      port: connection?.port || 8883,
+      serialNumber: connection?.serialNumber || '',
+      accessCode: connection?.accessCode || ''
+    };
   }
 
   private parseProfileExport(value: string): IPrintrJornyProfileFile {

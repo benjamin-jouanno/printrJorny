@@ -57,6 +57,38 @@
         <input type="text" name="customPrinterModel" [(ngModel)]="customPrinterModel" autocomplete="off" required />
       </label>
 
+      <section class="connection-card" *ngIf="isBambuPrinterSelected">
+        <label class="connection-toggle">
+          <input type="checkbox" name="livePrinterStatus" [(ngModel)]="printerConnection.enabled" />
+          <span class="connection-switch" aria-hidden="true">
+            <span class="connection-switch-thumb"></span>
+          </span>
+          <span>Live Bambu status</span>
+        </label>
+
+        <div class="connection-fields" *ngIf="printerConnection.enabled">
+          <label class="field">
+            <span>Printer IP address <span class="required-mark">*</span></span>
+            <input type="text" name="printerHost" [(ngModel)]="printerConnection.host" placeholder="192.168.1.42" autocomplete="off" required />
+          </label>
+
+          <label class="field">
+            <span>MQTT port</span>
+            <input type="number" name="printerPort" [(ngModel)]="printerConnection.port" min="1" max="65535" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>Printer serial</span>
+            <input type="text" name="printerSerial" [(ngModel)]="printerConnection.serialNumber" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>LAN access code</span>
+            <input type="password" name="printerAccessCode" [(ngModel)]="printerConnection.accessCode" autocomplete="off" />
+          </label>
+        </div>
+      </section>
+
       <div class="form-actions">
         <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
         <button type="submit" class="primary-button" [disabled]="profileForm.invalid">Save profile</button>
