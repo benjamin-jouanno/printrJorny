@@ -40,6 +40,12 @@ The first live-status version checks whether the printer is reachable from the i
 
 Live status requires the Tauri desktop app. It will show as desktop-only when running the Angular app directly in a browser.
 
+## Instalation
+
+Currently the application support only windows, you can go ahead and download the installer here:
+
+[Printr-Jorny-v1.1-en-US](link)
+
 ## Development
 
 Install dependencies:

@@ -9,7 +9,6 @@ import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-
 import { LastPrintedComponent } from './components/last-printed/last-printed.component';
 import { FilamentTypeComponent } from './components/filament-type/filament-type.component';
 import { FilamentFormComponent } from './components/filament-form/filament-form.component';
-import { GetStartedComponent } from './components/get-started/get-started.component';
 import { PrintFormComponent } from './components/print-form/print-form.component';
 import { PrintCalendarComponent } from './components/print-calendar/print-calendar.component';
 import { ProfileSelectionComponent } from './components/profile-selection/profile-selection.component';
@@ -31,7 +30,7 @@ interface IPrintrJornyProfileFile {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, GetStartedComponent, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, PrintCalendarComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
+  imports: [CommonModule, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, PrintCalendarComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -167,7 +166,7 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  exportActiveProfile(): void {
+  async exportActiveProfile(): Promise<void> {
     if (!this.activeProfileId) {
       return;
     }
@@ -181,13 +180,49 @@ export class AppComponent implements OnDestroy {
       filamentInventory: this.filamentInventory
     };
 
-    const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
-    downloadLink.click();
-    URL.revokeObjectURL(url);
+    if (!('__TAURI_INTERNALS__' in window)) {
+      const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
+      downloadLink.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    const defaultName = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
+
+    try {
+      const tauri = (window as any).__TAURI__;
+
+      if (!tauri?.dialog || !tauri?.fs) {
+        // If Tauri internals exist but dialog/fs are not exposed, fallback to browser download
+        const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = defaultName;
+        downloadLink.click();
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      const selectedPath = await tauri.dialog.save({
+        defaultPath: defaultName,
+        filters: [
+          { name: 'Printr Jorny profile', extensions: ['printrjorny', 'json'] }
+        ]
+      });
+
+      if (!selectedPath) {
+        return;
+      }
+
+      await tauri.fs.writeFile({ path: selectedPath, contents: JSON.stringify(profileFile, null, 2) });
+    } catch {
+      window.alert('Could not save profile file.');
+    }
   }
 
   selectProfile(profileId: string): void {
