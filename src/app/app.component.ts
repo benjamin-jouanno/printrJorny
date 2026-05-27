@@ -74,6 +74,21 @@ export class AppComponent {
     this.loadActiveProfile();
   }
 
+  async minimizeWindow(): Promise<void> {
+    const appWindow = await this.getTauriWindow();
+    await appWindow?.minimize();
+  }
+
+  async toggleMaximizeWindow(): Promise<void> {
+    const appWindow = await this.getTauriWindow();
+    await appWindow?.toggleMaximize();
+  }
+
+  async closeWindow(): Promise<void> {
+    const appWindow = await this.getTauriWindow();
+    await appWindow?.close();
+  }
+
   toggleTheme(): void {
     this.themeMode = this.themeMode === 'dark' ? 'light' : 'dark';
     localStorage.setItem(this.themeStorageKey, this.themeMode);
@@ -521,5 +536,14 @@ export class AppComponent {
 
   private createFilamentId(): string {
     return `filament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private async getTauriWindow() {
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      return getCurrentWindow();
+    } catch {
+      return null;
+    }
   }
 }

@@ -26,6 +26,7 @@
   --scroll-track: rgba(15, 20, 30, 0.7);
   --scroll-thumb: rgba(128, 255, 219, 0.32);
   --scroll-thumb-hover: rgba(128, 255, 219, 0.48);
+  --titlebar-height: 38px;
   display: block;
   isolation: isolate;
   min-height: 100vh;
@@ -70,14 +71,126 @@
   --scroll-thumb-hover: rgba(12, 166, 120, 0.5);
 }
 
+.app-titlebar {
+  height: var(--titlebar-height);
+  padding: 0 10px 0 14px;
+  border-bottom: 1px solid var(--panel-border);
+  background: color-mix(in srgb, var(--panel-bg) 82%, transparent);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.titlebar-printer-icon {
+  position: relative;
+  width: 18px;
+  height: 15px;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+}
+
+.titlebar-printer-icon::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: -6px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent-2);
+}
+
+.window-actions {
+  display: flex;
+  align-items: center;
+}
+
+.window-button {
+  width: 42px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.window-button:hover {
+  background: var(--field-bg-hover);
+  color: var(--text-main);
+}
+
+.close-window:hover {
+  background: #ff5f6d;
+  color: #ffffff;
+}
+
+.window-minimize {
+  width: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.window-maximize {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.window-close {
+  position: relative;
+  width: 14px;
+  height: 14px;
+}
+
+.window-close::before,
+.window-close::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  width: 2px;
+  height: 14px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.window-close::before {
+  transform: rotate(45deg);
+}
+
+.window-close::after {
+  transform: rotate(-45deg);
+}
+
 .dashboard-shell {
   width: calc(100% - min(10em, 48px));
-  height: 100vh;
+  height: calc(100vh - var(--titlebar-height));
   margin: 0 auto;
   padding: 28px 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+:host ::ng-deep .profile-selection-page,
+:host ::ng-deep .profile-picker,
+:host ::ng-deep .get-started-page {
+  min-height: calc(100vh - var(--titlebar-height));
 }
 
 .workspace {
@@ -201,7 +314,7 @@
   .dashboard-shell {
     width: min(100% - 24px, 1180px);
     height: auto;
-    min-height: 100vh;
+    min-height: calc(100vh - var(--titlebar-height));
     overflow: visible;
     padding: 18px 0;
   }

@@ -1,3 +1,22 @@
+<header class="app-titlebar" data-tauri-drag-region>
+  <div class="titlebar-brand" data-tauri-drag-region>
+    <span class="titlebar-printer-icon" aria-hidden="true"></span>
+    <span data-tauri-drag-region>Printr Jorny</span>
+  </div>
+
+  <div class="window-actions">
+    <button type="button" class="window-button" aria-label="Minimize window" (click)="minimizeWindow()">
+      <span class="window-minimize" aria-hidden="true"></span>
+    </button>
+    <button type="button" class="window-button" aria-label="Maximize window" (click)="toggleMaximizeWindow()">
+      <span class="window-maximize" aria-hidden="true"></span>
+    </button>
+    <button type="button" class="window-button close-window" aria-label="Close window" (click)="closeWindow()">
+      <span class="window-close" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+
 <profile-selection
   *ngIf="!activeProfileId"
   [profiles]="profiles"
