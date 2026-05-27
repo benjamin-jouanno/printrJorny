@@ -44,7 +44,7 @@ Live status requires the Tauri desktop app. It will show as desktop-only when ru
 
 Currently the application support only windows, you can go ahead and download the installer here:
 
-[Printr-Jorny-v1.1-en-US](D:\a\printrJorny\printrJorny\dist\printr-jorny)
+[Printr-Jorny-v1.1-en-US](https://github.com/benjamin-jouanno/printrJorny/releases/download/release/printr-jorny_0.1.1_x64_en-US.msi)
 
 ## Development
 
