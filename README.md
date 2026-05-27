@@ -88,6 +88,7 @@ src-tauri/target/release/bundle/
 
 Common outputs include an `.msi` installer and an `.exe` setup file.
 
+
 ## Tech Stack
 
 - Angular
