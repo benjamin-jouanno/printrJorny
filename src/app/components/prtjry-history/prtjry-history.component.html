@@ -1,7 +1,10 @@
 <article class="panel history-panel">
   <div class="panel-heading">
     <p class="eyebrow">Printing history <span class="history-count">({{ items.length }})</span></p>
-    <button type="button" class="add-history-button" aria-label="Add print" (click)="addPrint.emit()">+</button>
+    <div class="history-actions">
+      <button type="button" class="calendar-history-button" (click)="openCalendar.emit()">Calendar</button>
+      <button type="button" class="add-history-button" aria-label="Add print" (click)="addPrint.emit()">+</button>
+    </div>
   </div>
 
   <div class="history-list">

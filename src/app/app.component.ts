@@ -10,16 +10,26 @@ import { FilamentTypeComponent } from './components/filament-type/filament-type.
 import { FilamentFormComponent } from './components/filament-form/filament-form.component';
 import { GetStartedComponent } from './components/get-started/get-started.component';
 import { PrintFormComponent } from './components/print-form/print-form.component';
+import { PrintCalendarComponent } from './components/print-calendar/print-calendar.component';
 import { ProfileSelectionComponent } from './components/profile-selection/profile-selection.component';
 import { ProfileFormComponent } from './components/profile-form/profile-form.component';
 import { IHeader } from './interfaces/header.interface';
 import { IPrint } from './interfaces/print.interface';
 import { IFilament } from './interfaces/filament.interface';
 
+interface IPrintrJornyProfileFile {
+  format: 'printr-jorny-profile';
+  version: 1;
+  exportedAt: string;
+  profile: IHeader;
+  printingHistory: IPrint[];
+  filamentInventory: IFilament[];
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, GetStartedComponent, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
+  imports: [CommonModule, GetStartedComponent, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, PrintCalendarComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -47,6 +57,7 @@ export class AppComponent {
     profilePicture: '',
   };
   activeProfileId = '';
+  activeView: 'dashboard' | 'calendar' = 'dashboard';
   themeMode: 'dark' | 'light' = 'dark';
 
   @HostBinding('class.light-theme')
@@ -95,6 +106,15 @@ export class AppComponent {
     void this.getTauriWindow()?.close().catch(() => undefined);
   }
 
+  showCalendarView(): void {
+    this.activeView = 'calendar';
+    this.selectedPrint = null;
+  }
+
+  showDashboardView(): void {
+    this.activeView = 'dashboard';
+  }
+
   toggleTheme(): void {
     this.themeMode = this.themeMode === 'dark' ? 'light' : 'dark';
     localStorage.setItem(this.themeStorageKey, this.themeMode);
@@ -115,6 +135,49 @@ export class AppComponent {
     this.selectProfile(savedProfile.id || '');
   }
 
+  async importProfileFile(file: File): Promise<void> {
+    try {
+      const importedProfile = this.parseProfileExport(await file.text());
+      const profileId = this.createProfileId();
+      const profile: IHeader = {
+        ...importedProfile.profile,
+        id: profileId
+      };
+
+      this.profiles = [...this.profiles, profile];
+      this.persistProfiles();
+      localStorage.setItem(`${this.printingHistoryStorageKey}-${profileId}`, JSON.stringify(importedProfile.printingHistory));
+      localStorage.setItem(`${this.filamentInventoryStorageKey}-${profileId}`, JSON.stringify(importedProfile.filamentInventory));
+      this.loadProfilePrintCounts();
+      this.selectProfile(profileId);
+    } catch {
+      window.alert('This profile file could not be imported.');
+    }
+  }
+
+  exportActiveProfile(): void {
+    if (!this.activeProfileId) {
+      return;
+    }
+
+    const profileFile: IPrintrJornyProfileFile = {
+      format: 'printr-jorny-profile',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile: this.headerInfo,
+      printingHistory: this.printingHistory,
+      filamentInventory: this.filamentInventory
+    };
+
+    const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
+    downloadLink.click();
+    URL.revokeObjectURL(url);
+  }
+
   selectProfile(profileId: string): void {
     const profile = this.profiles.find(item => item.id === profileId);
 
@@ -124,6 +187,7 @@ export class AppComponent {
 
     this.headerInfo = profile;
     this.activeProfileId = profile.id;
+    this.activeView = 'dashboard';
     localStorage.setItem(this.activeProfileStorageKey, profile.id);
     this.selectedPrint = null;
     this.closePrintForm();
@@ -142,6 +206,7 @@ export class AppComponent {
     };
     this.printingHistory = [];
     this.filamentInventory = [];
+    this.activeView = 'dashboard';
     this.emptyFilamentNotification = null;
     this.printPendingDeletion = null;
     this.selectedPrint = null;
@@ -542,6 +607,38 @@ export class AppComponent {
 
   private createFilamentId(): string {
     return `filament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private parseProfileExport(value: string): IPrintrJornyProfileFile {
+    const data = JSON.parse(value) as Partial<IPrintrJornyProfileFile>;
+
+    if (
+      data.format !== 'printr-jorny-profile' ||
+      data.version !== 1 ||
+      !data.profile?.userName ||
+      !data.profile.printerModel ||
+      !Array.isArray(data.printingHistory) ||
+      !Array.isArray(data.filamentInventory)
+    ) {
+      throw new Error('Invalid Printr Jorny profile file.');
+    }
+
+    return {
+      format: 'printr-jorny-profile',
+      version: 1,
+      exportedAt: data.exportedAt || new Date().toISOString(),
+      profile: data.profile,
+      printingHistory: data.printingHistory,
+      filamentInventory: data.filamentInventory
+    };
+  }
+
+  private getExportFileName(value: string): string {
+    return (value || 'profile')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || 'profile';
   }
 
   private getTauriWindow(): TauriWindow | null {

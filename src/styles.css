@@ -18,3 +18,256 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
+app-root.light-theme .profile,
+app-root.light-theme .printer-summary,
+app-root.light-theme .add-print-action,
+app-root.light-theme .history-panel,
+app-root.light-theme .stat-card,
+app-root.light-theme .last-panel,
+app-root.light-theme .filament-panel,
+app-root.light-theme .calendar-panel,
+app-root.light-theme .profile-card {
+  backdrop-filter: blur(24px) saturate(1.22);
+}
+
+app-root.light-theme input,
+app-root.light-theme textarea,
+app-root.light-theme select,
+app-root.light-theme .custom-select-button,
+app-root.light-theme .filament-picker-button,
+app-root.light-theme .calendar-select-button {
+  border-color: rgba(15, 23, 42, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+}
+
+app-root.light-theme .custom-select-options,
+app-root.light-theme .filament-options,
+app-root.light-theme .calendar-select-options,
+app-root.light-theme .settings-menu {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(15, 23, 42, 0.14);
+  box-shadow: 0 24px 70px rgba(58, 75, 95, 0.18);
+}
+
+app-root .modal-card .modal-header .close-button {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #ff6fd8;
+  color: transparent;
+  font-size: 0;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.16),
+    0 1px 5px rgba(0, 0, 0, 0.16);
+}
+
+app-root .modal-card .modal-header .close-button::before,
+app-root .modal-card .modal-header .close-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(65, 6, 50, 0.7);
+  opacity: 0;
+  transition: opacity 140ms ease;
+  transform-origin: center;
+}
+
+app-root .modal-card .modal-header .close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+app-root .modal-card .modal-header .close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+app-root .modal-card .modal-header .close-button:hover {
+  filter: brightness(1.06);
+}
+
+app-root .modal-card .modal-header .close-button:hover::before,
+app-root .modal-card .modal-header .close-button:hover::after {
+  opacity: 1;
+}
+
+.calendar-select-options,
+.calendar-grid,
+.day-prints,
+.year-grid,
+.month-card-prints {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.calendar-select-options::-webkit-scrollbar,
+.calendar-grid::-webkit-scrollbar,
+.day-prints::-webkit-scrollbar,
+.year-grid::-webkit-scrollbar,
+.month-card-prints::-webkit-scrollbar {
+  width: 10px;
+}
+
+.calendar-select-options::-webkit-scrollbar-track,
+.calendar-grid::-webkit-scrollbar-track,
+.day-prints::-webkit-scrollbar-track,
+.year-grid::-webkit-scrollbar-track,
+.month-card-prints::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 999px;
+}
+
+.calendar-select-options::-webkit-scrollbar-thumb,
+.calendar-grid::-webkit-scrollbar-thumb,
+.day-prints::-webkit-scrollbar-thumb,
+.year-grid::-webkit-scrollbar-thumb,
+.month-card-prints::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border: 2px solid var(--scroll-track);
+  border-radius: 999px;
+}
+
+.space-star,
+.space-planet,
+.space-comet {
+  position: absolute;
+  display: block;
+}
+
+.space-star {
+  width: 7px;
+  height: 7px;
+  background:
+    linear-gradient(var(--accent), var(--accent)) center / 2px 7px no-repeat,
+    linear-gradient(90deg, var(--accent), var(--accent)) center / 7px 2px no-repeat;
+  animation: star-twinkle 2.4s ease-in-out infinite;
+}
+
+.star-one {
+  left: 14%;
+  top: 20px;
+}
+
+.star-two {
+  left: 48%;
+  top: 36px;
+  animation-delay: 500ms;
+}
+
+.star-three {
+  right: 14%;
+  top: 18px;
+  animation-delay: 900ms;
+}
+
+.space-planet {
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.planet-one {
+  left: 24%;
+  bottom: 20px;
+  width: 24px;
+  height: 24px;
+  animation: planet-float 5.8s ease-in-out infinite;
+}
+
+.planet-one::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 10px;
+  width: 36px;
+  height: 6px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  transform: rotate(-16deg);
+}
+
+.planet-two {
+  right: 26%;
+  bottom: 34px;
+  width: 14px;
+  height: 14px;
+  animation: planet-float 4.8s ease-in-out infinite reverse;
+}
+
+.space-comet {
+  left: -50px;
+  top: 30px;
+  width: 42px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: -12px 0 0 color-mix(in srgb, var(--accent) 32%, transparent);
+  animation: comet-drift 7s ease-in-out infinite;
+}
+
+.printer-icon::before {
+  content: '';
+  width: 24px;
+  height: 18px;
+  border: 2px solid var(--accent);
+  border-radius: 3px;
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+}
+
+.printer-icon::after {
+  content: '';
+  width: 28px;
+  height: 13px;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+}
+
+@keyframes star-twinkle {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+}
+
+@keyframes planet-float {
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes comet-drift {
+  0%, 28% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  42% {
+    opacity: 1;
+  }
+
+  72%, 100% {
+    transform: translateX(calc(100vw / 3));
+    opacity: 0;
+  }
+}

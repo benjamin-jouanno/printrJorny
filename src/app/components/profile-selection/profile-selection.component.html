@@ -35,6 +35,10 @@
 
     <div class="create-profile-row">
       <button type="button" class="create-profile-button" (click)="isCreatingProfile = true">Create new profile</button>
+      <label class="import-profile-button">
+        <input type="file" accept=".printrjorny,application/json" (change)="onProfileFileSelected($event)" />
+        <span>Import profile</span>
+      </label>
     </div>
 
     <div class="modal-backdrop" *ngIf="profilePendingDeletion" (click)="cancelProfileDeletion()">
@@ -53,6 +57,10 @@
 
   <section class="creation-panel" *ngIf="shouldShowCreationForm">
     <button *ngIf="profiles.length" type="button" class="back-button" (click)="isCreatingProfile = false">Back to profiles</button>
+    <label class="import-profile-button creation-import-button" *ngIf="!profiles.length">
+      <input type="file" accept=".printrjorny,application/json" (change)="onProfileFileSelected($event)" />
+      <span>Import profile</span>
+    </label>
     <get-started (profileCreated)="saveNewProfile($event)"></get-started>
   </section>
 </main>

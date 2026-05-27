@@ -46,6 +46,7 @@
 
 .profile-card,
 .create-profile-button,
+.import-profile-button,
 .back-button {
   border-radius: 8px;
   cursor: pointer;
@@ -181,7 +182,8 @@
   background: currentColor;
 }
 
-.create-profile-button {
+.create-profile-button,
+.import-profile-button {
   min-height: 40px;
   border: 1px solid var(--accent-border);
   background: var(--accent-soft);
@@ -190,17 +192,36 @@
   width: fit-content;
 }
 
-.create-profile-button:hover {
+.import-profile-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.import-profile-button input {
+  display: none;
+}
+
+.create-profile-button:hover,
+.import-profile-button:hover {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .create-profile-row {
   display: flex;
   justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .creation-panel {
   position: relative;
+}
+
+.creation-import-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
 }
 
 .back-button {

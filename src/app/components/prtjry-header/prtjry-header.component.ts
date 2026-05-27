@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IHeader } from '../../interfaces/header.interface';
 
@@ -19,7 +19,9 @@ export class PrtjryHeaderComponent {
   @Output() addPrint = new EventEmitter<void>();
   @Output() switchProfile = new EventEmitter<void>();
   @Output() editProfile = new EventEmitter<void>();
+  @Output() exportProfile = new EventEmitter<void>();
   @Output() toggleTheme = new EventEmitter<void>();
+  isSettingsMenuOpen = false;
 
   get initials(): string {
     const nameParts = this.data.userName.trim().split(/\s+/).filter(Boolean);
@@ -30,5 +32,23 @@ export class PrtjryHeaderComponent {
 
   get themeToggleLabel(): string {
     return this.themeMode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  @HostListener('document:click')
+  closeSettingsMenuFromDocument(): void {
+    this.closeSettingsMenu();
+  }
+
+  toggleSettingsMenu(): void {
+    this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
+  }
+
+  closeSettingsMenu(): void {
+    this.isSettingsMenuOpen = false;
+  }
+
+  runMenuAction(action: EventEmitter<void>): void {
+    action.emit();
+    this.closeSettingsMenu();
   }
 }

@@ -24,15 +24,18 @@
   (selectProfile)="selectProfile($event)"
   (createProfile)="saveProfile($event)"
   (deleteProfile)="deleteProfile($event)"
+  (importProfile)="importProfileFile($event)"
 ></profile-selection>
 
 <main class="dashboard-shell" *ngIf="activeProfileId">
   <prtjry-header
+    *ngIf="activeView === 'dashboard'"
     [data]="headerInfo"
     [themeMode]="themeMode"
     (addPrint)="openCreatePrintForm()"
     (switchProfile)="showProfileSelection()"
     (editProfile)="openProfileForm()"
+    (exportProfile)="exportActiveProfile()"
     (toggleTheme)="toggleTheme()"
   ></prtjry-header>
 
@@ -88,11 +91,12 @@
     </section>
   </div>
 
-  <section class="workspace">
+  <section class="workspace" *ngIf="activeView === 'dashboard'">
     <prtjry-history
       [items]="printingHistory"
       (select)="selectedPrint = $event"
       (addPrint)="openCreatePrintForm()"
+      (openCalendar)="showCalendarView()"
     ></prtjry-history>
 
     <dashboard-stats
@@ -111,4 +115,12 @@
       <filament-type [filaments]="filamentInventory" (addFilament)="openCreateFilamentForm()"></filament-type>
     </aside>
   </section>
+
+  <print-calendar
+    *ngIf="activeView === 'calendar'"
+    [items]="printingHistory"
+    (select)="selectedPrint = $event"
+    (addPrint)="openCreatePrintForm()"
+    (back)="showDashboardView()"
+  ></print-calendar>
 </main>

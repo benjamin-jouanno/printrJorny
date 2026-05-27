@@ -16,6 +16,7 @@ export class ProfileSelectionComponent {
   @Output() selectProfile = new EventEmitter<string>();
   @Output() createProfile = new EventEmitter<IHeader>();
   @Output() deleteProfile = new EventEmitter<string>();
+  @Output() importProfile = new EventEmitter<File>();
 
   isCreatingProfile = false;
   profilePendingDeletion: IHeader | null = null;
@@ -62,5 +63,16 @@ export class ProfileSelectionComponent {
   saveNewProfile(profile: IHeader): void {
     this.createProfile.emit(profile);
     this.isCreatingProfile = false;
+  }
+
+  onProfileFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+      this.importProfile.emit(file);
+    }
+
+    input.value = '';
   }
 }

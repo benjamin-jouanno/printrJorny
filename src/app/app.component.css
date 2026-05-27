@@ -43,18 +43,18 @@
 
 :host.light-theme {
   --app-background:
-    radial-gradient(circle at 14% 8%, rgba(72, 191, 227, 0.34), transparent 28rem),
-    radial-gradient(circle at 84% 16%, rgba(128, 255, 219, 0.28), transparent 26rem),
-    radial-gradient(circle at 72% 88%, rgba(242, 157, 56, 0.16), transparent 26rem),
-    linear-gradient(135deg, #f9fcff 0%, #eef8f7 46%, #e7edf8 100%);
-  --panel-bg: rgba(255, 255, 255, 0.82);
-  --panel-bg-strong: rgba(255, 255, 255, 0.96);
-  --panel-border: rgba(15, 23, 42, 0.12);
-  --panel-border-strong: rgba(15, 23, 42, 0.16);
-  --card-bg: rgba(255, 255, 255, 0.64);
-  --card-bg-strong: rgba(255, 255, 255, 0.9);
-  --field-bg: rgba(15, 23, 42, 0.05);
-  --field-bg-hover: rgba(15, 23, 42, 0.09);
+    radial-gradient(circle at 14% 8%, rgba(72, 191, 227, 0.42), transparent 28rem),
+    radial-gradient(circle at 84% 16%, rgba(128, 255, 219, 0.36), transparent 26rem),
+    radial-gradient(circle at 72% 88%, rgba(242, 157, 56, 0.18), transparent 26rem),
+    linear-gradient(135deg, #fbfdff 0%, #edf9f7 46%, #eaf0fb 100%);
+  --panel-bg: rgba(255, 255, 255, 0.54);
+  --panel-bg-strong: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(255, 255, 255, 0.72);
+  --panel-border-strong: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.34);
+  --card-bg-strong: rgba(255, 255, 255, 0.62);
+  --field-bg: rgba(255, 255, 255, 0.7);
+  --field-bg-hover: rgba(255, 255, 255, 0.86);
   --text-main: #142033;
   --text-muted: #66758c;
   --text-soft: #3d4d63;
@@ -63,9 +63,9 @@
   --accent-contrast: #ffffff;
   --accent-soft: rgba(12, 166, 120, 0.11);
   --accent-border: rgba(12, 166, 120, 0.28);
-  --shadow-panel: 0 18px 42px rgba(58, 75, 95, 0.16);
-  --shadow-modal: 0 34px 80px rgba(58, 75, 95, 0.22);
-  --modal-backdrop: rgba(20, 31, 45, 0.38);
+  --shadow-panel: 0 18px 48px rgba(58, 75, 95, 0.14);
+  --shadow-modal: 0 34px 90px rgba(58, 75, 95, 0.2);
+  --modal-backdrop: rgba(238, 246, 252, 0.58);
   --scroll-track: rgba(15, 23, 42, 0.08);
   --scroll-thumb: rgba(12, 166, 120, 0.34);
   --scroll-thumb-hover: rgba(12, 166, 120, 0.5);
@@ -73,10 +73,8 @@
 
 .app-titlebar {
   height: var(--titlebar-height);
-  padding: 0 10px 0 14px;
-  border-bottom: 1px solid var(--panel-border);
-  background: color-mix(in srgb, var(--panel-bg) 82%, transparent);
-  backdrop-filter: blur(18px);
+  padding: 0 14px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -113,68 +111,80 @@
 .window-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .window-button {
-  width: 42px;
-  height: 30px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
   border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-muted);
+  border-radius: 999px;
+  background: #48bfe3;
+  color: rgba(4, 31, 44, 0.72);
   cursor: pointer;
   display: grid;
   place-items: center;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.16);
 }
 
-.window-button:hover {
-  background: var(--field-bg-hover);
-  color: var(--text-main);
+.window-button:nth-child(2) {
+  background: #80ffdb;
+  color: rgba(4, 42, 34, 0.72);
 }
 
-.close-window:hover {
-  background: #ff5f6d;
-  color: #ffffff;
+.close-window {
+  background: #ff6fd8;
+  color: rgba(65, 6, 50, 0.7);
+}
+
+.window-button > span {
+  opacity: 0;
+}
+
+.window-button:hover > span {
+  opacity: 1;
 }
 
 .window-minimize {
-  width: 12px;
-  height: 2px;
+  width: 7px;
+  height: 1.5px;
   border-radius: 999px;
   background: currentColor;
 }
 
 .window-maximize {
-  width: 12px;
-  height: 12px;
-  border: 2px solid currentColor;
-  border-radius: 3px;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
 }
 
 .window-close {
   position: relative;
-  width: 14px;
-  height: 14px;
+  width: 7px;
+  height: 7px;
 }
 
 .window-close::before,
 .window-close::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 6px;
-  width: 2px;
-  height: 14px;
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: 8px;
   border-radius: 999px;
   background: currentColor;
+  transform-origin: center;
 }
 
 .window-close::before {
-  transform: rotate(45deg);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .window-close::after {
-  transform: rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .dashboard-shell {

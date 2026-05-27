@@ -1,0 +1,148 @@
+<section class="calendar-page" (click)="closeMenus()">
+  <article class="calendar-panel">
+    <p class="calendar-bookmark">Print history calendar</p>
+    <button type="button" class="back-button" (click)="back.emit()">Back</button>
+
+    <div class="calendar-controls">
+      <div class="calendar-period">
+        <div>
+          <p class="month-eyebrow">{{ items.length }} prints tracked</p>
+          <h2>{{ periodLabel }}</h2>
+        </div>
+      </div>
+
+      <div class="calendar-control-stack">
+        <div class="view-switcher" aria-label="Calendar display">
+          <button
+            type="button"
+            *ngFor="let view of calendarViews"
+            [class.is-active]="activeView === view"
+            (click)="selectView(view)"
+          >
+            {{ view }}
+          </button>
+        </div>
+
+        <div class="date-selectors">
+          <div class="selector-field">
+            <span>Month</span>
+            <div class="calendar-select" [class.is-open]="isMonthMenuOpen" (click)="$event.stopPropagation()">
+              <button type="button" class="calendar-select-button" (click)="toggleMonthMenu()">
+                {{ selectedMonthLabel }}
+              </button>
+              <div class="calendar-select-options" *ngIf="isMonthMenuOpen">
+                <button
+                  type="button"
+                  class="calendar-select-option"
+                  *ngFor="let month of monthOptions"
+                  [class.is-selected]="month.value === selectedMonth"
+                  (click)="chooseMonth(month.value)"
+                >
+                  {{ month.label }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="selector-field">
+            <span>Year</span>
+            <div class="calendar-select year-select" [class.is-open]="isYearMenuOpen" (click)="$event.stopPropagation()">
+              <button type="button" class="calendar-select-button" [disabled]="!canChooseYear" (click)="toggleYearMenu()">
+                {{ canChooseYear ? selectedYear : 'No prints' }}
+              </button>
+              <div class="calendar-select-options" *ngIf="isYearMenuOpen">
+                <button
+                  type="button"
+                  class="calendar-select-option"
+                  *ngFor="let year of yearOptions"
+                  [class.is-selected]="year === selectedYear"
+                  (click)="chooseYear(year)"
+                >
+                  {{ year }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="month-actions">
+        <button type="button" aria-label="Previous period" (click)="previousPeriod()">&lsaquo;</button>
+        <button type="button" (click)="goToToday()">Today</button>
+        <button type="button" aria-label="Next period" (click)="nextPeriod()">&rsaquo;</button>
+      </div>
+    </div>
+
+    <div class="weekday-grid" *ngIf="activeView !== 'year'" aria-hidden="true">
+      <span *ngFor="let day of weekDays">{{ day }}</span>
+    </div>
+
+    <div class="calendar-grid" *ngIf="activeView !== 'year'" [class.week-view]="activeView === 'week'">
+      <article
+        class="calendar-day"
+        *ngFor="let day of visibleDays"
+        [class.is-muted]="!day.isCurrentMonth"
+        [class.is-today]="day.isToday"
+      >
+        <div class="day-heading">
+          <span>{{ activeView === 'week' ? (day.date | date:'EEE d') : day.dayNumber }}</span>
+          <small *ngIf="day.prints.length">{{ day.prints.length }}</small>
+        </div>
+
+        <div class="day-prints">
+          <button
+            type="button"
+            class="calendar-print-card"
+            [class.compact-print-card]="activeView !== 'week'"
+            *ngFor="let item of day.prints"
+            (click)="select.emit(item)"
+          >
+            <span class="print-card-top">
+              <strong>{{ item.name }}</strong>
+              <span class="status-dot status-{{ item.status.replace(' ', '-') }}"></span>
+            </span>
+            <span class="print-card-meta" *ngIf="activeView === 'week'; else compactPrintMeta">
+              <span *ngIf="item.filamentName">
+                <span class="filament-color" [style.background]="item.filamentColor" aria-hidden="true"></span>
+                {{ item.filamentName }}
+              </span>
+              <span>{{ item.time }}</span>
+            </span>
+            <ng-template #compactPrintMeta>
+              <span class="compact-print-dots">
+                <span class="filament-color" [style.background]="item.filamentColor || '#9daabc'" aria-hidden="true"></span>
+                <span class="status-dot status-{{ item.status.replace(' ', '-') }}"></span>
+              </span>
+            </ng-template>
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="year-grid" *ngIf="activeView === 'year'">
+      <article class="year-month-card" *ngFor="let month of yearMonths">
+        <div class="month-card-heading">
+          <button type="button" (click)="visibleDate = month.date; selectView('month')">{{ month.label }}</button>
+          <small *ngIf="month.prints.length">{{ month.prints.length }}</small>
+        </div>
+
+        <div class="month-card-prints">
+          <button
+            type="button"
+            class="calendar-print-card compact-print-card"
+            *ngFor="let item of month.prints"
+            (click)="select.emit(item)"
+          >
+            <span class="print-card-top">
+              <strong>{{ item.name }}</strong>
+              <span class="compact-print-dots">
+                <span class="filament-color" [style.background]="item.filamentColor || '#9daabc'" aria-hidden="true"></span>
+                <span class="status-dot status-{{ item.status.replace(' ', '-') }}"></span>
+              </span>
+            </span>
+          </button>
+        </div>
+      </article>
+    </div>
+  </article>
+</section>
