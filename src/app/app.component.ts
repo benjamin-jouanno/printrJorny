@@ -1,5 +1,6 @@
 import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { getCurrentWindow, type Window as TauriWindow } from '@tauri-apps/api/window';
 import { PrtjryHeaderComponent } from './components/prtjry-header/prtjry-header.component';
 import { PrtjryHistoryComponent } from './components/prtjry-history/prtjry-history.component';
 import { PrintDetailsComponent } from './components/print-details/print-details.component';
@@ -74,19 +75,24 @@ export class AppComponent {
     this.loadActiveProfile();
   }
 
-  async minimizeWindow(): Promise<void> {
-    const appWindow = await this.getTauriWindow();
-    await appWindow?.minimize();
+  startWindowDrag(event: MouseEvent): void {
+    if (event.button !== 0 || (event.target as HTMLElement).closest('.window-button')) {
+      return;
+    }
+
+    void this.getTauriWindow()?.startDragging().catch(() => undefined);
   }
 
-  async toggleMaximizeWindow(): Promise<void> {
-    const appWindow = await this.getTauriWindow();
-    await appWindow?.toggleMaximize();
+  minimizeWindow(): void {
+    void this.getTauriWindow()?.minimize().catch(() => undefined);
   }
 
-  async closeWindow(): Promise<void> {
-    const appWindow = await this.getTauriWindow();
-    await appWindow?.close();
+  toggleMaximizeWindow(): void {
+    void this.getTauriWindow()?.toggleMaximize().catch(() => undefined);
+  }
+
+  closeWindow(): void {
+    void this.getTauriWindow()?.close().catch(() => undefined);
   }
 
   toggleTheme(): void {
@@ -538,12 +544,11 @@ export class AppComponent {
     return `filament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   }
 
-  private async getTauriWindow() {
-    try {
-      const { getCurrentWindow } = await import('@tauri-apps/api/window');
-      return getCurrentWindow();
-    } catch {
+  private getTauriWindow(): TauriWindow | null {
+    if (!('__TAURI_INTERNALS__' in window)) {
       return null;
     }
+
+    return getCurrentWindow();
   }
 }

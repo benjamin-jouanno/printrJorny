@@ -1,7 +1,7 @@
-<header class="app-titlebar" data-tauri-drag-region>
-  <div class="titlebar-brand" data-tauri-drag-region>
+<header class="app-titlebar" (mousedown)="startWindowDrag($event)">
+  <div class="titlebar-brand">
     <span class="titlebar-printer-icon" aria-hidden="true"></span>
-    <span data-tauri-drag-region>Printr Jorny</span>
+    <span>Printr Jorny</span>
   </div>
 
   <div class="window-actions">
