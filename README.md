@@ -4,6 +4,8 @@ Printr Jorny is a desktop app for tracking 3D printing history, filament invento
 
 Current version: `0.2.0`
 
+<img width="2549" height="1386" alt="demo" src="https://github.com/user-attachments/assets/65710ee9-c86f-4b9e-9aa0-8b644deb806b" />
+
 ## What It Does
 
 - Create and switch between multiple printer profiles.
@@ -49,7 +51,7 @@ Live status requires the Tauri desktop app. It will show as desktop-only when ru
 
 Currently the application support only windows, you can go ahead and download the installer here:
 
-[Printr-Jorny-v0.2.0-en-US](link)
+[Printr-Jorny-v0.2.0-en-US](https://github.com/benjamin-jouanno/printrJorny/releases/download/release/printr-jorny_0.2.0_x64_en-US.msi)
 
 ## Version 0.2.0
 
