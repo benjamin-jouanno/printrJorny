@@ -2,6 +2,9 @@
 
 Printr Jorny is a desktop app for tracking 3D printing history, filament inventory, print outcomes, and cost over time. It is built with Angular and Tauri, so it runs as a lightweight desktop application while keeping the interface fast and local-first.
 
+<img width="2549" height="1386" alt="demo" src="https://github.com/user-attachments/assets/65710ee9-c86f-4b9e-9aa0-8b644deb806b" />
+
+
 ## What It Does
 
 - Create and switch between multiple printer profiles.
