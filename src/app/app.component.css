@@ -215,7 +215,7 @@
 
 .right-rail {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto;
   align-self: stretch;
   gap: 16px;
   height: 100%;

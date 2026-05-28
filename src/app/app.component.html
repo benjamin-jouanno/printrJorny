@@ -33,12 +33,13 @@
     [data]="headerInfo"
     [themeMode]="themeMode"
     [printerStatus]="printerStatus"
+    [prints]="printingHistory"
     (addPrint)="openCreatePrintForm()"
     (switchProfile)="showProfileSelection()"
     (editProfile)="openProfileForm()"
     (exportProfile)="exportActiveProfile()"
     (toggleTheme)="toggleTheme()"
-    (openPrinterDetails)="openPrinterDetails()"
+    (openPrinterSettings)="openPrinterSettings()"
   ></prtjry-header>
 
   <profile-form
@@ -70,14 +71,14 @@
     (cancel)="closeFilamentForm()"
   ></filament-form>
 
-  <div class="modal-backdrop" *ngIf="isPrinterDetailsOpen" (click)="closePrinterDetails()">
+  <div class="modal-backdrop" *ngIf="isPrinterSettingsOpen" (click)="closePrinterSettings()">
     <section class="notification-modal printer-details-modal" (click)="$event.stopPropagation()">
       <div class="printer-details-header">
         <div>
-          <p class="modal-eyebrow">Printer details</p>
+          <p class="modal-eyebrow">Printer settings</p>
           <h2>{{ headerInfo.printerModel }}</h2>
         </div>
-        <button type="button" class="close-button" aria-label="Close printer details" (click)="closePrinterDetails()">x</button>
+        <button type="button" class="close-button" aria-label="Close printer settings" (click)="closePrinterSettings()">x</button>
       </div>
 
       <div class="printer-details-status">
@@ -94,37 +95,42 @@
         </div>
       </div>
 
-      <dl class="printer-details-grid">
-        <div>
-          <dt>Live status</dt>
-          <dd>{{ headerInfo.printerConnection?.enabled ? 'Enabled' : 'Disabled' }}</dd>
-        </div>
-        <div>
-          <dt>Connection</dt>
-          <dd>{{ headerInfo.printerConnection?.type === 'bambu-local' ? 'Bambu local' : 'Manual tracking' }}</dd>
-        </div>
-        <div>
-          <dt>IP address</dt>
-          <dd>{{ headerInfo.printerConnection?.host || 'Not set' }}</dd>
-        </div>
-        <div>
-          <dt>Port</dt>
-          <dd>{{ headerInfo.printerConnection?.port || '8883' }}</dd>
-        </div>
-        <div>
-          <dt>Serial</dt>
-          <dd>{{ headerInfo.printerConnection?.serialNumber || 'Not set' }}</dd>
-        </div>
-        <div>
-          <dt>Access code</dt>
-          <dd>{{ headerInfo.printerConnection?.accessCode ? 'Saved' : 'Not set' }}</dd>
-        </div>
-      </dl>
+      <form class="printer-settings-form" #printerSettingsNgForm="ngForm" (ngSubmit)="savePrinterSettings()">
+        <label class="connection-toggle">
+          <input type="checkbox" name="livePrinterStatus" [(ngModel)]="printerSettingsForm.enabled" />
+          <span class="connection-switch" aria-hidden="true">
+            <span class="connection-switch-thumb"></span>
+          </span>
+          <span>Live Bambu status</span>
+        </label>
 
-      <div class="modal-actions">
-        <button type="button" class="secondary-modal-button" (click)="closePrinterDetails()">Close</button>
-        <button type="button" class="primary-modal-button" (click)="closePrinterDetails(); openProfileForm()">Edit profile</button>
-      </div>
+        <div class="connection-fields" *ngIf="printerSettingsForm.enabled">
+          <label class="field">
+            <span>Printer IP address <span class="required-mark">*</span></span>
+            <input type="text" name="printerHost" [(ngModel)]="printerSettingsForm.host" placeholder="192.168.1.42" autocomplete="off" required pattern=".*\S.*" />
+          </label>
+
+          <label class="field">
+            <span>MQTT port</span>
+            <input type="number" name="printerPort" [(ngModel)]="printerSettingsForm.port" min="1" max="65535" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>Printer serial</span>
+            <input type="text" name="printerSerial" [(ngModel)]="printerSettingsForm.serialNumber" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>LAN access code</span>
+            <input type="password" name="printerAccessCode" [(ngModel)]="printerSettingsForm.accessCode" autocomplete="off" />
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-modal-button" (click)="closePrinterSettings()">Cancel</button>
+          <button type="submit" class="primary-modal-button" [disabled]="printerSettingsNgForm.invalid">Save printer</button>
+        </div>
+      </form>
     </section>
   </div>
 
@@ -159,20 +165,23 @@
       (openCalendar)="showCalendarView()"
     ></prtjry-history>
 
-    <dashboard-stats
-      [currentJob]="currentJob"
-      [activeMaterial]="activeMaterial"
-      [nozzleTemperature]="nozzleTemperature"
-      [bedTemperature]="bedTemperature"
-      [printProgress]="printProgress"
-      [stats]="stats"
-      [prints]="printingHistory"
-      [themeMode]="themeMode"
-    ></dashboard-stats>
+    <section class="center-stack">
+      <dashboard-stats
+        [currentJob]="currentJob"
+        [activeMaterial]="activeMaterial"
+        [nozzleTemperature]="nozzleTemperature"
+        [bedTemperature]="bedTemperature"
+        [printProgress]="printProgress"
+        [stats]="stats"
+        [prints]="printingHistory"
+        [themeMode]="themeMode"
+      ></dashboard-stats>
+
+      <filament-type [filaments]="filamentInventory" (addFilament)="openCreateFilamentForm()"></filament-type>
+    </section>
 
     <aside class="right-rail">
       <last-printed [item]="lastPrinted"></last-printed>
-      <filament-type [filaments]="filamentInventory" (addFilament)="openCreateFilamentForm()"></filament-type>
     </aside>
   </section>
 

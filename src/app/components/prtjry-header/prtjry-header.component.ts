@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { IHeader } from '../../interfaces/header.interface';
 import { IPrinterLiveStatus } from '../../interfaces/printer-status.interface';
+import { IPrint } from '../../interfaces/print.interface';
 
 @Component({
   selector: 'prtjry-header',
@@ -20,6 +21,7 @@ export class PrtjryHeaderComponent {
     profilePicture: '',
   };
   @Input() themeMode: 'dark' | 'light' = 'dark';
+  @Input() prints: IPrint[] = [];
   @Input() printerStatus: IPrinterLiveStatus = {
     state: 'not-configured',
     label: 'Manual',
@@ -31,7 +33,7 @@ export class PrtjryHeaderComponent {
   @Output() editProfile = new EventEmitter<void>();
   @Output() exportProfile = new EventEmitter<void>();
   @Output() toggleTheme = new EventEmitter<void>();
-  @Output() openPrinterDetails = new EventEmitter<void>();
+  @Output() openPrinterSettings = new EventEmitter<void>();
   isSettingsMenuOpen = false;
 
   get initials(): string {
@@ -39,6 +41,10 @@ export class PrtjryHeaderComponent {
     const initials = nameParts.slice(0, 2).map(part => part[0]).join('');
 
     return initials.toUpperCase() || 'ID';
+  }
+
+  get firstName(): string {
+    return this.data.userName.trim().split(/\s+/).filter(Boolean)[0] || this.data.userName || 'there';
   }
 
   get themeToggleLabel(): string {
@@ -59,6 +65,58 @@ export class PrtjryHeaderComponent {
 
   get printProgress(): number {
     return Math.max(0, Math.min(100, this.printerStatus.progress ?? 0));
+  }
+
+  get isPrinterConnectionEnabled(): boolean {
+    return Boolean(this.data.printerConnection?.enabled);
+  }
+
+  get printerStatusLabel(): string {
+    if (this.printerStatus.state === 'reachable' || this.printerStatus.state === 'ready') {
+      return 'Online';
+    }
+
+    return this.printerStatus.label;
+  }
+
+  get printerActivityLabel(): string {
+    if (!this.isPrinterConnectionEnabled) {
+      return 'Live status disabled';
+    }
+
+    if (this.printerStatus.state === 'printing') {
+      return 'Printing';
+    }
+
+    if (this.printerStatus.state === 'paused') {
+      return 'Paused';
+    }
+
+    if (this.printerStatus.state === 'offline' || this.printerStatus.state === 'error') {
+      return 'Issue';
+    }
+
+    return 'Idle';
+  }
+
+  get totalFilamentUsed(): number {
+    return this.prints.reduce((total, print) => total + (Number(print.filament) || 0), 0);
+  }
+
+  get totalCost(): number {
+    return this.prints.reduce((total, print) => total + (Number(print.cost) || 0), 0);
+  }
+
+  get successCount(): number {
+    return this.prints.filter(print => print.status === 'success').length;
+  }
+
+  get failedCount(): number {
+    return this.prints.filter(print => print.status === 'failed').length;
+  }
+
+  get passedPoorlyCount(): number {
+    return this.prints.filter(print => print.status === 'passed poorly').length;
   }
 
   @HostListener('document:click')

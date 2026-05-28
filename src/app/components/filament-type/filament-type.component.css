@@ -1,6 +1,7 @@
 :host {
   display: block;
   min-height: 0;
+  min-width: 0;
 }
 
 .panel {
@@ -9,9 +10,12 @@
   background: var(--panel-bg);
   box-shadow: var(--shadow-panel);
   backdrop-filter: blur(18px);
-  height: 100%;
-  min-height: 190px;
-  padding: 22px;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 16px;
   display: flex;
   flex-direction: column;
 }
@@ -20,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .eyebrow {
@@ -61,20 +65,24 @@
 }
 
 .filament-list {
-  flex: 1;
+  width: 100%;
+  max-width: 100%;
   display: grid;
-  align-content: start;
+  grid-auto-flow: column;
+  grid-auto-columns: 280px;
+  justify-content: start;
+  align-items: stretch;
   gap: 12px;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0 6px;
   scrollbar-width: thin;
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 
 .filament-list::-webkit-scrollbar {
-  width: 10px;
+  height: 10px;
 }
 
 .filament-list::-webkit-scrollbar-track {
@@ -95,6 +103,9 @@
 .filament-card {
   display: grid;
   gap: 12px;
+  min-width: 0;
+  width: 280px;
+  max-width: 280px;
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   background: var(--card-bg);
@@ -112,25 +123,57 @@
   flex: 1;
 }
 
-.filament-color {
-  width: 18px;
-  height: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
+.filament-cube {
+  --filament-color: var(--accent);
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--filament-color);
+  border-radius: 8px;
   flex: 0 0 auto;
-  margin-top: 1px;
+  margin: 8px 2px 0 8px;
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--filament-color) 34%, transparent), transparent 38%),
+    color-mix(in srgb, var(--filament-color) 16%, transparent);
+  transform: rotateX(58deg) rotateZ(45deg);
+  box-shadow:
+    0 12px 24px color-mix(in srgb, var(--filament-color) 18%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--filament-color) 14%, transparent);
+}
+
+.filament-cube::before,
+.filament-cube::after {
+  content: '';
+  position: absolute;
+  border: 2px solid var(--filament-color);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--filament-color) 12%, transparent);
+}
+
+.filament-cube::before {
+  inset: 8px -12px -12px 8px;
+}
+
+.filament-cube::after {
+  inset: -12px 8px 8px -12px;
 }
 
 .filament-topline h3 {
   margin: 0;
   color: var(--text-main);
   font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .filament-topline p {
   margin: 6px 0 0;
   color: var(--text-muted);
   font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .filament-topline strong {
@@ -139,7 +182,7 @@
 }
 
 .quantity-bar {
-  height: 8px;
+  height: 7px;
   border-radius: 999px;
   overflow: hidden;
   background: var(--field-bg);
@@ -156,17 +199,31 @@
   background: linear-gradient(90deg, #ff6b6b, #f29d38);
 }
 
-.quantity-meta {
+.filament-bottomline {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 700;
 }
 
+.filament-bottomline .quantity-bar {
+  flex: 1 1 auto;
+  min-width: 104px;
+}
+
+.filament-bottomline strong {
+  flex: 0 0 max-content;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .empty-inventory {
-  min-height: 180px;
+  min-height: 130px;
   display: grid;
   place-content: center;
   gap: 8px;
@@ -176,6 +233,17 @@
   border-radius: 8px;
   background: var(--accent-soft);
   padding: 20px;
+}
+
+@media (max-width: 800px) {
+  .filament-list {
+    grid-auto-columns: 260px;
+  }
+
+  .filament-card {
+    width: 260px;
+    max-width: 260px;
+  }
 }
 
 .empty-inventory p {

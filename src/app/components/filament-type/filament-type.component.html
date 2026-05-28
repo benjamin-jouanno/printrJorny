@@ -10,24 +10,23 @@
   </div>
 
   <ng-template #filamentList>
-    <div class="filament-list">
+    <div class="filament-list" (wheel)="scrollFilaments($event)">
       <article class="filament-card" *ngFor="let filament of filaments">
         <div class="filament-topline">
-          <span class="filament-color" [style.background]="filament.color" aria-hidden="true"></span>
+          <span class="filament-cube" [style.--filament-color]="filament.color" aria-hidden="true">
+          </span>
           <div>
             <h3>{{ filament.name }}</h3>
             <p>{{ filament.brand }}</p>
+            <p>{{ filament.color }}</p>
           </div>
-          <strong>{{ filament.quantityGrams }} g</strong>
         </div>
 
-        <div class="quantity-bar" aria-hidden="true">
-          <span [class.low-quantity]="isLowQuantity(filament)" [style.width.%]="getQuantityPercent(filament)"></span>
-        </div>
-
-        <div class="quantity-meta">
-          <span>{{ filament.quantityGrams }} g available</span>
-          <span>{{ getQuantityPercent(filament) }}% left</span>
+        <div class="filament-bottomline">
+          <div class="quantity-bar" aria-hidden="true">
+            <span [class.low-quantity]="isLowQuantity(filament)" [style.width.%]="getQuantityPercent(filament)"></span>
+          </div>
+          <strong>{{ filament.quantityGrams }} g remaining</strong>
         </div>
       </article>
     </div>

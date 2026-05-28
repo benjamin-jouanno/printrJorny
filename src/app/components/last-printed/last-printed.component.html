@@ -1,15 +1,20 @@
 <section class="panel last-printed">
   <div class="panel-heading">
     <p class="eyebrow">Last printed</p>
+    <span *ngIf="item" class="status-pill status-{{ item.status.replace(' ', '-') }}">{{ item.status }}</span>
   </div>
 
   <div *ngIf="item; else noPrint">
-    <div class="last-title-row">
-      <h3>{{ item.name }}</h3>
-      <div class="status-graphic title-status status-{{ item.status.replace(' ', '-') }}" title="{{ item.status }}">
-        <span class="status-dot"></span>
+    <div class="last-hero">
+      <div class="print-visual">
+        <img *ngIf="item.image; else printPlaceholder" [src]="item.image" alt="" />
+        <ng-template #printPlaceholder>
+          <span class="cube-placeholder" aria-hidden="true"></span>
+        </ng-template>
       </div>
     </div>
+
+    <h3>{{ item.name }}</h3>
     <p class="muted">{{ item.date | date:'d MMMM y' }}</p>
 
     <div class="last-details">
@@ -19,12 +24,20 @@
       </div>
       <div>
         <p class="detail-label">Filament</p>
-        <strong>{{ item.filament }} g</strong>
+        <strong>{{ item.filament | number:'1.0-2' }} g</strong>
       </div>
       <div>
         <p class="detail-label">Cost</p>
         <strong>€{{ item.cost | number:'1.2-2' }}</strong>
       </div>
+    </div>
+
+    <div class="filament-block" *ngIf="item.filamentName">
+      <div>
+        <p class="detail-label">Filament</p>
+        <strong>{{ item.filamentName }}</strong>
+      </div>
+      <span class="filament-dot" [style.background]="item.filamentColor" aria-hidden="true"></span>
     </div>
 
     <div class="description-block">

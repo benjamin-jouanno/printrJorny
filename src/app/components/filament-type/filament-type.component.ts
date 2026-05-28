@@ -30,4 +30,15 @@ export class FilamentTypeComponent {
   isLowQuantity(filament: IFilament): boolean {
     return this.getQuantityPercent(filament) < 15;
   }
+
+  scrollFilaments(event: WheelEvent): void {
+    const list = event.currentTarget as HTMLElement;
+
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+      return;
+    }
+
+    list.scrollLeft += event.deltaY;
+    event.preventDefault();
+  }
 }

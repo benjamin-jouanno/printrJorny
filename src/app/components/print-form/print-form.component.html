@@ -14,6 +14,22 @@
         <input type="text" name="name" [(ngModel)]="formPrint.name" placeholder="Calibration cube" required />
       </label>
 
+      <div class="print-image-field field-wide">
+        <div class="print-image-preview" aria-hidden="true">
+          <img *ngIf="formPrint.image; else printImagePlaceholder" [src]="formPrint.image" alt="" />
+          <ng-template #printImagePlaceholder>
+            <span class="cube-placeholder"></span>
+          </ng-template>
+        </div>
+        <div class="print-image-actions">
+          <label class="image-button">
+            <input type="file" accept="image/*" (change)="onPrintImageSelected($event)" />
+            <span>{{ formPrint.image ? 'Change print picture' : 'Add print picture' }}</span>
+          </label>
+          <button *ngIf="formPrint.image" type="button" class="remove-image-button" (click)="removePrintImage()">Remove</button>
+        </div>
+      </div>
+
       <label class="field">
         <span>Date <span class="required-mark">*</span></span>
         <input type="date" name="date" [(ngModel)]="formPrint.date" required />

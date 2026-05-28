@@ -2,7 +2,7 @@
   position: relative;
   z-index: 60;
   display: grid;
-  grid-template-columns: minmax(170px, 220px) minmax(180px, 1fr) max-content minmax(180px, 240px);
+  grid-template-columns: minmax(150px, 200px) minmax(0, 1fr) minmax(250px, 300px) minmax(180px, 240px);
   gap: 16px;
   align-items: stretch;
   margin-bottom: 18px;
@@ -49,58 +49,56 @@
   grid-column: 1 / -1;
 }
 
-.header-accent {
-  position: relative;
-  overflow: hidden;
-  border-color: var(--accent-border);
-  background:
-    radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.16) 0 2px, transparent 3px),
-    radial-gradient(circle at 74% 28%, rgba(255, 255, 255, 0.12) 0 2px, transparent 3px),
-    linear-gradient(135deg, rgba(128, 255, 219, 0.18), rgba(72, 191, 227, 0.12)),
-    var(--accent-soft);
-}
-
 .printer-summary {
-  min-width: 210px;
-  width: max-content;
+  min-width: 272px;
+  width: 100%;
   max-width: 300px;
+  min-height: 178px;
   align-items: stretch;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px;
+  gap: 16px;
+  padding: 18px;
   border-color: var(--accent-border);
   font: inherit;
   text-align: left;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 64%),
+    var(--panel-bg);
+}
+
+.printer-card-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 68px;
+  gap: 16px;
+  align-items: start;
 }
 
 .printer-copy {
   min-width: 0;
   display: grid;
-  align-content: center;
-  gap: 6px;
+  align-content: start;
+  gap: 9px;
 }
 
 .printer-kicker,
 .printer-status {
   width: fit-content;
   margin: 0;
-  border: 1px solid var(--panel-border);
-  border-radius: 999px;
-  background: var(--field-bg);
   color: var(--text-muted);
-  font-size: 0.68rem;
-  font-weight: 800;
+  font-size: 0.82rem;
+  font-weight: 700;
   line-height: 1;
-  padding: 5px 8px;
 }
 
 .printer-summary h2 {
   margin: 0;
   color: var(--text-main);
-  font-size: 0.98rem;
+  font-size: 1.08rem;
   font-weight: 800;
   line-height: 1.2;
-  max-width: 190px;
+  max-width: 170px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -110,10 +108,23 @@
   align-items: center;
   gap: 6px;
   color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.printer-status.is-not-configured {
+  color: var(--text-muted);
+}
+
+.printer-status-separator {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
 }
 
 .printer-status-detail {
-  max-width: 190px;
+  max-width: 170px;
   color: var(--text-muted);
   font-size: 0.68rem;
   line-height: 1.25;
@@ -122,34 +133,99 @@
   white-space: nowrap;
 }
 
-.add-print-action {
+.printer-settings-button {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: 12px;
-  border-color: var(--accent-border);
+  gap: 10px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent),
+    var(--field-bg);
   color: var(--text-main);
-  background: var(--accent-soft);
   cursor: pointer;
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.86rem;
   font-weight: 800;
+  padding: 0 14px;
+}
+
+.printer-settings-button .settings-icon {
+  font-size: 1.18rem;
+}
+
+.printer-settings-button:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--text-main);
+}
+
+.printer-settings-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.add-print-action {
+  justify-content: flex-start;
+  gap: 18px;
+  border-color: var(--accent-border);
+  color: var(--text-main);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 58%),
+    color-mix(in srgb, var(--panel-bg) 86%, transparent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.96rem;
+  font-weight: 800;
+  padding: 18px 28px;
+  border-style: dashed;
+  border-width: 1.5px;
+  min-width: 240px;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
 }
 
 .add-print-action:hover {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--panel-border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 62%),
+    color-mix(in srgb, var(--panel-bg) 82%, transparent);
   transform: translateY(-1px);
   box-shadow: 0 22px 54px rgba(72, 191, 227, 0.18);
 }
 
+.add-print-action:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .add-print-icon {
-  width: 34px;
-  height: 34px;
+  width: 62px;
+  height: 62px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-size: 1.35rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 54%),
+    var(--accent-soft);
+  color: var(--accent);
+  font-size: 2.1rem;
+  font-weight: 500;
   line-height: 1;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent),
+    0 12px 28px color-mix(in srgb, var(--accent) 14%, transparent);
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.add-print-action:hover .add-print-icon {
+  background: color-mix(in srgb, var(--accent) 16%, var(--accent-soft));
+  transform: scale(1.03);
 }
 
 .profile-settings {
@@ -366,21 +442,31 @@
 }
 
 .printer-icon {
-  align-self: center;
-  width: 50px;
-  height: 58px;
-  border-radius: 12px;
+  align-self: start;
+  justify-self: end;
+  width: 68px;
+  height: 78px;
+  flex: 0 0 auto;
+  border-radius: 8px;
   display: inline-grid;
   place-items: center;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  box-shadow: inset 0 0 0 1px var(--panel-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 58%),
+    var(--field-bg);
+  border: 1px solid var(--panel-border-strong);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 14px 30px rgba(0, 0, 0, 0.18);
   position: relative;
 }
 
 @media (max-width: 980px) {
   .topbar {
     grid-template-columns: 1fr;
+  }
+
+  .add-print-action {
+    min-width: 0;
   }
 }
 

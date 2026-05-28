@@ -48,31 +48,92 @@
     </div>
   </section>
 
-  <section class="header-accent" aria-hidden="true">
-    <span class="space-star star-one"></span>
-    <span class="space-star star-two"></span>
-    <span class="space-star star-three"></span>
-    <span class="space-planet planet-one"></span>
-    <span class="space-planet planet-two"></span>
-    <span class="space-comet"></span>
+  <section class="header-accent">
+    <div class="header-space-bg" aria-hidden="true">
+      <span class="space-star star-one"></span>
+      <span class="space-star star-two"></span>
+      <span class="space-star star-three"></span>
+      <span class="space-star star-four"></span>
+      <span class="space-star star-five"></span>
+      <span class="space-star star-six"></span>
+      <span class="space-star star-seven"></span>
+      <span class="space-star star-eight"></span>
+      <span class="space-star star-nine"></span>
+      <span class="space-star star-ten"></span>
+      <span class="space-planet planet-one"></span>
+      <span class="space-planet planet-two"></span>
+      <span class="space-planet planet-three"></span>
+      <span class="space-planet planet-four"></span>
+      <span class="space-comet comet-one"></span>
+      <span class="space-comet comet-two"></span>
+      <span class="space-comet comet-three"></span>
+    </div>
+
+    <div class="header-accent-content">
+      <div class="header-accent-copy">
+        <h2>Welcome back, <span>{{ firstName }}</span> !</h2>
+        <p>Let's turn your ideas into reality.</p>
+      </div>
+
+      <div class="hero-stats" aria-label="Printing summary">
+        <article class="hero-stat">
+          <span class="hero-stat-icon total-icon" aria-hidden="true"></span>
+          <strong>{{ prints.length }}</strong>
+          <small>Total prints</small>
+        </article>
+        <article class="hero-stat">
+          <span class="hero-stat-icon cost-icon" aria-hidden="true">€</span>
+          <strong>€{{ totalCost | number:'1.0-2' }}</strong>
+          <small>Total cost</small>
+        </article>
+        <article class="hero-stat">
+          <span class="hero-stat-icon filament-icon" aria-hidden="true"></span>
+          <strong>{{ totalFilamentUsed | number:'1.0-2' }} g</strong>
+          <small>Filament used</small>
+        </article>
+        <article class="hero-stat compact-stat">
+          <span class="status-dot success-dot" aria-hidden="true"></span>
+          <strong>{{ successCount }}</strong>
+          <small>Success</small>
+        </article>
+        <article class="hero-stat compact-stat">
+          <span class="status-dot failed-dot" aria-hidden="true"></span>
+          <strong>{{ failedCount }}</strong>
+          <small>Failed</small>
+        </article>
+        <article class="hero-stat compact-stat">
+          <span class="status-dot poor-dot" aria-hidden="true"></span>
+          <strong>{{ passedPoorlyCount }}</strong>
+          <small>Poor</small>
+        </article>
+      </div>
+    </div>
   </section>
 
-  <button type="button" class="printer-summary" aria-label="Open printer details" (click)="openPrinterDetails.emit()">
-    <div class="printer-copy">
-      <p class="printer-kicker">Current printer</p>
-      <h2>{{ data.printerModel }}</h2>
-      <span class="printer-status" *ngIf="!isLiveStatusDisabled" [ngClass]="printerStatusClass">
-        <span class="printer-status-dot" aria-hidden="true"></span>
-        {{ printerStatus.label }}
-      </span>
-      <small class="printer-status-detail" *ngIf="!isLiveStatusDisabled">{{ printerStatus.detail }}</small>
-      <small class="printer-status-detail" *ngIf="isLiveStatusDisabled">Enable live status in profile settings.</small>
-      <span class="printer-progress" *ngIf="!isLiveStatusDisabled && hasPrintProgress">
-        <span class="printer-progress-fill" [style.width.%]="printProgress"></span>
-      </span>
+  <section class="printer-summary" aria-label="Current printer">
+    <div class="printer-card-main">
+      <div class="printer-copy">
+        <p class="printer-kicker">Current printer</p>
+        <h2>{{ data.printerModel }}</h2>
+        <span class="printer-status" [ngClass]="printerStatusClass">
+          <span class="printer-status-dot" aria-hidden="true"></span>
+          <ng-container *ngIf="isPrinterConnectionEnabled; else liveStatusDisabled">
+            {{ printerStatusLabel }}
+            <span class="printer-status-separator" aria-hidden="true"></span>
+            {{ printerActivityLabel }}
+          </ng-container>
+          <ng-template #liveStatusDisabled>Live status disabled</ng-template>
+        </span>
+        <span class="printer-progress" *ngIf="!isLiveStatusDisabled && hasPrintProgress">
+          <span class="printer-progress-fill" [style.width.%]="printProgress"></span>
+        </span>
+      </div>
     </div>
-    <span class="printer-icon" aria-hidden="true"></span>
-  </button>
+    <button type="button" class="printer-settings-button" aria-label="Open printer settings" (click)="openPrinterSettings.emit()">
+      <span>Printer settings</span>
+      <span class="settings-icon" aria-hidden="true"></span>
+    </button>
+  </section>
 
   <button type="button" class="add-print-action" (click)="addPrint.emit()">
     <span class="add-print-icon" aria-hidden="true">+</span>

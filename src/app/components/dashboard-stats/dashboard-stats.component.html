@@ -4,36 +4,4 @@
       <canvas #chartCanvas class="chart-canvas"></canvas>
     </div>
   </section>
-  <section class="panel bottom-panel">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">{{ getTotalFillamentConsumption() | number:'1.0-2' }} g</div>
-        <div class="stat-label">Filament used</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-value">€ {{ getTotalCost() | number:'1.0-2' }}</div>
-        <div class="stat-label">Total cost</div>
-      </div>
-
-      <div class="stat-card green">
-        <div class="stat-value ">{{ getSuccessCount() }}</div>
-        <div class="stat-label">Success</div>
-      </div>
-
-      <div class="stat-card red">
-        <div class="stat-value ">{{ getFailedCount() }}</div>
-        <div class="stat-label">Failed</div>
-      </div>
-
-      <div class="stat-card orange">
-        <div class="stat-value ">{{ getPoorlyDoneCount() }}</div>
-        <div class="stat-label">Poorly done</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{{ prints.length }}</div>
-        <div class="stat-label">Total Prints</div>
-      </div>
-    </div>
-  </section>
 </section>

@@ -1,5 +1,6 @@
 import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow, type Window as TauriWindow } from '@tauri-apps/api/window';
 import { PrtjryHeaderComponent } from './components/prtjry-header/prtjry-header.component';
@@ -30,7 +31,7 @@ interface IPrintrJornyProfileFile {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, PrintCalendarComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
+  imports: [CommonModule, FormsModule, ProfileSelectionComponent, ProfileFormComponent, PrtjryHeaderComponent, PrtjryHistoryComponent, PrintCalendarComponent, DashboardStatsComponent, LastPrintedComponent, FilamentTypeComponent, FilamentFormComponent, PrintDetailsComponent, PrintFormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -49,7 +50,7 @@ export class AppComponent implements OnDestroy {
   isPrintFormOpen = false;
   isFilamentFormOpen = false;
   isProfileFormOpen = false;
-  isPrinterDetailsOpen = false;
+  isPrinterSettingsOpen = false;
   emptyFilamentNotification: IFilament | null = null;
   printPendingDeletion: IPrint | null = null;
   headerInfo: IHeader = {
@@ -63,6 +64,7 @@ export class AppComponent implements OnDestroy {
   activeView: 'dashboard' | 'calendar' = 'dashboard';
   themeMode: 'dark' | 'light' = 'dark';
   printerStatus: IPrinterLiveStatus = this.createManualPrinterStatus();
+  printerSettingsForm: IPrinterConnection = this.normalizePrinterConnection();
   private printerStatusTimer: number | null = null;
 
   @HostBinding('class.light-theme')
@@ -273,12 +275,30 @@ export class AppComponent implements OnDestroy {
     this.isProfileFormOpen = false;
   }
 
-  openPrinterDetails(): void {
-    this.isPrinterDetailsOpen = true;
+  openPrinterSettings(): void {
+    this.printerSettingsForm = this.normalizePrinterConnection(this.headerInfo.printerConnection);
+    this.isPrinterSettingsOpen = true;
   }
 
-  closePrinterDetails(): void {
-    this.isPrinterDetailsOpen = false;
+  closePrinterSettings(): void {
+    this.isPrinterSettingsOpen = false;
+  }
+
+  savePrinterSettings(): void {
+    if (!this.activeProfileId) {
+      return;
+    }
+
+    const updatedProfile: IHeader = {
+      ...this.headerInfo,
+      printerConnection: this.normalizePrinterConnection(this.printerSettingsForm)
+    };
+
+    this.profiles = this.profiles.map(item => item.id === this.activeProfileId ? updatedProfile : item);
+    this.headerInfo = updatedProfile;
+    this.persistProfiles();
+    this.startPrinterStatusPolling();
+    this.closePrinterSettings();
   }
 
   hasPrinterProgress(): boolean {

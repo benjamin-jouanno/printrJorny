@@ -9,6 +9,7 @@ export interface IPrint {
   time: string;
   status: string;
   date: string;
+  image?: string;
   description?: string;
   errorDescription?: string;
 }

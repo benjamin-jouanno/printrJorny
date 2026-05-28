@@ -97,9 +97,29 @@ export class PrintFormComponent implements OnChanges {
       filamentName: selectedFilament.name,
       filamentColor: selectedFilament.color,
       cost: Number(this.formPrint.cost) || 0,
+      image: this.formPrint.image || '',
       description: this.formPrint.description?.trim(),
       errorDescription: this.formPrint.errorDescription?.trim()
     });
+  }
+
+  onPrintImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file || !file.type.startsWith('image/')) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.formPrint.image = typeof reader.result === 'string' ? reader.result : '';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removePrintImage(): void {
+    this.formPrint.image = '';
   }
 
   private createEmptyPrint(): IPrint {
@@ -116,6 +136,7 @@ export class PrintFormComponent implements OnChanges {
       time: '',
       status: 'success',
       date: new Date().toISOString().slice(0, 10),
+      image: '',
       description: '',
       errorDescription: ''
     };

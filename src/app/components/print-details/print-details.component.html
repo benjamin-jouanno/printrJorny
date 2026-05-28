@@ -13,6 +13,13 @@
       <button type="button" class="close-button" aria-label="Close details" (click)="closeModal()">×</button>
     </div>
 
+    <div class="print-image-panel">
+      <img *ngIf="item.image; else detailPlaceholder" [src]="item.image" alt="" />
+      <ng-template #detailPlaceholder>
+        <span class="cube-placeholder" aria-hidden="true"></span>
+      </ng-template>
+    </div>
+
     <div class="details-grid">
       <div>
         <p class="detail-label">Date</p>
