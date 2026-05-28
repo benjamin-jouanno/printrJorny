@@ -40,6 +40,7 @@
     (exportProfile)="exportActiveProfile()"
     (toggleTheme)="toggleTheme()"
     (openPrinterSettings)="openPrinterSettings()"
+    (openProjects)="showProjectsView()"
   ></prtjry-header>
 
   <profile-form
@@ -157,6 +158,174 @@
     </section>
   </div>
 
+  <div class="modal-backdrop" *ngIf="projectPendingDeletion" (click)="cancelProjectDeletion()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow danger">Delete project</p>
+      <h2>{{ projectPendingDeletion.name }}</h2>
+      <p class="modal-copy">This project and all of its tasks will be removed from your profile.</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="cancelProjectDeletion()">Cancel</button>
+        <button type="button" class="danger-modal-button" (click)="confirmProjectDeletion()">Delete project</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="projectTaskPendingDeletion" (click)="cancelProjectTaskDeletion()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow danger">Delete task</p>
+      <h2>{{ projectTaskPendingDeletion.name }}</h2>
+      <p class="modal-copy">This task will be removed from the project board.</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="cancelProjectTaskDeletion()">Cancel</button>
+        <button type="button" class="danger-modal-button" (click)="confirmProjectTaskDeletion()">Delete task</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="isProjectFormOpen" (click)="closeProjectForm()">
+    <section class="notification-modal project-form-modal" (click)="$event.stopPropagation()">
+      <div class="project-form-header">
+        <div>
+          <p class="modal-eyebrow">New project</p>
+          <h2>Create project</h2>
+        </div>
+        <button type="button" class="close-button" aria-label="Close project form" (click)="closeProjectForm()">x</button>
+      </div>
+
+      <form class="project-form" #projectNgForm="ngForm" (ngSubmit)="saveProject()">
+        <div class="project-image-field">
+          <div class="project-image-preview" aria-hidden="true">
+            <img *ngIf="projectForm.image; else projectImagePlaceholder" [src]="projectForm.image" alt="" />
+            <ng-template #projectImagePlaceholder>
+              <span class="project-cube-placeholder"></span>
+            </ng-template>
+          </div>
+          <div class="project-image-actions">
+            <label class="project-image-button">
+              <input type="file" accept="image/*" (change)="onProjectImageSelected($event)" />
+              <span>{{ projectForm.image ? 'Change image' : 'Add image' }}</span>
+            </label>
+            <button *ngIf="projectForm.image" type="button" class="project-remove-image-button" (click)="removeProjectImage()">Remove</button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Name <span class="required-mark">*</span></span>
+          <input type="text" name="projectName" [(ngModel)]="projectForm.name" required />
+        </label>
+
+        <label class="field">
+          <span>Start date <span class="required-mark">*</span></span>
+          <input type="date" name="projectStartDate" [(ngModel)]="projectForm.startDate" required />
+        </label>
+
+        <label class="field field-wide">
+          <span>Description</span>
+          <textarea name="projectDescription" [(ngModel)]="projectForm.description" rows="4"></textarea>
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-modal-button" (click)="closeProjectForm()">Cancel</button>
+          <button type="submit" class="primary-modal-button" [disabled]="projectNgForm.invalid">Create project</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="isProjectTaskFormOpen" (click)="closeProjectTaskForm()">
+    <section class="notification-modal project-form-modal" (click)="$event.stopPropagation()">
+      <div class="project-form-header">
+        <div>
+          <p class="modal-eyebrow">{{ isEditingProjectTask ? 'Edit task' : 'New task' }}</p>
+          <h2>{{ isEditingProjectTask ? 'Edit task' : 'Add task' }}</h2>
+        </div>
+        <button type="button" class="close-button" aria-label="Close task form" (click)="closeProjectTaskForm()">x</button>
+      </div>
+
+      <form class="project-form" #taskNgForm="ngForm" (ngSubmit)="saveProjectTask()">
+        <div class="project-image-field">
+          <div class="project-image-preview" aria-hidden="true">
+            <img *ngIf="projectTaskForm.picture; else taskPicturePlaceholder" [src]="projectTaskForm.picture" alt="" />
+            <ng-template #taskPicturePlaceholder>
+              <span class="project-cube-placeholder"></span>
+            </ng-template>
+          </div>
+          <div class="project-image-actions">
+            <label class="project-image-button">
+              <input type="file" accept="image/*" (change)="onProjectTaskPictureSelected($event)" />
+              <span>{{ projectTaskForm.picture ? 'Change picture' : 'Add picture' }}</span>
+            </label>
+            <button *ngIf="projectTaskForm.picture" type="button" class="project-remove-image-button" (click)="removeProjectTaskPicture()">Remove</button>
+          </div>
+        </div>
+
+        <label class="field field-wide">
+          <span>Name <span class="required-mark">*</span></span>
+          <input type="text" name="taskName" [(ngModel)]="projectTaskForm.name" required />
+        </label>
+
+        <div class="field field-wide task-description-field">
+          <span>Description</span>
+          <div class="rich-text-toolbar" aria-label="Task description formatting">
+            <button type="button" aria-label="Bold" (mousedown)="$event.preventDefault(); formatProjectTaskDescription('bold')">B</button>
+            <button type="button" aria-label="Italic" (mousedown)="$event.preventDefault(); formatProjectTaskDescription('italic')">I</button>
+            <button type="button" aria-label="List" (mousedown)="$event.preventDefault(); formatProjectTaskDescription('insertUnorderedList')">List</button>
+          </div>
+          <div
+            #projectTaskDescriptionEditor
+            class="rich-text-editor"
+            contenteditable="true"
+            role="textbox"
+            aria-multiline="true"
+            data-placeholder="Add notes, links, material details, or anything useful..."
+            (input)="updateProjectTaskDescription($event)"
+            (blur)="updateProjectTaskDescription($event)"
+          ></div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-modal-button" (click)="cancelProjectTaskForm()">Cancel</button>
+          <button type="submit" class="primary-modal-button" [disabled]="taskNgForm.invalid">{{ isEditingProjectTask ? 'Save task' : 'Create task' }}</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="selectedProjectTask" (click)="selectedProjectTask = null">
+    <section class="notification-modal project-task-details-modal" (click)="$event.stopPropagation()">
+      <div class="project-form-header">
+        <div>
+          <p class="modal-eyebrow">Task details</p>
+          <div class="task-title-row">
+            <h2>{{ selectedProjectTask.name }}</h2>
+            <span class="task-status-tag" [ngClass]="getProjectTaskStatusClass(selectedProjectTask.status)">{{ selectedProjectTask.status }}</span>
+          </div>
+        </div>
+        <button type="button" class="close-button" aria-label="Close task details" (click)="selectedProjectTask = null">x</button>
+      </div>
+
+      <div class="task-detail-image">
+        <img *ngIf="selectedProjectTask.picture; else selectedTaskPlaceholder" [src]="selectedProjectTask.picture" alt="" />
+        <ng-template #selectedTaskPlaceholder>
+          <span class="project-cube-placeholder"></span>
+        </ng-template>
+      </div>
+
+      <div class="task-detail-description">
+        <span>Description</span>
+        <div *ngIf="selectedProjectTask.description; else emptyTaskDescription" [innerHTML]="selectedProjectTask.description"></div>
+        <ng-template #emptyTaskDescription>
+          <p>No description yet.</p>
+        </ng-template>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="openEditProjectTaskForm(selectedProjectTask)">Edit task</button>
+        <button type="button" class="danger-modal-button" (click)="deleteSelectedProjectTask()">Delete task</button>
+      </div>
+    </section>
+  </div>
+
   <section class="workspace" *ngIf="activeView === 'dashboard'">
     <prtjry-history
       [items]="printingHistory"
@@ -192,4 +361,134 @@
     (addPrint)="openCreatePrintForm()"
     (back)="showDashboardView()"
   ></print-calendar>
+
+  <section class="projects-page" *ngIf="activeView === 'projects'">
+    <article class="projects-panel">
+      <div class="projects-space-bg" aria-hidden="true">
+        <span class="space-star project-star-one"></span>
+        <span class="space-star project-star-two"></span>
+        <span class="space-star project-star-three"></span>
+        <span class="space-star project-star-four"></span>
+        <span class="space-star project-star-five"></span>
+        <span class="space-star project-star-six"></span>
+        <span class="space-star project-star-seven"></span>
+        <span class="space-star project-star-eight"></span>
+        <span class="space-star project-star-nine"></span>
+        <span class="space-star project-star-ten"></span>
+        <span class="space-star project-star-eleven"></span>
+        <span class="space-star project-star-twelve"></span>
+        <span class="space-star project-star-thirteen"></span>
+        <span class="space-star project-star-fourteen"></span>
+        <span class="space-star project-star-fifteen"></span>
+        <span class="space-planet project-planet-one"></span>
+        <span class="space-planet project-planet-two"></span>
+        <span class="space-planet project-planet-three"></span>
+        <span class="space-planet project-planet-four"></span>
+        <span class="space-planet project-planet-five"></span>
+        <span class="space-comet project-comet-one"></span>
+        <span class="space-comet project-comet-two"></span>
+        <span class="space-comet project-comet-three"></span>
+        <span class="space-comet project-comet-four"></span>
+        <span class="space-comet project-comet-five"></span>
+      </div>
+
+      <div class="projects-header">
+        <div>
+          <p class="modal-eyebrow">Projects</p>
+          <h2>Projects</h2>
+        </div>
+        <div class="projects-actions">
+          <button type="button" class="primary-modal-button" (click)="openCreateProjectForm()">Add project</button>
+          <button type="button" class="secondary-modal-button" (click)="showDashboardView()">Back to dashboard</button>
+        </div>
+      </div>
+      <div class="projects-grid" *ngIf="projects.length; else noProjects">
+        <article class="project-card" *ngFor="let project of projects" tabindex="0" role="button" (click)="openProject(project)" (keydown.enter)="openProject(project)">
+          <div class="project-card-image">
+            <img *ngIf="project.image; else projectCardPlaceholder" [src]="project.image" alt="" />
+            <ng-template #projectCardPlaceholder>
+              <span class="project-cube-placeholder"></span>
+            </ng-template>
+          </div>
+          <div class="project-card-copy">
+            <p>{{ project.startDate | date:'d MMMM y' }}</p>
+            <h3>{{ project.name }}</h3>
+            <span>{{ project.tasks.length }} tasks</span>
+          </div>
+          <p class="project-card-description">{{ project.description || 'No description yet.' }}</p>
+        </article>
+      </div>
+
+      <ng-template #noProjects>
+      <div class="projects-empty-state">
+        <span class="rocket-icon large-rocket" aria-hidden="true"></span>
+        <p>No projects yet.</p>
+      </div>
+      </ng-template>
+    </article>
+  </section>
+
+  <section class="project-board-page" *ngIf="activeView === 'project-board' && selectedProject as project">
+    <article class="project-board-panel">
+      <div class="project-board-header">
+        <div>
+          <p class="modal-eyebrow">Project follow-up</p>
+          <h2>{{ project.name }}</h2>
+          <span>{{ project.startDate | date:'d MMMM y' }} · {{ project.tasks.length }} tasks</span>
+        </div>
+        <div class="projects-actions">
+          <button type="button" class="danger-modal-button compact-danger-button" (click)="deleteSelectedProject()">Delete project</button>
+          <button type="button" class="secondary-modal-button" (click)="showProjectsView()">Back to projects</button>
+        </div>
+      </div>
+
+      <div class="kanban-board">
+        <section
+          class="kanban-column"
+          *ngFor="let status of projectTaskStatuses"
+          (dragover)="$event.preventDefault()"
+          (drop)="dropTask(status)"
+        >
+          <div class="kanban-column-header">
+            <h3>{{ status }}</h3>
+            <div class="kanban-column-actions">
+              <button
+                *ngIf="status === 'to do'"
+                type="button"
+                class="kanban-add-task-button"
+                aria-label="Add task"
+                title="Add task"
+                (click)="openCreateProjectTaskForm()"
+              >+</button>
+              <span>{{ getProjectTasksByStatus(status).length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-task-list">
+            <article
+              class="kanban-task-card"
+              [ngClass]="getProjectTaskStatusClass(task.status)"
+              *ngFor="let task of getProjectTasksByStatus(status)"
+              draggable="true"
+              (dragstart)="startTaskDrag(task)"
+              (dragend)="clearTaskDrag()"
+              (click)="selectedProjectTask = task"
+              tabindex="0"
+              role="button"
+              (keydown.enter)="selectedProjectTask = task"
+            >
+              <div class="kanban-task-image">
+                <img *ngIf="task.picture; else taskCardPlaceholder" [src]="task.picture" alt="" />
+                <ng-template #taskCardPlaceholder>
+                  <span class="project-cube-placeholder"></span>
+                </ng-template>
+              </div>
+              <strong>{{ task.name }}</strong>
+              <small>{{ task.status }}</small>
+            </article>
+          </div>
+        </section>
+      </div>
+    </article>
+  </section>
 </main>

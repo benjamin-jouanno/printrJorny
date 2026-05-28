@@ -34,6 +34,7 @@ export class PrtjryHeaderComponent {
   @Output() exportProfile = new EventEmitter<void>();
   @Output() toggleTheme = new EventEmitter<void>();
   @Output() openPrinterSettings = new EventEmitter<void>();
+  @Output() openProjects = new EventEmitter<void>();
   isSettingsMenuOpen = false;
 
   get initials(): string {

@@ -41,6 +41,10 @@
   background: var(--app-background);
 }
 
+:host.projects-list-view::before {
+  background: #0c121d;
+}
+
 :host.light-theme {
   --app-background:
     radial-gradient(circle at 14% 8%, rgba(72, 191, 227, 0.42), transparent 28rem),
@@ -69,6 +73,10 @@
   --scroll-track: rgba(15, 23, 42, 0.08);
   --scroll-thumb: rgba(12, 166, 120, 0.34);
   --scroll-thumb-hover: rgba(12, 166, 120, 0.5);
+}
+
+:host.light-theme.projects-list-view::before {
+  background: #fbfdff;
 }
 
 .app-titlebar {
@@ -315,9 +323,36 @@
   color: #ff9aa2;
 }
 
+.primary-modal-button,
+.secondary-modal-button,
+.danger-modal-button {
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.primary-modal-button:hover,
+.primary-modal-button:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 12px 24px rgba(52, 211, 153, 0.2);
+  transform: translateY(-1px);
+}
+
+.secondary-modal-button:hover,
+.secondary-modal-button:focus-visible {
+  border-color: var(--accent-border);
+  color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
 .danger-modal-button:hover {
   background: #ff6b6b;
   color: var(--accent-contrast);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.14), 0 12px 24px rgba(255, 107, 107, 0.2);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 800px) {

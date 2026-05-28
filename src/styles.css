@@ -462,6 +462,1049 @@ app-root .center-stack {
   min-width: 0;
 }
 
+app-root .projects-page {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+}
+
+app-root .projects-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent-2) 24%, transparent), transparent 26rem),
+    radial-gradient(circle at 82% 22%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 24rem),
+    var(--panel-bg);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(18px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  padding: 24px;
+}
+
+app-root .projects-space-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+app-root .projects-space-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 46%, transparent) 0 1.6px, transparent 2.6px),
+    radial-gradient(circle at 28% 68%, color-mix(in srgb, var(--accent-2) 52%, transparent) 0 1.4px, transparent 2.4px),
+    radial-gradient(circle at 46% 26%, rgba(255, 255, 255, 0.32) 0 1.2px, transparent 2.2px),
+    radial-gradient(circle at 62% 76%, color-mix(in srgb, var(--accent) 38%, transparent) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 86% 42%, color-mix(in srgb, var(--accent-2) 48%, transparent) 0 1.5px, transparent 2.5px);
+  opacity: 0.84;
+}
+
+app-root .projects-header,
+app-root .projects-empty-state {
+  position: relative;
+  z-index: 1;
+}
+
+app-root .projects-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+app-root .projects-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+app-root .projects-header h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.8rem;
+}
+
+app-root .projects-empty-state {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+app-root .projects-empty-state p {
+  margin: 0;
+  color: var(--text-soft);
+  font-weight: 800;
+}
+
+app-root .large-rocket {
+  width: 34px;
+  height: 44px;
+  color: var(--accent);
+}
+
+app-root .projects-grid {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  align-content: start;
+  gap: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 6px 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+app-root .projects-grid::-webkit-scrollbar {
+  width: 10px;
+}
+
+app-root .projects-grid::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 999px;
+}
+
+app-root .projects-grid::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border: 2px solid var(--scroll-track);
+  border-radius: 999px;
+}
+
+app-root .project-card {
+  min-width: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg-strong);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+app-root .project-card:hover,
+app-root .project-card:focus-visible {
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--accent) 6%, var(--panel-bg-strong));
+}
+
+app-root .project-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+app-root .project-card-image {
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+app-root .project-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+app-root .project-card-copy {
+  min-width: 0;
+}
+
+app-root .project-card-copy p {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+app-root .project-card-copy h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.05rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+app-root .project-card-copy span {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+app-root .project-card-description {
+  min-height: 2.6em;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+app-root .project-form-modal {
+  width: min(560px, 100%);
+}
+
+app-root .project-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+app-root .project-form-header .close-button {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #ff6fd8;
+  color: transparent;
+  font-size: 0;
+  cursor: pointer;
+}
+
+app-root .project-form-header .close-button::before,
+app-root .project-form-header .close-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(65, 6, 50, 0.7);
+  opacity: 0;
+  transition: opacity 140ms ease;
+  transform-origin: center;
+}
+
+app-root .project-form-header .close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+app-root .project-form-header .close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+app-root .project-form-header .close-button:hover::before,
+app-root .project-form-header .close-button:hover::after {
+  opacity: 1;
+}
+
+app-root .project-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+app-root .project-form .modal-actions {
+  grid-column: 1 / -1;
+}
+
+app-root .project-form .field,
+app-root .project-image-actions {
+  display: grid;
+  gap: 8px;
+}
+
+app-root .project-form .field-wide,
+app-root .project-image-field {
+  grid-column: 1 / -1;
+}
+
+app-root .project-form .field span {
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+app-root .project-form input,
+app-root .project-form select,
+app-root .project-form textarea {
+  width: 100%;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--field-bg);
+  color: var(--text-main);
+  font: inherit;
+  outline: none;
+}
+
+app-root .project-form input {
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+app-root .project-form select {
+  min-height: 46px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%) right 18px center / 7px 7px no-repeat,
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%) right 13px center / 7px 7px no-repeat,
+    var(--field-bg);
+  cursor: pointer;
+  padding: 0 42px 0 14px;
+}
+
+app-root .project-form textarea {
+  min-height: 104px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+app-root .project-form input:focus,
+app-root .project-form select:focus,
+app-root .project-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+app-root .rich-text-toolbar {
+  border: 1px solid var(--panel-border);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--field-bg);
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+}
+
+app-root .rich-text-toolbar button {
+  min-width: 34px;
+  height: 30px;
+  border: 1px solid var(--panel-border);
+  border-radius: 7px;
+  background: var(--panel-bg-strong);
+  color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+app-root .rich-text-toolbar button:hover,
+app-root .rich-text-toolbar button:focus-visible {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+app-root .rich-text-editor {
+  min-height: 200px;
+  max-height: 340px;
+  overflow-y: auto;
+  border: 1px solid var(--panel-border);
+  border-radius: 0 0 8px 8px;
+  background: var(--field-bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  outline: none;
+  padding: 12px;
+}
+
+app-root .rich-text-editor:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+app-root .rich-text-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+}
+
+app-root .rich-text-editor ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+app-root .project-image-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+app-root .project-image-preview {
+  width: 96px;
+  height: 96px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+app-root .project-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+app-root .project-image-button {
+  min-height: 40px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  color: var(--text-main);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 0 14px;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+app-root .project-image-button:hover,
+app-root .project-image-button:focus-within {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+app-root .project-image-button input {
+  display: none;
+}
+
+app-root .project-remove-image-button {
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  color: #ff9aa2;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+app-root .project-remove-image-button:hover,
+app-root .project-remove-image-button:focus-visible {
+  color: #ff6b6b;
+  transform: translateY(-1px);
+}
+
+app-root .project-cube-placeholder {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  transform: rotateX(58deg) rotateZ(45deg);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+app-root .project-cube-placeholder::before,
+app-root .project-cube-placeholder::after {
+  content: '';
+  position: absolute;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-2) 14%, transparent);
+}
+
+app-root .project-cube-placeholder::before {
+  inset: 10px -15px -15px 10px;
+}
+
+app-root .project-cube-placeholder::after {
+  inset: -15px 10px 10px -15px;
+}
+
+app-root .project-board-page {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+}
+
+app-root .project-board-panel {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(18px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 18px;
+  min-height: 0;
+  padding: 24px;
+}
+
+app-root .project-board-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+app-root .project-board-header h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.8rem;
+}
+
+app-root .project-board-header span {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 750;
+}
+
+app-root .compact-danger-button {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+}
+
+app-root .kanban-board {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(220px, 1fr));
+  gap: 12px;
+  overflow: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+app-root .kanban-column {
+  min-height: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+app-root .kanban-column-header {
+  border-bottom: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+}
+
+app-root .kanban-column-header h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 0.86rem;
+  text-transform: capitalize;
+}
+
+app-root .kanban-column-header span {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+app-root .kanban-column-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+app-root .kanban-add-task-button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: 0;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+app-root .kanban-add-task-button:hover,
+app-root .kanban-add-task-button:focus-visible {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+app-root .kanban-task-list {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+app-root .kanban-task-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg-strong);
+  box-shadow: inset 0 0 0 1px transparent;
+  display: grid;
+  gap: 9px;
+  cursor: grab;
+  padding: 10px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+app-root .kanban-task-card:hover,
+app-root .kanban-task-card:focus-visible {
+  border-color: var(--accent-border);
+}
+
+app-root .kanban-task-card:active {
+  cursor: grabbing;
+}
+
+app-root .kanban-task-image {
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+app-root .kanban-task-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+app-root .kanban-task-card strong {
+  color: var(--text-main);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+app-root .kanban-task-card small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+app-root .kanban-task-card.task-status-doing,
+app-root .task-status-tag.task-status-doing {
+  --task-state-color: #4aa3ff;
+  --task-state-soft: rgba(74, 163, 255, 0.12);
+}
+
+app-root .kanban-task-card.task-status-on-hold,
+app-root .task-status-tag.task-status-on-hold {
+  --task-state-color: #f6a94d;
+  --task-state-soft: rgba(246, 169, 77, 0.12);
+}
+
+app-root .kanban-task-card.task-status-ready-for-review,
+app-root .task-status-tag.task-status-ready-for-review {
+  --task-state-color: #8b5cf6;
+  --task-state-soft: rgba(139, 92, 246, 0.14);
+}
+
+app-root .kanban-task-card.task-status-done,
+app-root .task-status-tag.task-status-done {
+  --task-state-color: #34d399;
+  --task-state-soft: rgba(52, 211, 153, 0.12);
+}
+
+app-root .kanban-task-card.task-status-discontinued,
+app-root .task-status-tag.task-status-discontinued {
+  --task-state-color: #ff6b6b;
+  --task-state-soft: rgba(255, 107, 107, 0.12);
+}
+
+app-root .kanban-task-card.task-status-doing,
+app-root .kanban-task-card.task-status-on-hold,
+app-root .kanban-task-card.task-status-ready-for-review,
+app-root .kanban-task-card.task-status-done,
+app-root .kanban-task-card.task-status-discontinued {
+  border-color: color-mix(in srgb, var(--task-state-color) 42%, var(--panel-border));
+  background:
+    linear-gradient(135deg, var(--task-state-soft), transparent 58%),
+    var(--panel-bg-strong);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--task-state-color) 24%, transparent),
+    0 0 18px color-mix(in srgb, var(--task-state-color) 12%, transparent),
+    0 12px 28px color-mix(in srgb, var(--task-state-color) 8%, transparent);
+}
+
+app-root .kanban-task-card.task-status-doing:hover,
+app-root .kanban-task-card.task-status-doing:focus-visible,
+app-root .kanban-task-card.task-status-on-hold:hover,
+app-root .kanban-task-card.task-status-on-hold:focus-visible,
+app-root .kanban-task-card.task-status-ready-for-review:hover,
+app-root .kanban-task-card.task-status-ready-for-review:focus-visible,
+app-root .kanban-task-card.task-status-done:hover,
+app-root .kanban-task-card.task-status-done:focus-visible,
+app-root .kanban-task-card.task-status-discontinued:hover,
+app-root .kanban-task-card.task-status-discontinued:focus-visible {
+  border-color: var(--task-state-color);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--task-state-color) 42%, transparent),
+    0 0 0 3px var(--task-state-soft),
+    0 14px 30px color-mix(in srgb, var(--task-state-color) 16%, transparent);
+}
+
+app-root .project-task-details-modal {
+  width: min(440px, 100%);
+}
+
+app-root .task-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+app-root .task-title-row h2 {
+  margin: 0;
+}
+
+app-root .task-status-tag {
+  width: fit-content;
+  min-height: 26px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: capitalize;
+}
+
+app-root .task-status-tag.task-status-doing,
+app-root .task-status-tag.task-status-on-hold,
+app-root .task-status-tag.task-status-ready-for-review,
+app-root .task-status-tag.task-status-done,
+app-root .task-status-tag.task-status-discontinued {
+  border-color: color-mix(in srgb, var(--task-state-color) 54%, var(--panel-border));
+  background: var(--task-state-soft);
+  color: var(--task-state-color);
+}
+
+app-root .task-detail-image {
+  min-height: 220px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--card-bg);
+  margin-bottom: 16px;
+}
+
+app-root .task-detail-image img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+app-root .task-detail-meta {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 14px;
+}
+
+app-root .task-detail-meta span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+app-root .task-detail-meta strong {
+  color: var(--text-main);
+  text-transform: capitalize;
+}
+
+app-root .task-detail-description {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  margin-top: 12px;
+  padding: 14px;
+}
+
+app-root .task-detail-description span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+app-root .task-detail-description p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+app-root .task-detail-description ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+app-root .project-star-one {
+  left: 10%;
+  top: 12%;
+}
+
+app-root .project-star-two {
+  left: 24%;
+  top: 42%;
+  transform: scale(0.7);
+  animation-delay: 600ms;
+}
+
+app-root .project-star-three {
+  left: 42%;
+  top: 16%;
+  transform: scale(0.86);
+  animation-delay: 1100ms;
+}
+
+app-root .project-star-four {
+  right: 22%;
+  top: 28%;
+  transform: scale(0.68);
+  animation-delay: 1500ms;
+}
+
+app-root .project-star-five {
+  right: 12%;
+  bottom: 18%;
+  animation-delay: 2100ms;
+}
+
+app-root .project-star-six {
+  left: 56%;
+  bottom: 24%;
+  transform: scale(0.58);
+  animation-delay: 2600ms;
+}
+
+app-root .project-star-seven {
+  left: 18%;
+  bottom: 16%;
+  transform: scale(0.74);
+  animation-delay: 300ms;
+}
+
+app-root .project-star-eight {
+  left: 34%;
+  bottom: 34%;
+  transform: scale(0.52);
+  animation-delay: 1900ms;
+}
+
+app-root .project-star-nine {
+  left: 72%;
+  top: 14%;
+  transform: scale(0.62);
+  animation-delay: 2400ms;
+}
+
+app-root .project-star-ten {
+  right: 7%;
+  top: 52%;
+  transform: scale(0.82);
+  animation-delay: 800ms;
+}
+
+app-root .project-star-eleven {
+  left: 7%;
+  top: 68%;
+  transform: scale(0.48);
+  animation-delay: 1700ms;
+}
+
+app-root .project-star-twelve {
+  left: 64%;
+  bottom: 12%;
+  transform: scale(0.7);
+  animation-delay: 2800ms;
+}
+
+app-root .project-star-thirteen {
+  left: 82%;
+  bottom: 36%;
+  transform: scale(0.44);
+  animation-delay: 3600ms;
+}
+
+app-root .project-star-fourteen {
+  left: 48%;
+  top: 58%;
+  transform: scale(0.56);
+  animation-delay: 1300ms;
+}
+
+app-root .project-star-fifteen {
+  left: 3%;
+  top: 30%;
+  transform: scale(0.66);
+  animation-delay: 3200ms;
+}
+
+app-root .project-planet-one {
+  left: 14%;
+  bottom: 26%;
+  width: 42px;
+  height: 42px;
+  animation: planet-float 6.4s ease-in-out infinite;
+}
+
+app-root .project-planet-one::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 17px;
+  width: 68px;
+  height: 10px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  transform: rotate(-16deg);
+}
+
+app-root .project-planet-two {
+  right: 18%;
+  top: 18%;
+  width: 24px;
+  height: 24px;
+  animation: planet-float 5.2s ease-in-out infinite reverse;
+}
+
+app-root .project-planet-three {
+  right: 34%;
+  bottom: 20%;
+  width: 15px;
+  height: 15px;
+  opacity: 0.76;
+  animation: planet-float 5.8s ease-in-out infinite;
+}
+
+app-root .project-planet-four {
+  left: 48%;
+  top: 34%;
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+  opacity: 0.68;
+  animation: planet-float 6.8s ease-in-out infinite reverse;
+  animation-delay: 1200ms;
+}
+
+app-root .project-planet-five {
+  right: 7%;
+  bottom: 12%;
+  width: 20px;
+  height: 20px;
+  border-color: var(--accent-2);
+  background: color-mix(in srgb, var(--accent-2) 18%, transparent);
+  opacity: 0.72;
+  animation: planet-float 5.6s ease-in-out infinite;
+  animation-delay: 2200ms;
+}
+
+app-root .project-comet-one {
+  top: 22%;
+  animation-duration: 7.4s;
+}
+
+app-root .project-comet-two {
+  top: 52%;
+  width: 54px;
+  opacity: 0.72;
+  animation-duration: 9.2s;
+  animation-delay: 1800ms;
+}
+
+app-root .project-comet-three {
+  top: 78%;
+  width: 36px;
+  opacity: 0.64;
+  animation-duration: 10s;
+  animation-delay: 3200ms;
+}
+
+app-root .project-comet-four {
+  top: 36%;
+  width: 30px;
+  opacity: 0.58;
+  animation-duration: 11.4s;
+  animation-delay: 4200ms;
+}
+
+app-root .project-comet-five {
+  top: 66%;
+  width: 48px;
+  opacity: 0.68;
+  animation-duration: 8.8s;
+  animation-delay: 900ms;
+}
+
 print-form .print-image-field {
   display: flex;
   align-items: center;
@@ -607,6 +1650,66 @@ prtjry-header .header-accent-content {
   grid-template-rows: auto minmax(0, 1fr);
   gap: 18px;
   min-width: 0;
+}
+
+prtjry-header .projects-link-button {
+  position: absolute;
+  z-index: 3;
+  top: 14px;
+  right: 14px;
+  min-height: 34px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel-bg-strong);
+  color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0 12px;
+}
+
+prtjry-header .projects-link-button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+prtjry-header .projects-link-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.rocket-icon {
+  position: relative;
+  width: 15px;
+  height: 19px;
+  flex: 0 0 auto;
+  display: inline-block;
+  transform: rotate(42deg);
+}
+
+.rocket-icon::before {
+  content: '';
+  position: absolute;
+  inset: 1px 4px 3px;
+  border: 2px solid currentColor;
+  border-radius: 8px 8px 3px 3px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.rocket-icon::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  bottom: -2px;
+  width: 5px;
+  height: 7px;
+  border-radius: 999px;
+  background: #f29d38;
+  box-shadow: 0 0 12px rgba(242, 157, 56, 0.38);
 }
 
 prtjry-header .header-accent-copy {
@@ -1079,6 +2182,15 @@ app-root.light-theme .github-menu-item:hover {
 }
 
 @media (max-width: 560px) {
+  app-root .project-form {
+    grid-template-columns: 1fr;
+  }
+
+  app-root .project-image-field {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   prtjry-header .hero-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

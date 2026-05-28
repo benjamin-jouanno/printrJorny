@@ -2,6 +2,8 @@
 
 Printr Jorny is a desktop app for tracking 3D printing history, filament inventory, print outcomes, and cost over time. It is built with Angular and Tauri, so it runs as a lightweight desktop application while keeping the interface fast and local-first.
 
+Current version: `0.2.0`
+
 ## What It Does
 
 - Create and switch between multiple printer profiles.
@@ -14,7 +16,10 @@ Printr Jorny is a desktop app for tracking 3D printing history, filament invento
 - View dashboard stats for total filament, total cost, successful prints, failed prints, and poorly done prints.
 - Review charted filament usage and cost over time.
 - Browse long print histories in a calendar view with week, month, and year modes.
-- Import and export full profiles with their print history and filament inventory.
+- Create projects with images, descriptions, start dates, and project-specific tasks.
+- Track project tasks on a kanban board with to do, doing, on hold, ready for review, done, and discontinued states.
+- Drag tasks between kanban columns, add rich task descriptions, attach task pictures, edit tasks, and delete projects or tasks.
+- Import and export full profiles with their print history, filament inventory, and projects.
 - Open printer details from the dashboard header.
 - Configure optional Bambu local live status for Bambu printer profiles.
 - Show printer reachability in the header, with progress UI ready when print progress data is available.
@@ -23,9 +28,9 @@ Printr Jorny is a desktop app for tracking 3D printing history, filament invento
 
 ## Data Storage
 
-The app stores profile, print, theme, and filament inventory data locally in browser storage through the Tauri webview. There is no account system or external backend.
+The app stores profile, print, theme, filament inventory, and project data locally in browser storage through the Tauri webview. There is no account system or external backend.
 
-Profiles can be exported as `.printrjorny` files from the profile settings menu, then imported from the profile selection screen. This is useful for backups or moving a profile to another computer.
+Profiles can be exported as `.printrjorny` files from the profile settings menu, then imported from the profile selection screen. Exports include print history, filament inventory, and projects, which is useful for backups or moving a profile to another computer.
 
 ## Bambu Live Status
 
@@ -40,11 +45,15 @@ The first live-status version checks whether the printer is reachable from the i
 
 Live status requires the Tauri desktop app. It will show as desktop-only when running the Angular app directly in a browser.
 
-## Instalation
+## Installation
 
 Currently the application support only windows, you can go ahead and download the installer here:
 
-[Printr-Jorny-v1.1-en-US](link)
+[Printr-Jorny-v0.2.0-en-US](link)
+
+## Version 0.2.0
+
+This release adds the projects feature: project cards, an animated projects view, per-project kanban boards, rich task details, drag-and-drop task status updates, task editing, and project/task deletion.
 
 ## Development
 
