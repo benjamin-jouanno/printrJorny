@@ -182,6 +182,20 @@
     </section>
   </div>
 
+  <div class="modal-backdrop" *ngIf="projectTaskPendingCompletion as task" (click)="cancelProjectTaskStatusChange()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow">Complete task</p>
+      <h2>{{ task.name }}</h2>
+      <p class="modal-copy">
+        Moving this task to done will add {{ task.prints.length }} linked print{{ task.prints.length === 1 ? '' : 's' }} to your print history.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="cancelProjectTaskStatusChange()">Cancel</button>
+        <button type="button" class="primary-modal-button" (click)="confirmProjectTaskStatusChange()">Add prints and mark done</button>
+      </div>
+    </section>
+  </div>
+
   <div class="modal-backdrop" *ngIf="isProjectFormOpen" (click)="closeProjectForm()">
     <section class="notification-modal project-form-modal" (click)="$event.stopPropagation()">
       <div class="project-form-header">
@@ -233,7 +247,7 @@
   </div>
 
   <div class="modal-backdrop" *ngIf="isProjectTaskFormOpen" (click)="closeProjectTaskForm()">
-    <section class="notification-modal project-form-modal" (click)="$event.stopPropagation()">
+    <section class="notification-modal project-form-modal project-task-form-modal" (click)="$event.stopPropagation()">
       <div class="project-form-header">
         <div>
           <p class="modal-eyebrow">{{ isEditingProjectTask ? 'Edit task' : 'New task' }}</p>
@@ -242,7 +256,7 @@
         <button type="button" class="close-button" aria-label="Close task form" (click)="closeProjectTaskForm()">x</button>
       </div>
 
-      <form class="project-form" #taskNgForm="ngForm" (ngSubmit)="saveProjectTask()">
+      <form class="project-form" #taskNgForm="ngForm" (ngSubmit)="saveProjectTask()" (click)="closeProjectTaskPrintMenus()">
         <div class="project-image-field">
           <div class="project-image-preview" aria-hidden="true">
             <img *ngIf="projectTaskForm.picture; else taskPicturePlaceholder" [src]="projectTaskForm.picture" alt="" />
@@ -283,6 +297,140 @@
           ></div>
         </div>
 
+        <div class="field field-wide task-prints-field">
+          <div class="task-prints-header">
+            <span>Prints linked to this task</span>
+            <button type="button" class="project-image-button compact-task-print-button" (click)="addProjectTaskPrint()">Add print</button>
+          </div>
+
+          <div class="task-print-list" *ngIf="projectTaskForm.prints.length; else noTaskPrints">
+            <article class="task-print-editor" *ngFor="let print of projectTaskForm.prints; let printIndex = index">
+              <div class="task-print-editor-header">
+                <strong>Print {{ printIndex + 1 }}</strong>
+                <button type="button" class="project-remove-image-button" (click)="removeProjectTaskPrint(printIndex)">Remove</button>
+              </div>
+
+              <div class="task-print-image-field">
+                <div class="task-print-image-preview" aria-hidden="true">
+                  <img *ngIf="print.image; else taskPrintImagePlaceholder" [src]="print.image" alt="" />
+                  <ng-template #taskPrintImagePlaceholder>
+                    <span class="project-cube-placeholder"></span>
+                  </ng-template>
+                </div>
+                <div class="project-image-actions">
+                  <label class="project-image-button">
+                    <input type="file" accept="image/*" (change)="onProjectTaskPrintImageSelected($event, printIndex)" />
+                    <span>{{ print.image ? 'Change picture' : 'Add picture' }}</span>
+                  </label>
+                  <button *ngIf="print.image" type="button" class="project-remove-image-button" (click)="removeProjectTaskPrintImage(printIndex)">Remove picture</button>
+                </div>
+              </div>
+
+              <label class="field field-wide">
+                <span>Print name <span class="required-mark">*</span></span>
+                <input type="text" [name]="'taskPrintName' + printIndex" [(ngModel)]="print.name" required />
+              </label>
+
+              <label class="field task-print-half-field">
+                <span>Date <span class="required-mark">*</span></span>
+                <input type="date" [name]="'taskPrintDate' + printIndex" [(ngModel)]="print.date" required />
+              </label>
+
+              <label class="field task-print-half-field">
+                <span>Status <span class="required-mark">*</span></span>
+                <input type="text" class="task-print-hidden-input" [name]="'taskPrintStatus' + printIndex" [(ngModel)]="print.status" required />
+                <div class="task-print-select" [class.is-open]="openTaskPrintStatusIndex === printIndex" (click)="$event.stopPropagation()">
+                  <button type="button" class="task-print-select-button" (click)="toggleTaskPrintStatusMenu(printIndex)">
+                    {{ print.status }}
+                  </button>
+                  <div class="task-print-select-options" *ngIf="openTaskPrintStatusIndex === printIndex">
+                    <button
+                      type="button"
+                      class="task-print-select-option"
+                      *ngFor="let status of printStatuses"
+                      [class.is-selected]="status === print.status"
+                      (click)="chooseTaskPrintStatus(printIndex, status)"
+                    >
+                      {{ status }}
+                    </button>
+                  </div>
+                </div>
+              </label>
+
+              <label class="field field-wide">
+                <span>Filament <span class="required-mark">*</span></span>
+                <input type="text" class="task-print-hidden-input" [name]="'taskPrintFilament' + printIndex" [(ngModel)]="print.filamentId" required />
+                <div class="task-print-select" [class.is-open]="openTaskPrintFilamentIndex === printIndex" (click)="$event.stopPropagation()">
+                  <button type="button" class="task-print-select-button" (click)="toggleTaskPrintFilamentMenu(printIndex)">
+                    {{ getTaskPrintFilamentName(print) }}
+                  </button>
+                  <div class="task-print-select-options" *ngIf="openTaskPrintFilamentIndex === printIndex">
+                    <button
+                      type="button"
+                      class="task-print-select-option"
+                      *ngFor="let filament of filamentInventory"
+                      [class.is-selected]="filament.id === print.filamentId"
+                      (click)="chooseTaskPrintFilament(printIndex, filament.id)"
+                    >
+                      <span class="task-print-filament-dot" [style.background]="filament.color" aria-hidden="true"></span>
+                      <span>{{ filament.name }} - {{ filament.quantityGrams }} g left</span>
+                    </button>
+                  </div>
+                </div>
+              </label>
+
+              <label class="field task-print-half-field">
+                <span>Filament (g) <span class="required-mark">*</span></span>
+                <input type="number" [name]="'taskPrintFilamentUsed' + printIndex" [(ngModel)]="print.filament" min="0" step="0.1" required />
+              </label>
+
+              <label class="field task-print-half-field">
+                <span>Cost <span class="required-mark">*</span></span>
+                <input type="number" [name]="'taskPrintCost' + printIndex" [(ngModel)]="print.cost" min="0" step="0.01" required />
+              </label>
+
+              <label class="field field-wide">
+                <span>Duration <span class="required-mark">*</span></span>
+                <input type="text" class="task-print-hidden-input" [name]="'taskPrintTime' + printIndex" [(ngModel)]="print.time" required />
+                <span class="task-print-duration-inputs">
+                  <label>
+                    <input
+                      type="number"
+                      [name]="'taskPrintDurationHours' + printIndex"
+                      [ngModel]="getTaskPrintDurationHours(print)"
+                      (ngModelChange)="updateTaskPrintDuration(printIndex, 'hours', $event)"
+                      min="0"
+                      step="1"
+                    />
+                    <span>Hours</span>
+                  </label>
+                  <label>
+                    <input
+                      type="number"
+                      [name]="'taskPrintDurationMinutes' + printIndex"
+                      [ngModel]="getTaskPrintDurationMinutes(print)"
+                      (ngModelChange)="updateTaskPrintDuration(printIndex, 'minutes', $event)"
+                      min="0"
+                      max="59"
+                      step="1"
+                    />
+                    <span>Minutes</span>
+                  </label>
+                </span>
+              </label>
+
+              <label class="field field-wide">
+                <span>Description</span>
+                <textarea [name]="'taskPrintDescription' + printIndex" [(ngModel)]="print.description" rows="2"></textarea>
+              </label>
+            </article>
+          </div>
+
+          <ng-template #noTaskPrints>
+            <p class="task-prints-empty">No prints linked yet.</p>
+          </ng-template>
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="secondary-modal-button" (click)="cancelProjectTaskForm()">Cancel</button>
           <button type="submit" class="primary-modal-button" [disabled]="taskNgForm.invalid">{{ isEditingProjectTask ? 'Save task' : 'Create task' }}</button>
@@ -316,6 +464,20 @@
         <div *ngIf="selectedProjectTask.description; else emptyTaskDescription" [innerHTML]="selectedProjectTask.description"></div>
         <ng-template #emptyTaskDescription>
           <p>No description yet.</p>
+        </ng-template>
+      </div>
+
+      <div class="task-detail-prints">
+        <span>Linked prints</span>
+        <div class="task-detail-print-list" *ngIf="selectedProjectTask.prints.length; else emptyLinkedPrints">
+          <article class="task-detail-print-card" *ngFor="let print of selectedProjectTask.prints">
+            <strong>{{ print.name }}</strong>
+            <small>{{ print.date | date:'d MMM y' }} - {{ print.time }} - {{ print.filament | number:'1.0-2' }} g</small>
+            <em>{{ getTaskPrintFilamentName(print) }}</em>
+          </article>
+        </div>
+        <ng-template #emptyLinkedPrints>
+          <p>No prints linked yet.</p>
         </ng-template>
       </div>
 
@@ -445,7 +607,9 @@
       <div class="kanban-board">
         <section
           class="kanban-column"
+          [class.is-drag-over]="hoveredTaskDropStatus === status"
           *ngFor="let status of projectTaskStatuses"
+          [attr.data-task-status]="status"
           (dragover)="$event.preventDefault()"
           (drop)="dropTask(status)"
         >
@@ -469,16 +633,19 @@
               class="kanban-task-card"
               [ngClass]="getProjectTaskStatusClass(task.status)"
               *ngFor="let task of getProjectTasksByStatus(status)"
-              draggable="true"
-              (dragstart)="startTaskDrag(task)"
-              (dragend)="clearTaskDrag()"
-              (click)="selectedProjectTask = task"
+              draggable="false"
+              (dragstart)="$event.preventDefault()"
+              (pointerdown)="startTaskPointerDrag(task, $event)"
+              (pointermove)="trackTaskPointerDrag($event)"
+              (pointerup)="finishTaskPointerDrag($event)"
+              (pointercancel)="clearTaskDrag()"
+              (click)="openProjectTaskDetails(task)"
               tabindex="0"
               role="button"
-              (keydown.enter)="selectedProjectTask = task"
+              (keydown.enter)="openProjectTaskDetails(task)"
             >
               <div class="kanban-task-image">
-                <img *ngIf="task.picture; else taskCardPlaceholder" [src]="task.picture" alt="" />
+                <img *ngIf="task.picture; else taskCardPlaceholder" [src]="task.picture" alt="" draggable="false" />
                 <ng-template #taskCardPlaceholder>
                   <span class="project-cube-placeholder"></span>
                 </ng-template>

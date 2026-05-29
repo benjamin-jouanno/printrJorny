@@ -666,6 +666,32 @@ app-root .project-form-modal {
   width: min(560px, 100%);
 }
 
+app-root .project-task-form-modal {
+  width: min(1120px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+app-root .project-task-form-modal::-webkit-scrollbar,
+app-root .project-task-details-modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+app-root .project-task-form-modal::-webkit-scrollbar-track,
+app-root .project-task-details-modal::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 999px;
+}
+
+app-root .project-task-form-modal::-webkit-scrollbar-thumb,
+app-root .project-task-details-modal::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border: 2px solid var(--scroll-track);
+  border-radius: 999px;
+}
+
 app-root .project-form-header {
   display: flex;
   align-items: flex-start;
@@ -764,12 +790,32 @@ app-root .project-form input {
 app-root .project-form select {
   min-height: 46px;
   appearance: none;
+  -webkit-appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent-2) 50%) right 18px center / 7px 7px no-repeat,
+    linear-gradient(135deg, var(--accent-2) 50%, transparent 50%) right 13px center / 7px 7px no-repeat,
+    var(--field-bg);
+  cursor: pointer;
+  font-weight: 750;
+  padding: 0 42px 0 14px;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+app-root .project-form select:hover {
+  border-color: var(--accent-border);
   background:
     linear-gradient(45deg, transparent 50%, var(--accent) 50%) right 18px center / 7px 7px no-repeat,
     linear-gradient(135deg, var(--accent) 50%, transparent 50%) right 13px center / 7px 7px no-repeat,
-    var(--field-bg);
-  cursor: pointer;
-  padding: 0 42px 0 14px;
+    var(--field-bg-hover);
+}
+
+app-root .project-form select option {
+  background: var(--panel-bg-strong);
+  color: var(--text-main);
 }
 
 app-root .project-form textarea {
@@ -864,6 +910,216 @@ app-root .project-image-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+app-root .task-prints-field {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 14px;
+}
+
+app-root .task-prints-header,
+app-root .task-print-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+app-root .compact-task-print-button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+app-root .task-print-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+app-root .task-print-editor {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg-strong);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+app-root .task-print-editor-header,
+app-root .task-print-image-field {
+  grid-column: 1 / -1;
+}
+
+app-root .task-print-half-field {
+  grid-column: span 2;
+}
+
+app-root .task-print-editor-header strong {
+  color: var(--text-main);
+  font-size: 0.92rem;
+}
+
+app-root .task-print-image-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+app-root .task-print-image-preview {
+  width: 78px;
+  height: 78px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+app-root .task-print-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+app-root .task-prints-empty {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+app-root .task-print-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+app-root .task-print-duration-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+app-root .task-print-duration-inputs label {
+  display: grid;
+  gap: 6px;
+}
+
+app-root .task-print-duration-inputs label span {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+app-root .task-print-select {
+  position: relative;
+  min-width: 0;
+}
+
+app-root .task-print-select-button,
+app-root .task-print-select-option {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--field-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font: inherit;
+  font-weight: 750;
+  line-height: 1.2;
+  min-width: 0;
+  padding: 0 42px 0 14px;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+app-root .task-print-select-button {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+app-root .task-print-select-button::after {
+  content: '';
+  position: absolute;
+  right: 15px;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--accent-2);
+  border-bottom: 2px solid var(--accent-2);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+app-root .task-print-select-button:hover {
+  border-color: var(--accent-border);
+  background: var(--field-bg-hover);
+}
+
+app-root .task-print-select.is-open .task-print-select-button {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+app-root .task-print-select.is-open .task-print-select-button::after {
+  border-color: var(--accent);
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+app-root .task-print-select-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 220px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  overflow-y: auto;
+  background: var(--panel-bg-strong);
+  box-shadow: var(--shadow-panel);
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+app-root .task-print-select-option {
+  justify-content: flex-start;
+  min-height: 40px;
+  border-color: transparent;
+  padding: 0 10px;
+}
+
+app-root .task-print-select-option:hover,
+app-root .task-print-select-option.is-selected {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+app-root .task-print-filament-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 12%, transparent);
 }
 
 app-root .project-image-button {
@@ -1011,6 +1267,23 @@ app-root .kanban-column {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+app-root .kanban-column.is-drag-over {
+  border-color: var(--accent-border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 58%),
+    var(--card-bg);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent),
+    0 16px 34px color-mix(in srgb, var(--accent) 9%, transparent);
+  transform: translateY(-1px);
 }
 
 app-root .kanban-column-header {
@@ -1095,6 +1368,9 @@ app-root .kanban-task-card {
   gap: 9px;
   cursor: grab;
   padding: 10px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -1124,6 +1400,8 @@ app-root .kanban-task-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 app-root .kanban-task-card strong {
@@ -1202,7 +1480,11 @@ app-root .kanban-task-card.task-status-discontinued:focus-visible {
 }
 
 app-root .project-task-details-modal {
-  width: min(440px, 100%);
+  width: min(980px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 
 app-root .task-title-row {
@@ -1304,6 +1586,51 @@ app-root .task-detail-description p {
 app-root .task-detail-description ul {
   margin: 8px 0 0;
   padding-left: 20px;
+}
+
+app-root .task-detail-prints {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  margin-top: 12px;
+  padding: 14px;
+}
+
+app-root .task-detail-prints > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+app-root .task-detail-print-list {
+  display: grid;
+  gap: 8px;
+}
+
+app-root .task-detail-print-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-bg-strong);
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+app-root .task-detail-print-card strong {
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+app-root .task-detail-print-card small,
+app-root .task-detail-print-card em,
+app-root .task-detail-prints p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: normal;
 }
 
 app-root .project-star-one {
@@ -2099,6 +2426,14 @@ app-root.light-theme .github-menu-item:hover {
 }
 
 @media (max-width: 800px) {
+  app-root .task-print-editor {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  app-root .task-print-half-field {
+    grid-column: span 1;
+  }
+
   app-root .printer-details-grid {
     grid-template-columns: 1fr;
   }
@@ -2184,6 +2519,14 @@ app-root.light-theme .github-menu-item:hover {
 @media (max-width: 560px) {
   app-root .project-form {
     grid-template-columns: 1fr;
+  }
+
+  app-root .task-print-editor {
+    grid-template-columns: 1fr;
+  }
+
+  app-root .task-print-half-field {
+    grid-column: 1 / -1;
   }
 
   app-root .project-image-field {

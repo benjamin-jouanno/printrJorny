@@ -262,9 +262,23 @@
   padding: 24px;
 }
 
+.notification-modal.project-task-form-modal {
+  width: min(960px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.notification-modal.project-task-details-modal {
+  width: min(820px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
 .modal-eyebrow {
   margin: 0 0 8px;
-  color: #f29d38;
+  color: var(--accent-2);
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0;
