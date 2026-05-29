@@ -1,11 +1,14 @@
 import { Component, Input, AfterViewInit, OnChanges, OnDestroy, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IPrint } from '../../interfaces/print.interface';
+
+type GraphRange = 'last-7-days' | 'last-month' | 'last-year' | 'all-time';
 
 @Component({
   selector: 'dashboard-stats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard-stats.component.html',
   styleUrls: ['./dashboard-stats.component.css']
 })
@@ -20,6 +23,14 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
   @Input() themeMode: 'dark' | 'light' = 'dark';
 
   @ViewChild('chartCanvas', { static: false }) canvas!: ElementRef<HTMLCanvasElement>;
+  selectedGraphRange: GraphRange = 'last-7-days';
+  isGraphRangeMenuOpen = false;
+  readonly graphRanges: Array<{ label: string; value: GraphRange }> = [
+    { label: 'Last 7 days', value: 'last-7-days' },
+    { label: 'Last month', value: 'last-month' },
+    { label: 'Last year', value: 'last-year' },
+    { label: 'All time', value: 'all-time' }
+  ];
   private chart: any;
 
   ngAfterViewInit(): void {
@@ -38,13 +49,36 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
     }
   }
 
+  updateGraphRange(): void {
+    this.renderChart();
+  }
+
+  toggleGraphRangeMenu(): void {
+    this.isGraphRangeMenuOpen = !this.isGraphRangeMenuOpen;
+  }
+
+  closeGraphRangeMenu(): void {
+    this.isGraphRangeMenuOpen = false;
+  }
+
+  chooseGraphRange(range: GraphRange): void {
+    this.selectedGraphRange = range;
+    this.closeGraphRangeMenu();
+    this.renderChart();
+  }
+
+  getSelectedGraphRangeLabel(): string {
+    return this.graphRanges.find(range => range.value === this.selectedGraphRange)?.label || 'Last 7 days';
+  }
+
   private async renderChart() {
     if (!this.canvas) return;
     const module = await import('chart.js/auto');
     const Chart = (module as any).default ?? module;
 
     // prepare chronological data (oldest -> newest)
-    const sorted = [...(this.prints || [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const sorted = this.getFilteredPrints()
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     const labels = sorted.map(p => p.date);
     const filamentData = sorted.map(p => Number(p.filament ?? 0));
     const costData = sorted.map(p => Number(p.cost ?? 0));
@@ -221,5 +255,36 @@ export class DashboardStatsComponent implements AfterViewInit, OnChanges, OnDest
 
   getPoorlyDoneCount(): number {
     return this.prints.filter(print => print.status === 'passed poorly').length;
+  }
+
+  private getFilteredPrints(): IPrint[] {
+    const prints = [...(this.prints || [])];
+
+    if (this.selectedGraphRange === 'all-time') {
+      return prints;
+    }
+
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const startDate = new Date(today);
+
+    if (this.selectedGraphRange === 'last-7-days') {
+      startDate.setDate(today.getDate() - 6);
+    }
+
+    if (this.selectedGraphRange === 'last-month') {
+      startDate.setMonth(today.getMonth() - 1);
+    }
+
+    if (this.selectedGraphRange === 'last-year') {
+      startDate.setFullYear(today.getFullYear() - 1);
+    }
+
+    startDate.setHours(0, 0, 0, 0);
+
+    return prints.filter(print => {
+      const printDate = new Date(print.date);
+      return printDate >= startDate && printDate <= today;
+    });
   }
 }

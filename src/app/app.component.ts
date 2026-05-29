@@ -30,6 +30,13 @@ interface IPrintrJornyProfileFile {
   projects: IProject[];
 }
 
+interface IPrintrJornyProjectFile {
+  format: 'printr-jorny-project';
+  version: 1;
+  exportedAt: string;
+  project: IProject;
+}
+
 interface IPendingTaskStatusChange {
   taskId: string;
   status: ProjectTaskStatus;
@@ -107,6 +114,10 @@ export class AppComponent implements OnDestroy {
   readonly printStatuses = ['success', 'passed poorly', 'failed'];
   openTaskPrintStatusIndex: number | null = null;
   openTaskPrintFilamentIndex: number | null = null;
+  isEditingProjectName = false;
+  projectNameDraft = '';
+  pendingTaskDurationHours = 0;
+  pendingTaskDurationMinutes = 0;
   nozzleTemperature = 215;
   bedTemperature = 60;
   printProgress = 68;
@@ -135,6 +146,10 @@ export class AppComponent implements OnDestroy {
 
   get isEditingProjectTask(): boolean {
     return Boolean(this.projectTaskForm.id);
+  }
+
+  get hasPendingTaskDuration(): boolean {
+    return Number(this.pendingTaskDurationHours) > 0 || Number(this.pendingTaskDurationMinutes) > 0;
   }
 
   constructor() {
@@ -185,12 +200,37 @@ export class AppComponent implements OnDestroy {
     this.projectPendingDeletion = null;
     this.projectTaskPendingDeletion = null;
     this.projectTaskPendingStatusChange = null;
+    this.cancelProjectNameEdit();
   }
 
   openProject(project: IProject): void {
     this.selectedProjectId = project.id;
     this.selectedProjectTask = null;
+    this.cancelProjectNameEdit();
     this.activeView = 'project-board';
+  }
+
+  startProjectNameEdit(project: IProject): void {
+    this.projectNameDraft = project.name;
+    this.isEditingProjectName = true;
+  }
+
+  saveProjectName(project: IProject): void {
+    const name = this.projectNameDraft.trim();
+
+    if (!name) {
+      return;
+    }
+
+    this.projects = this.projects.map(item => item.id === project.id ? { ...item, name } : item);
+    this.isEditingProjectName = false;
+    this.projectNameDraft = '';
+    this.persistProjects();
+  }
+
+  cancelProjectNameEdit(): void {
+    this.isEditingProjectName = false;
+    this.projectNameDraft = '';
   }
 
   deleteSelectedProject(): void {
@@ -216,6 +256,48 @@ export class AppComponent implements OnDestroy {
 
   cancelProjectDeletion(): void {
     this.projectPendingDeletion = null;
+  }
+
+  async exportSelectedProject(): Promise<void> {
+    const project = this.selectedProject;
+
+    if (!project) {
+      return;
+    }
+
+    const projectFile: IPrintrJornyProjectFile = {
+      format: 'printr-jorny-project',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      project: this.normalizeProject(project)
+    };
+    const defaultName = `${this.getExportFileName(project.name)}.printrjorny-project`;
+
+    try {
+      await this.saveJsonFile(projectFile, defaultName, 'Printr Jorny project', ['.printrjorny-project', '.json']);
+    } catch {
+      window.alert('Could not save project file.');
+    }
+  }
+
+  async importProjectFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const importedProject = this.createImportedProjectCopy(this.parseProjectExport(await file.text()).project);
+      this.projects = [importedProject, ...this.projects];
+      this.persistProjects();
+      this.openProject(importedProject);
+    } catch {
+      window.alert('This project file could not be imported.');
+    } finally {
+      input.value = '';
+    }
   }
 
   toggleTheme(): void {
@@ -276,46 +358,10 @@ export class AppComponent implements OnDestroy {
       projects: this.projects
     };
 
-    if (!('__TAURI_INTERNALS__' in window)) {
-      const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const downloadLink = document.createElement('a');
-      downloadLink.href = url;
-      downloadLink.download = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
-      downloadLink.click();
-      URL.revokeObjectURL(url);
-      return;
-    }
-
     const defaultName = `${this.getExportFileName(this.headerInfo.userName)}.printrjorny`;
 
     try {
-      const tauri = (window as any).__TAURI__;
-
-      if (!tauri?.dialog || !tauri?.fs) {
-        // If Tauri internals exist but dialog/fs are not exposed, fallback to browser download
-        const blob = new Blob([JSON.stringify(profileFile, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const downloadLink = document.createElement('a');
-        downloadLink.href = url;
-        downloadLink.download = defaultName;
-        downloadLink.click();
-        URL.revokeObjectURL(url);
-        return;
-      }
-
-      const selectedPath = await tauri.dialog.save({
-        defaultPath: defaultName,
-        filters: [
-          { name: 'Printr Jorny profile', extensions: ['printrjorny', 'json'] }
-        ]
-      });
-
-      if (!selectedPath) {
-        return;
-      }
-
-      await tauri.fs.writeFile({ path: selectedPath, contents: JSON.stringify(profileFile, null, 2) });
+      await this.saveJsonFile(profileFile, defaultName, 'Printr Jorny profile', ['.printrjorny', '.json']);
     } catch {
       window.alert('Could not save profile file.');
     }
@@ -530,17 +576,20 @@ export class AppComponent implements OnDestroy {
 
   confirmProjectTaskStatusChange(): void {
     const pendingChange = this.projectTaskPendingStatusChange;
+    const duration = this.formatTaskDuration(this.pendingTaskDurationHours, this.pendingTaskDurationMinutes);
 
-    if (!pendingChange) {
+    if (!pendingChange || !duration) {
       return;
     }
 
-    this.applyProjectTaskStatusChange(pendingChange.taskId, pendingChange.status);
+    this.applyProjectTaskStatusChange(pendingChange.taskId, pendingChange.status, duration);
     this.projectTaskPendingStatusChange = null;
+    this.resetPendingTaskDuration();
   }
 
   cancelProjectTaskStatusChange(): void {
     this.projectTaskPendingStatusChange = null;
+    this.resetPendingTaskDuration();
   }
 
   toggleTaskPrintStatusMenu(index: number): void {
@@ -766,7 +815,13 @@ export class AppComponent implements OnDestroy {
       return;
     }
 
-    if (status === 'done' && task.status !== 'done' && task.prints.length) {
+    if (task.status === 'done' && status !== 'discontinued') {
+      return;
+    }
+
+    if (status === 'done' && task.status !== 'done') {
+      this.pendingTaskDurationHours = this.getDurationPart(task.duration, 'h');
+      this.pendingTaskDurationMinutes = this.getDurationPart(task.duration, 'm');
       this.projectTaskPendingStatusChange = { taskId, status };
       return;
     }
@@ -774,7 +829,7 @@ export class AppComponent implements OnDestroy {
     this.applyProjectTaskStatusChange(taskId, status);
   }
 
-  private applyProjectTaskStatusChange(taskId: string, status: ProjectTaskStatus): void {
+  private applyProjectTaskStatusChange(taskId: string, status: ProjectTaskStatus, duration?: string): void {
     const project = this.selectedProject;
 
     if (!project) {
@@ -786,13 +841,13 @@ export class AppComponent implements OnDestroy {
     this.projects = this.projects.map(item => item.id === project.id
       ? {
           ...item,
-          tasks: item.tasks.map(task => task.id === taskId ? { ...task, status } : task)
+          tasks: item.tasks.map(task => task.id === taskId ? { ...task, status, duration: duration ?? task.duration } : task)
         }
       : item
     );
 
     if (status === 'done' && taskToUpdate) {
-      this.addTaskPrintsToHistory({ ...taskToUpdate, status });
+      this.addTaskPrintsToHistory({ ...taskToUpdate, status, duration: duration ?? taskToUpdate.duration });
     }
 
     this.persistProjects();
@@ -823,6 +878,22 @@ export class AppComponent implements OnDestroy {
   private getDurationPart(time: string, unit: 'h' | 'm'): number {
     const match = time.match(unit === 'h' ? /(\d+)\s*h/i : /(\d+)\s*m/i);
     return match ? Number(match[1]) : 0;
+  }
+
+  private formatTaskDuration(hours: number | string, minutes: number | string): string {
+    const normalizedHours = Math.max(0, Math.floor(Number(hours) || 0));
+    const normalizedMinutes = Math.max(0, Math.min(59, Math.floor(Number(minutes) || 0)));
+
+    if (!normalizedHours && !normalizedMinutes) {
+      return '';
+    }
+
+    return `${normalizedHours}h ${normalizedMinutes.toString().padStart(2, '0')}m`;
+  }
+
+  private resetPendingTaskDuration(): void {
+    this.pendingTaskDurationHours = 0;
+    this.pendingTaskDurationMinutes = 0;
   }
 
   private formatTaskPrintDuration(hours: number, minutes: number): string {
@@ -1378,6 +1449,7 @@ export class AppComponent implements OnDestroy {
       id: '',
       name: '',
       description: '',
+      duration: '',
       picture: '',
       status,
       prints: []
@@ -1440,6 +1512,7 @@ export class AppComponent implements OnDestroy {
       id: task.id || this.createProjectTaskId(),
       name: task.name?.trim() || 'Untitled task',
       description: task.description?.trim() || '',
+      duration: task.duration?.trim() || '',
       picture: task.picture || '',
       status: this.normalizeProjectTaskStatus(task.status),
       prints: Array.isArray(task.prints)
@@ -1520,12 +1593,92 @@ export class AppComponent implements OnDestroy {
     };
   }
 
+  private parseProjectExport(value: string): IPrintrJornyProjectFile {
+    const data = JSON.parse(value) as Partial<IPrintrJornyProjectFile>;
+
+    if (
+      data.format !== 'printr-jorny-project' ||
+      data.version !== 1 ||
+      !data.project?.name ||
+      !data.project.startDate
+    ) {
+      throw new Error('Invalid Printr Jorny project file.');
+    }
+
+    return {
+      format: 'printr-jorny-project',
+      version: 1,
+      exportedAt: data.exportedAt || new Date().toISOString(),
+      project: this.normalizeProject(data.project)
+    };
+  }
+
+  private createImportedProjectCopy(project: IProject): IProject {
+    return {
+      ...project,
+      id: this.createProjectId(),
+      name: project.name.trim().endsWith(' - imported') ? project.name.trim() : `${project.name.trim()} - imported`,
+      tasks: project.tasks.map(task => ({
+        ...task,
+        id: this.createProjectTaskId(),
+        prints: task.prints.map(print => ({
+          ...print,
+          id: this.createPrintId()
+        }))
+      }))
+    };
+  }
+
   private getExportFileName(value: string): string {
     return (value || 'profile')
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '') || 'profile';
+  }
+
+  private async saveJsonFile(data: unknown, fileName: string, description: string, extensions: string[]): Promise<void> {
+    const contents = JSON.stringify(data, null, 2);
+    const showSaveFilePicker = (window as any).showSaveFilePicker;
+
+    if (typeof showSaveFilePicker === 'function') {
+      try {
+        const handle = await showSaveFilePicker({
+          suggestedName: fileName,
+          types: [
+            {
+              description,
+              accept: {
+                'application/json': extensions
+              }
+            }
+          ]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(contents);
+        await writable.close();
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+
+        throw error;
+      }
+
+      return;
+    }
+
+    this.downloadJsonFile(data, fileName);
+  }
+
+  private downloadJsonFile(data: unknown, fileName: string): void {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = fileName;
+    downloadLink.click();
+    URL.revokeObjectURL(url);
   }
 
   private getTauriWindow(): TauriWindow | null {

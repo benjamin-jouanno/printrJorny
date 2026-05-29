@@ -6,6 +6,7 @@ export interface IProjectTask {
   id: string;
   name: string;
   description: string;
+  duration: string;
   status: ProjectTaskStatus;
   picture?: string;
   prints: IPrint[];

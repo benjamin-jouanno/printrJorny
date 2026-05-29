@@ -187,11 +187,30 @@
       <p class="modal-eyebrow">Complete task</p>
       <h2>{{ task.name }}</h2>
       <p class="modal-copy">
-        Moving this task to done will add {{ task.prints.length }} linked print{{ task.prints.length === 1 ? '' : 's' }} to your print history.
+        Add the time spent on this task before moving it to done.
+        <ng-container *ngIf="task.prints.length">
+          This will also add {{ task.prints.length }} linked print{{ task.prints.length === 1 ? '' : 's' }} to your print history.
+        </ng-container>
+        Once confirmed, this task can only be moved to discontinued.
       </p>
+      <label class="completion-duration-field">
+        <span>Task duration <span class="required-mark">*</span></span>
+        <span class="completion-duration-inputs">
+          <label>
+            <input type="number" name="pendingTaskDurationHours" [(ngModel)]="pendingTaskDurationHours" min="0" step="1" />
+            <span>Hours</span>
+          </label>
+          <label>
+            <input type="number" name="pendingTaskDurationMinutes" [(ngModel)]="pendingTaskDurationMinutes" min="0" max="59" step="1" />
+            <span>Minutes</span>
+          </label>
+        </span>
+      </label>
       <div class="modal-actions">
         <button type="button" class="secondary-modal-button" (click)="cancelProjectTaskStatusChange()">Cancel</button>
-        <button type="button" class="primary-modal-button" (click)="confirmProjectTaskStatusChange()">Add prints and mark done</button>
+        <button type="button" class="primary-modal-button" [disabled]="!hasPendingTaskDuration" (click)="confirmProjectTaskStatusChange()">
+          {{ task.prints.length ? 'Add prints and mark done' : 'Mark done' }}
+        </button>
       </div>
     </section>
   </div>
@@ -561,6 +580,10 @@
         </div>
         <div class="projects-actions">
           <button type="button" class="primary-modal-button" (click)="openCreateProjectForm()">Add project</button>
+          <label class="secondary-modal-button project-import-button">
+            <input type="file" accept=".printrjorny-project,.json,application/json" (change)="importProjectFile($event)" />
+            <span>Import project</span>
+          </label>
           <button type="button" class="secondary-modal-button" (click)="showDashboardView()">Back to dashboard</button>
         </div>
       </div>
@@ -595,11 +618,48 @@
       <div class="project-board-header">
         <div>
           <p class="modal-eyebrow">Project follow-up</p>
-          <h2>{{ project.name }}</h2>
+          <div class="project-title-row">
+            <h2 *ngIf="!isEditingProjectName; else projectNameEditor">{{ project.name }}</h2>
+            <ng-template #projectNameEditor>
+              <input
+                type="text"
+                class="project-title-input"
+                name="projectNameDraft"
+                [(ngModel)]="projectNameDraft"
+                (keydown.enter)="saveProjectName(project)"
+                (keydown.escape)="cancelProjectNameEdit()"
+                aria-label="Project name"
+                autofocus
+              />
+            </ng-template>
+            <button
+              *ngIf="!isEditingProjectName; else saveProjectNameButton"
+              type="button"
+              class="project-title-action"
+              aria-label="Edit project name"
+              title="Edit project name"
+              (click)="startProjectNameEdit(project)"
+            >
+              <span class="project-title-pen-icon" aria-hidden="true"></span>
+            </button>
+            <ng-template #saveProjectNameButton>
+              <button
+                type="button"
+                class="project-title-action is-save"
+                aria-label="Save project name"
+                title="Save project name"
+                [disabled]="!projectNameDraft.trim()"
+                (click)="saveProjectName(project)"
+              >
+                <span class="project-title-check-icon" aria-hidden="true"></span>
+              </button>
+            </ng-template>
+          </div>
           <span>{{ project.startDate | date:'d MMMM y' }} · {{ project.tasks.length }} tasks</span>
         </div>
         <div class="projects-actions">
           <button type="button" class="danger-modal-button compact-danger-button" (click)="deleteSelectedProject()">Delete project</button>
+          <button type="button" class="secondary-modal-button compact-project-button" (click)="exportSelectedProject()">Export project</button>
           <button type="button" class="secondary-modal-button" (click)="showProjectsView()">Back to projects</button>
         </div>
       </div>
@@ -644,13 +704,11 @@
               role="button"
               (keydown.enter)="openProjectTaskDetails(task)"
             >
-              <div class="kanban-task-image">
-                <img *ngIf="task.picture; else taskCardPlaceholder" [src]="task.picture" alt="" draggable="false" />
-                <ng-template #taskCardPlaceholder>
-                  <span class="project-cube-placeholder"></span>
-                </ng-template>
+              <div class="kanban-task-image" *ngIf="task.picture">
+                <img [src]="task.picture" alt="" draggable="false" />
               </div>
               <strong>{{ task.name }}</strong>
+              <small class="kanban-task-duration" *ngIf="task.status === 'done' && task.duration">{{ task.duration }}</small>
               <small>{{ task.status }}</small>
             </article>
           </div>
