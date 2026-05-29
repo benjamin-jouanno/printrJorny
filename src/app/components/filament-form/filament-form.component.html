@@ -3,7 +3,7 @@
     <div class="modal-header">
       <div>
         <p class="eyebrow">Filament inventory</p>
-        <h2>Add filament</h2>
+        <h2>{{ isEditing ? 'Edit filament' : 'Add filament' }}</h2>
       </div>
       <button type="button" class="close-button" aria-label="Close filament form" (click)="cancel.emit()">x</button>
     </div>
@@ -48,7 +48,7 @@
 
       <div class="form-actions">
         <button type="button" class="secondary-button" (click)="cancel.emit()">Cancel</button>
-        <button type="submit" class="primary-button" [disabled]="filamentForm.invalid">Add filament</button>
+        <button type="submit" class="primary-button" [disabled]="filamentForm.invalid">{{ isEditing ? 'Save filament' : 'Add filament' }}</button>
       </div>
     </form>
   </section>

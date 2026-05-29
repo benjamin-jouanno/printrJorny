@@ -11,7 +11,16 @@
 
   <ng-template #filamentList>
     <div class="filament-list" (wheel)="scrollFilaments($event)">
-      <article class="filament-card" *ngFor="let filament of filaments">
+      <article
+        class="filament-card"
+        *ngFor="let filament of filaments"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Open details for ' + filament.name"
+        (click)="selectFilament.emit(filament)"
+        (keydown.enter)="selectFilament.emit(filament)"
+        (keydown.space)="selectFilament.emit(filament); $event.preventDefault()"
+      >
         <div class="filament-topline">
           <span class="filament-cube" [style.--filament-color]="filament.color" aria-hidden="true">
           </span>

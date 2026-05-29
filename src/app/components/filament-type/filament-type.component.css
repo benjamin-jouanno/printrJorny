@@ -109,7 +109,17 @@
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   background: var(--card-bg);
+  cursor: pointer;
   padding: 14px;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.filament-card:hover,
+.filament-card:focus-visible {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-panel);
+  outline: none;
+  transform: translateY(-1px);
 }
 
 .filament-topline {
