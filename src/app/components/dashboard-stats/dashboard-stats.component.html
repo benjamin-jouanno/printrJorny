@@ -1,5 +1,24 @@
-<section class="dashboard-main">
+<section class="dashboard-main" (click)="closeGraphRangeMenu()">
   <section class="panel top-panel">
+    <div class="graph-range-control">
+      <input type="text" class="select-hidden-input" name="graphRange" [(ngModel)]="selectedGraphRange" aria-hidden="true" />
+      <div class="custom-select" [class.is-open]="isGraphRangeMenuOpen" (click)="$event.stopPropagation()">
+        <button type="button" class="custom-select-button" aria-label="Graph range" (click)="toggleGraphRangeMenu()">
+          {{ getSelectedGraphRangeLabel() }}
+        </button>
+        <div class="custom-select-options" *ngIf="isGraphRangeMenuOpen">
+          <button
+            type="button"
+            class="custom-select-option"
+            *ngFor="let range of graphRanges"
+            [class.is-selected]="range.value === selectedGraphRange"
+            (click)="chooseGraphRange(range.value)"
+          >
+            {{ range.label }}
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="chart-container">
       <canvas #chartCanvas class="chart-canvas"></canvas>
     </div>
