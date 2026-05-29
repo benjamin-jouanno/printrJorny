@@ -86,6 +86,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+  z-index: 10;
+}
+
+:host.profile-entry-view .app-titlebar {
+  background: transparent;
 }
 
 .titlebar-brand {
@@ -97,23 +103,11 @@
   font-weight: 800;
 }
 
-.titlebar-printer-icon {
-  position: relative;
-  width: 18px;
-  height: 15px;
-  border: 2px solid var(--accent);
-  border-radius: 4px;
-}
-
-.titlebar-printer-icon::before {
-  content: '';
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  top: -6px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--accent-2);
+.titlebar-app-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  border-radius: 6px;
 }
 
 .window-actions {
@@ -209,6 +203,38 @@
 :host ::ng-deep .profile-picker,
 :host ::ng-deep .get-started-page {
   min-height: calc(100vh - var(--titlebar-height));
+}
+
+:host.light-theme ::ng-deep .profile-selection-page {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(72, 191, 227, 0.24), transparent 30rem),
+    radial-gradient(circle at 84% 10%, rgba(12, 166, 120, 0.18), transparent 28rem),
+    radial-gradient(circle at 54% 92%, rgba(103, 119, 172, 0.14), transparent 32rem),
+    #f7fbff;
+}
+
+:host.light-theme ::ng-deep .profile-selection-page::before {
+  background: #168aad;
+  box-shadow:
+    8vw 16vh 0 rgba(12, 166, 120, 0.54), 15vw 76vh 0 rgba(22, 138, 173, 0.46),
+    22vw 34vh 0 rgba(12, 166, 120, 0.34), 29vw 88vh 0 rgba(22, 138, 173, 0.42),
+    36vw 18vh 0 rgba(12, 166, 120, 0.5), 43vw 64vh 0 rgba(22, 138, 173, 0.36),
+    51vw 27vh 0 rgba(12, 166, 120, 0.42), 58vw 84vh 0 rgba(22, 138, 173, 0.48),
+    66vw 15vh 0 rgba(12, 166, 120, 0.46), 72vw 52vh 0 rgba(22, 138, 173, 0.38),
+    81vw 30vh 0 rgba(12, 166, 120, 0.44), 91vw 72vh 0 rgba(22, 138, 173, 0.5);
+  filter: drop-shadow(0 0 4px rgba(22, 138, 173, 0.28));
+}
+
+:host.light-theme ::ng-deep .profile-selection-page::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(240, 248, 255, 0.52));
+}
+
+:host.light-theme ::ng-deep .intro-panel,
+:host.light-theme ::ng-deep .profile-form,
+:host.light-theme ::ng-deep .profile-card,
+:host.light-theme ::ng-deep .profile-add-card {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(15, 23, 42, 0.14);
 }
 
 .workspace {

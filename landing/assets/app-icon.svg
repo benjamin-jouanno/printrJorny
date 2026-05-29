@@ -1,0 +1,45 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="153" y1="99" x2="826" y2="922" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#10242F"/>
+      <stop offset="0.48" stop-color="#07111E"/>
+      <stop offset="1" stop-color="#040914"/>
+    </linearGradient>
+    <linearGradient id="border" x1="160" y1="127" x2="829" y2="863" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4AFEE4"/>
+      <stop offset="0.55" stop-color="#18B5F1"/>
+      <stop offset="1" stop-color="#2867FF"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="240" y1="220" x2="688" y2="752" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#70FFE6"/>
+      <stop offset="0.43" stop-color="#19E1E8"/>
+      <stop offset="1" stop-color="#2278FF"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(230 176) rotate(51) scale(520 370)">
+      <stop offset="0" stop-color="#55FFE9" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#2BD9EF" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.11  0 0 0 0 0.85  0 0 0 0 1  0 0 0 0.55 0" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="innerShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect x="96" y="96" width="832" height="832" rx="132" fill="url(#bg)" filter="url(#innerShadow)"/>
+  <rect x="99" y="99" width="826" height="826" rx="129" stroke="url(#border)" stroke-width="6" opacity="0.9"/>
+  <rect x="112" y="112" width="800" height="800" rx="118" fill="url(#shine)"/>
+
+  <!-- PJ monogram based on the selected first icon, exported without the app name text -->
+  <g filter="url(#softGlow)">
+    <path fill="url(#mark)" d="M274 254C246.386 254 224 276.386 224 304V690C224 717.614 246.386 740 274 740C301.614 740 324 717.614 324 690V558H441C523.843 558 591 490.843 591 408C591 325.157 523.843 258 441 258L274 254ZM324 354H438C466.719 354 490 377.281 490 406C490 434.719 466.719 458 438 458H324V354Z"/>
+    <path fill="url(#mark)" d="M489 564C516.614 564 539 586.386 539 614V620C539 664.183 574.817 700 619 700C663.183 700 699 664.183 699 620V415C699 387.386 721.386 365 749 365C776.614 365 799 387.386 799 415V620C799 719.411 718.411 800 619 800C519.589 800 439 719.411 439 620V614C439 586.386 461.386 564 489 564Z"/>
+    <path fill="url(#mark)" opacity="0.95" d="M698 365H750C777.614 365 800 387.386 800 415V540C800 567.614 777.614 590 750 590C722.386 590 700 567.614 700 540V465H698C670.386 465 648 442.614 648 415C648 387.386 670.386 365 698 365Z"/>
+  </g>
+
+  <path opacity="0.35" fill="#FFFFFF" d="M292 278H430C514 278 569 329 569 403C569 416 567 429 563 441C554 376 501 334 430 334H292V278Z"/>
+</svg>
