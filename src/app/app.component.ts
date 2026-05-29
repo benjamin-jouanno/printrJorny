@@ -30,6 +30,11 @@ interface IPrintrJornyProfileFile {
   projects: IProject[];
 }
 
+interface IPendingTaskStatusChange {
+  taskId: string;
+  status: ProjectTaskStatus;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -60,6 +65,7 @@ export class AppComponent implements OnDestroy {
   printPendingDeletion: IPrint | null = null;
   projectPendingDeletion: IProject | null = null;
   projectTaskPendingDeletion: IProjectTask | null = null;
+  projectTaskPendingStatusChange: IPendingTaskStatusChange | null = null;
   headerInfo: IHeader = {
     id: '',
     userName: '',
@@ -72,6 +78,11 @@ export class AppComponent implements OnDestroy {
   selectedProjectId = '';
   selectedProjectTask: IProjectTask | null = null;
   draggedTaskId = '';
+  hoveredTaskDropStatus: ProjectTaskStatus | '' = '';
+  private taskDragStartX = 0;
+  private taskDragStartY = 0;
+  private isTaskPointerDragging = false;
+  private suppressNextTaskClick = false;
   themeMode: 'dark' | 'light' = 'dark';
   printerStatus: IPrinterLiveStatus = this.createManualPrinterStatus();
   printerSettingsForm: IPrinterConnection = this.normalizePrinterConnection();
@@ -93,6 +104,9 @@ export class AppComponent implements OnDestroy {
   projectForm: IProject = this.createEmptyProject();
   projectTaskForm: IProjectTask = this.createEmptyProjectTask();
   readonly projectTaskStatuses: ProjectTaskStatus[] = ['to do', 'doing', 'on hold', 'ready for review', 'done', 'discontinued'];
+  readonly printStatuses = ['success', 'passed poorly', 'failed'];
+  openTaskPrintStatusIndex: number | null = null;
+  openTaskPrintFilamentIndex: number | null = null;
   nozzleTemperature = 215;
   bedTemperature = 60;
   printProgress = 68;
@@ -111,6 +125,12 @@ export class AppComponent implements OnDestroy {
 
   get selectedProject(): IProject | null {
     return this.projects.find(project => project.id === this.selectedProjectId) || null;
+  }
+
+  get projectTaskPendingCompletion(): IProjectTask | null {
+    return this.projectTaskPendingStatusChange
+      ? this.getSelectedProjectTaskById(this.projectTaskPendingStatusChange.taskId)
+      : null;
   }
 
   get isEditingProjectTask(): boolean {
@@ -164,6 +184,7 @@ export class AppComponent implements OnDestroy {
     this.selectedProjectTask = null;
     this.projectPendingDeletion = null;
     this.projectTaskPendingDeletion = null;
+    this.projectTaskPendingStatusChange = null;
   }
 
   openProject(project: IProject): void {
@@ -426,6 +447,7 @@ export class AppComponent implements OnDestroy {
   closeProjectTaskForm(): void {
     this.isProjectTaskFormOpen = false;
     this.projectTaskReturnId = '';
+    this.closeProjectTaskPrintMenus();
     this.projectTaskForm = this.createEmptyProjectTask();
   }
 
@@ -458,9 +480,111 @@ export class AppComponent implements OnDestroy {
       : item
     );
     this.persistProjects();
+    if (task.status === 'done') {
+      this.addTaskPrintsToHistory(task);
+    }
     const taskId = this.projectTaskReturnId;
     this.closeProjectTaskForm();
     this.returnToProjectTaskDetails(taskId);
+  }
+
+  addProjectTaskPrint(): void {
+    this.projectTaskForm.prints = [
+      ...(this.projectTaskForm.prints || []),
+      this.createEmptyTaskPrint()
+    ];
+  }
+
+  removeProjectTaskPrint(index: number): void {
+    this.projectTaskForm.prints = this.projectTaskForm.prints.filter((_, printIndex) => printIndex !== index);
+  }
+
+  onProjectTaskPrintImageSelected(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file || !file.type.startsWith('image/')) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.projectTaskForm.prints = this.projectTaskForm.prints.map((print, printIndex) => printIndex === index
+        ? { ...print, image: typeof reader.result === 'string' ? reader.result : '' }
+        : print
+      );
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeProjectTaskPrintImage(index: number): void {
+    this.projectTaskForm.prints = this.projectTaskForm.prints.map((print, printIndex) => printIndex === index
+      ? { ...print, image: '' }
+      : print
+    );
+  }
+
+  getTaskPrintFilamentName(print: IPrint): string {
+    return print.filamentName || this.filamentInventory.find(filament => filament.id === print.filamentId)?.name || 'No filament selected';
+  }
+
+  confirmProjectTaskStatusChange(): void {
+    const pendingChange = this.projectTaskPendingStatusChange;
+
+    if (!pendingChange) {
+      return;
+    }
+
+    this.applyProjectTaskStatusChange(pendingChange.taskId, pendingChange.status);
+    this.projectTaskPendingStatusChange = null;
+  }
+
+  cancelProjectTaskStatusChange(): void {
+    this.projectTaskPendingStatusChange = null;
+  }
+
+  toggleTaskPrintStatusMenu(index: number): void {
+    this.openTaskPrintStatusIndex = this.openTaskPrintStatusIndex === index ? null : index;
+    this.openTaskPrintFilamentIndex = null;
+  }
+
+  chooseTaskPrintStatus(index: number, status: string): void {
+    this.projectTaskForm.prints[index].status = status;
+    this.openTaskPrintStatusIndex = null;
+  }
+
+  toggleTaskPrintFilamentMenu(index: number): void {
+    this.openTaskPrintFilamentIndex = this.openTaskPrintFilamentIndex === index ? null : index;
+    this.openTaskPrintStatusIndex = null;
+  }
+
+  chooseTaskPrintFilament(index: number, filamentId: string): void {
+    this.projectTaskForm.prints[index].filamentId = filamentId;
+    this.openTaskPrintFilamentIndex = null;
+  }
+
+  getTaskPrintDurationHours(print: IPrint): number {
+    return this.getDurationPart(print.time, 'h');
+  }
+
+  getTaskPrintDurationMinutes(print: IPrint): number {
+    return this.getDurationPart(print.time, 'm');
+  }
+
+  updateTaskPrintDuration(index: number, part: 'hours' | 'minutes', value: number | string): void {
+    const print = this.projectTaskForm.prints[index];
+    const currentHours = this.getTaskPrintDurationHours(print);
+    const currentMinutes = this.getTaskPrintDurationMinutes(print);
+    const normalizedValue = Math.max(0, Math.floor(Number(value) || 0));
+    const hours = part === 'hours' ? normalizedValue : currentHours;
+    const minutes = part === 'minutes' ? Math.min(59, normalizedValue) : currentMinutes;
+
+    this.projectTaskForm.prints[index].time = this.formatTaskPrintDuration(hours, minutes);
+  }
+
+  closeProjectTaskPrintMenus(): void {
+    this.openTaskPrintStatusIndex = null;
+    this.openTaskPrintFilamentIndex = null;
   }
 
   deleteSelectedProjectTask(): void {
@@ -545,30 +669,168 @@ export class AppComponent implements OnDestroy {
     return `task-status-${status.replace(/\s+/g, '-')}`;
   }
 
-  startTaskDrag(task: IProjectTask): void {
+  openProjectTaskDetails(task: IProjectTask): void {
+    if (this.suppressNextTaskClick) {
+      this.suppressNextTaskClick = false;
+      return;
+    }
+
+    this.selectedProjectTask = task;
+  }
+
+  startTaskDrag(task: IProjectTask, event?: DragEvent): void {
     this.draggedTaskId = task.id;
+    event?.dataTransfer?.setData('text/plain', task.id);
+    if (event?.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  startTaskPointerDrag(task: IProjectTask, event: PointerEvent): void {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    this.draggedTaskId = task.id;
+    this.taskDragStartX = event.clientX;
+    this.taskDragStartY = event.clientY;
+    this.isTaskPointerDragging = false;
+    this.hoveredTaskDropStatus = '';
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  trackTaskPointerDrag(event: PointerEvent): void {
+    if (!this.draggedTaskId) {
+      return;
+    }
+
+    const distanceX = Math.abs(event.clientX - this.taskDragStartX);
+    const distanceY = Math.abs(event.clientY - this.taskDragStartY);
+    this.isTaskPointerDragging = this.isTaskPointerDragging || distanceX > 6 || distanceY > 6;
+
+    if (this.isTaskPointerDragging) {
+      this.hoveredTaskDropStatus = this.getTaskDropStatusFromPoint(event.clientX, event.clientY);
+    }
+  }
+
+  finishTaskPointerDrag(event: PointerEvent): void {
+    if (!this.draggedTaskId) {
+      return;
+    }
+
+    const taskId = this.draggedTaskId;
+    const taskWasDragged = this.isTaskPointerDragging;
+    const status = this.getTaskDropStatusFromPoint(event.clientX, event.clientY);
+
+    if ((event.currentTarget as HTMLElement).hasPointerCapture(event.pointerId)) {
+      (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+    }
+
+    if (taskWasDragged && this.isProjectTaskStatus(status)) {
+      this.dropTask(status);
+      this.suppressNextTaskClick = true;
+      this.isTaskPointerDragging = false;
+      this.hoveredTaskDropStatus = '';
+      return;
+    }
+
+    if (taskWasDragged) {
+      this.suppressNextTaskClick = true;
+    } else {
+      const task = this.selectedProject?.tasks.find(projectTask => projectTask.id === taskId);
+      if (task) {
+        this.selectedProjectTask = task;
+      }
+    }
+
+    this.clearTaskDrag();
+    this.isTaskPointerDragging = false;
   }
 
   dropTask(status: ProjectTaskStatus): void {
-    const project = this.selectedProject;
+    const taskId = this.draggedTaskId;
 
-    if (!project || !this.draggedTaskId) {
+    if (!taskId) {
       return;
     }
+
+    this.requestProjectTaskStatusChange(taskId, status);
+    this.draggedTaskId = '';
+  }
+
+  private requestProjectTaskStatusChange(taskId: string, status: ProjectTaskStatus): void {
+    const task = this.getSelectedProjectTaskById(taskId);
+
+    if (!task || task.status === status) {
+      return;
+    }
+
+    if (status === 'done' && task.status !== 'done' && task.prints.length) {
+      this.projectTaskPendingStatusChange = { taskId, status };
+      return;
+    }
+
+    this.applyProjectTaskStatusChange(taskId, status);
+  }
+
+  private applyProjectTaskStatusChange(taskId: string, status: ProjectTaskStatus): void {
+    const project = this.selectedProject;
+
+    if (!project) {
+      return;
+    }
+
+    const taskToUpdate = project.tasks.find(task => task.id === taskId);
 
     this.projects = this.projects.map(item => item.id === project.id
       ? {
           ...item,
-          tasks: item.tasks.map(task => task.id === this.draggedTaskId ? { ...task, status } : task)
+          tasks: item.tasks.map(task => task.id === taskId ? { ...task, status } : task)
         }
       : item
     );
-    this.draggedTaskId = '';
+
+    if (status === 'done' && taskToUpdate) {
+      this.addTaskPrintsToHistory({ ...taskToUpdate, status });
+    }
+
     this.persistProjects();
   }
 
   clearTaskDrag(): void {
     this.draggedTaskId = '';
+    this.isTaskPointerDragging = false;
+    this.hoveredTaskDropStatus = '';
+  }
+
+  private isProjectTaskStatus(status?: string): status is ProjectTaskStatus {
+    return this.projectTaskStatuses.includes(status as ProjectTaskStatus);
+  }
+
+  private getTaskDropStatusFromPoint(clientX: number, clientY: number): ProjectTaskStatus | '' {
+    const target = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+    const column = target?.closest<HTMLElement>('[data-task-status]');
+    const status = column?.dataset['taskStatus'];
+
+    return this.isProjectTaskStatus(status) ? status : '';
+  }
+
+  private getSelectedProjectTaskById(taskId: string): IProjectTask | null {
+    return this.selectedProject?.tasks.find(task => task.id === taskId) || null;
+  }
+
+  private getDurationPart(time: string, unit: 'h' | 'm'): number {
+    const match = time.match(unit === 'h' ? /(\d+)\s*h/i : /(\d+)\s*m/i);
+    return match ? Number(match[1]) : 0;
+  }
+
+  private formatTaskPrintDuration(hours: number, minutes: number): string {
+    if (!hours && !minutes) {
+      return '';
+    }
+
+    return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
   }
 
   savePrinterSettings(): void {
@@ -1117,7 +1379,26 @@ export class AppComponent implements OnDestroy {
       name: '',
       description: '',
       picture: '',
-      status
+      status,
+      prints: []
+    };
+  }
+
+  private createEmptyTaskPrint(): IPrint {
+    return {
+      id: this.createPrintId(),
+      name: '',
+      filament: 0,
+      filamentId: '',
+      filamentName: '',
+      filamentColor: '',
+      cost: 0,
+      time: '',
+      status: 'success',
+      date: new Date().toISOString().slice(0, 10),
+      image: '',
+      description: '',
+      errorDescription: ''
     };
   }
 
@@ -1160,8 +1441,49 @@ export class AppComponent implements OnDestroy {
       name: task.name?.trim() || 'Untitled task',
       description: task.description?.trim() || '',
       picture: task.picture || '',
-      status: this.normalizeProjectTaskStatus(task.status)
+      status: this.normalizeProjectTaskStatus(task.status),
+      prints: Array.isArray(task.prints)
+        ? task.prints
+            .filter(print => Boolean(print.name?.trim()))
+            .map(print => this.normalizeTaskPrint(print))
+        : []
     };
+  }
+
+  private normalizeTaskPrint(print: Partial<IPrint>): IPrint {
+    const filament = this.filamentInventory.find(item => item.id === print.filamentId);
+
+    return {
+      id: print.id || this.createPrintId(),
+      name: print.name?.trim() || 'Untitled print',
+      filament: Number(print.filament) || 0,
+      filamentId: filament?.id || print.filamentId || '',
+      filamentName: filament?.name || print.filamentName || '',
+      filamentColor: filament?.color || print.filamentColor || '',
+      cost: Number(print.cost) || 0,
+      time: print.time?.trim() || '',
+      status: this.printStatuses.includes(print.status || '') ? print.status || 'success' : 'success',
+      date: print.date || new Date().toISOString().slice(0, 10),
+      image: print.image || '',
+      description: print.description?.trim() || '',
+      errorDescription: print.errorDescription?.trim() || ''
+    };
+  }
+
+  private addTaskPrintsToHistory(task: IProjectTask): void {
+    const printsToAdd = task.prints
+      .map(print => this.normalizeTaskPrint(print))
+      .filter(print => print.name.trim() && !this.printingHistory.some(historyPrint => historyPrint.id === print.id));
+
+    if (!printsToAdd.length) {
+      return;
+    }
+
+    this.printingHistory = this.sortPrints([...printsToAdd, ...this.printingHistory]);
+    printsToAdd.forEach(print => this.applyFilamentUsage(print));
+    this.notifyEmptyFilament();
+    this.persistPrintingHistory();
+    this.updateActiveProfilePrintCount();
   }
 
   private normalizeProjectTaskStatus(status?: string): ProjectTaskStatus {
