@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printr Jorny - 3D printing organized</title>
+    <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="space-field" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Printr Jorny home">
+        <img src="assets/app-icon.svg" alt="" />
+        <span>Printr <strong>Jorny</strong></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#features">Features</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#download">Download</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="header-download" href="https://github.com/benjamin-jouanno/printrJorny/releases/download/release/printr-jorny_0.2.0_x64_en-US.msi" download>Download</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Desktop print journal for makers</p>
+          <h1>Your 3D printing journey, <span>organized.</span></h1>
+          <p class="hero-text">
+            Printr Jorny helps you manage prints, filament, printer status, profiles, and projects in one focused desktop app.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="https://github.com/benjamin-jouanno/printrJorny/releases/download/release/printr-jorny_0.2.0_x64_en-US.msi" download>
+              <span aria-hidden="true">↓</span>
+              Download for Windows
+            </a>
+            <a class="secondary-action" href="#screenshots">View screenshots</a>
+          </div>
+          <p class="trust-note">Offline-first. Your data stays on your machine.</p>
+        </div>
+
+        <div class="hero-preview" aria-label="Dashboard preview">
+          <img src="assets/dashboard-preview.svg" alt="Printr Jorny dashboard preview" />
+        </div>
+      </section>
+
+      <section class="features" id="features">
+        <p class="section-kicker">Built for makers</p>
+        <h2>Everything you need, in one place</h2>
+        <p class="section-copy">A quiet workspace for tracking prints from idea to finished object.</p>
+        <div class="feature-grid">
+          <article>
+            <span class="feature-icon">▣</span>
+            <h3>Manage printers</h3>
+            <p>Add printer details, settings, and live status without clutter.</p>
+          </article>
+          <article>
+            <span class="feature-icon">◎</span>
+            <h3>Custom profiles</h3>
+            <p>Switch between makers, machines, and separate histories.</p>
+          </article>
+          <article>
+            <span class="feature-icon">⌁</span>
+            <h3>Track your prints</h3>
+            <p>Review duration, cost, filament, outcomes, and notes.</p>
+          </article>
+          <article>
+            <span class="feature-icon">□</span>
+            <h3>Plan projects</h3>
+            <p>Use a kanban board to move tasks from idea to done.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="screenshots" id="screenshots">
+        <p class="section-kicker">Designed with care</p>
+        <h2>A clean experience</h2>
+        <p class="section-copy">Dark, modern, and focused. Everything stays at your fingertips.</p>
+        <div class="carousel">
+          <button class="carousel-button" type="button" data-direction="-1" aria-label="Previous screenshot">‹</button>
+          <div class="screenshot-track">
+            <article class="screenshot-card is-active">
+              <img src="assets/dashboard-preview.svg" alt="Dashboard screenshot preview" />
+            </article>
+            <article class="screenshot-card">
+              <img src="assets/profile-preview.svg" alt="Profile creation screenshot preview" />
+            </article>
+            <article class="screenshot-card">
+              <img src="assets/projects-preview.svg" alt="Project board screenshot preview" />
+            </article>
+          </div>
+          <button class="carousel-button" type="button" data-direction="1" aria-label="Next screenshot">›</button>
+        </div>
+        <div class="dots" aria-label="Screenshot navigation">
+          <button class="is-active" type="button" aria-label="Show dashboard screenshot"></button>
+          <button type="button" aria-label="Show profile screenshot"></button>
+          <button type="button" aria-label="Show projects screenshot"></button>
+        </div>
+      </section>
+
+      <section class="download-panel" id="download">
+        <div>
+          <h2>Ready to level up your 3D printing?</h2>
+          <p>Download Printr Jorny and keep your workflow calm, visible, and organized.</p>
+          <ul>
+            <li>Windows 10+ 64-bit</li>
+            <li>Offline-first data</li>
+            <li>Project export and import</li>
+          </ul>
+        </div>
+        <img src="assets/app-icon.svg" alt="" />
+        <div class="download-card">
+          <p>Download for Windows</p>
+          <small>Version 0.2.0</small>
+          <a class="primary-action" href="https://github.com/benjamin-jouanno/printrJorny/releases/download/release/printr-jorny_0.2.0_x64_en-US.msi" download>
+            <span aria-hidden="true">↓</span>
+            Download now
+          </a>
+        </div>
+      </section>
+
+      <section class="faq" id="faq">
+        <h2>FAQ</h2>
+        <details>
+          <summary>Does Printr Jorny work offline?</summary>
+          <p>Yes. The app is designed around local profile data and desktop workflows.</p>
+        </details>
+        <details>
+          <summary>Can I move projects between profiles or computers?</summary>
+          <p>Yes. Profiles and projects can be exported and imported.</p>
+        </details>
+        <details>
+          <summary>Is this landing page part of the app?</summary>
+          <p>No. It is a standalone static page in the repository's landing folder.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="#top">
+        <img src="assets/app-icon.svg" alt="" />
+        <span>Printr <strong>Jorny</strong></span>
+      </a>
+      <p>Made for makers, by makers.</p>
+      <a href="https://github.com/benjamin-jouanno/printrJorny/" rel="noreferrer">GitHub</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<svg width="1160" height="720" viewBox="0 0 1160 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1160" height="720" rx="28" fill="#08111D"/>
+  <rect x="1" y="1" width="1158" height="718" rx="27" stroke="#1EBBE5" stroke-opacity=".25" stroke-width="2"/>
+  <circle cx="1096" cy="32" r="7" fill="#47D8FF"/>
+  <circle cx="1120" cy="32" r="7" fill="#70FFE6"/>
+  <circle cx="1144" cy="32" r="7" fill="#FF6FD8"/>
+  <rect x="28" y="28" width="170" height="664" rx="22" fill="#0E1928"/>
+  <rect x="48" y="52" width="28" height="28" rx="8" fill="#09283A" stroke="#2DDCFF"/>
+  <text x="86" y="72" fill="#EAF6FF" font-family="Inter,Arial" font-size="18" font-weight="800">Printr Jorny</text>
+  <rect x="48" y="116" width="130" height="42" rx="10" fill="#13304A"/>
+  <text x="88" y="143" fill="#78FFE5" font-family="Inter,Arial" font-size="15" font-weight="800">Dashboard</text>
+  <text x="88" y="200" fill="#9EACC0" font-family="Inter,Arial" font-size="15" font-weight="700">Printers</text>
+  <text x="88" y="248" fill="#9EACC0" font-family="Inter,Arial" font-size="15" font-weight="700">Profiles</text>
+  <text x="88" y="296" fill="#9EACC0" font-family="Inter,Arial" font-size="15" font-weight="700">Prints</text>
+  <text x="88" y="344" fill="#9EACC0" font-family="Inter,Arial" font-size="15" font-weight="700">History</text>
+  <rect x="232" y="66" width="870" height="162" rx="20" fill="#0D1A2A" stroke="#1EBBE5" stroke-opacity=".22"/>
+  <text x="268" y="123" fill="#F4F7FB" font-family="Inter,Arial" font-size="34" font-weight="900">Welcome back, Thomas</text>
+  <text x="268" y="157" fill="#A9B6C9" font-family="Inter,Arial" font-size="16" font-weight="600">Here is what is happening with your prints.</text>
+  <rect x="268" y="260" width="250" height="104" rx="18" fill="#0E1B2B" stroke="#26364B"/>
+  <rect x="548" y="260" width="250" height="104" rx="18" fill="#0E1B2B" stroke="#26364B"/>
+  <rect x="828" y="260" width="250" height="104" rx="18" fill="#0E1B2B" stroke="#26364B"/>
+  <text x="318" y="312" fill="#F4F7FB" font-family="Inter,Arial" font-size="34" font-weight="900">12</text>
+  <text x="598" y="312" fill="#F4F7FB" font-family="Inter,Arial" font-size="34" font-weight="900">36</text>
+  <text x="878" y="312" fill="#F4F7FB" font-family="Inter,Arial" font-size="34" font-weight="900">18</text>
+  <text x="318" y="338" fill="#9EACC0" font-family="Inter,Arial" font-size="14" font-weight="700">Printed</text>
+  <text x="598" y="338" fill="#9EACC0" font-family="Inter,Arial" font-size="14" font-weight="700">Ready to use</text>
+  <text x="878" y="338" fill="#9EACC0" font-family="Inter,Arial" font-size="14" font-weight="700">Completed</text>
+  <rect x="268" y="398" width="810" height="238" rx="20" fill="#0E1B2B" stroke="#26364B"/>
+  <text x="298" y="438" fill="#F4F7FB" font-family="Inter,Arial" font-size="18" font-weight="900">Recent prints</text>
+  <rect x="930" y="414" width="104" height="36" rx="10" fill="#111F31"/>
+  <text x="956" y="438" fill="#D8E2F0" font-family="Inter,Arial" font-size="13" font-weight="800">View all</text>
+  <g font-family="Inter,Arial" font-size="15" font-weight="800">
+    <text x="318" y="492" fill="#EAF6FF">Dragon Skull</text>
+    <text x="318" y="540" fill="#EAF6FF">Articulated Lizard</text>
+    <text x="318" y="588" fill="#EAF6FF">Vase Spiral</text>
+  </g>
+  <g font-family="Inter,Arial" font-size="13" font-weight="800">
+    <text x="760" y="492" fill="#80FFDB">Completed</text>
+    <text x="760" y="540" fill="#80FFDB">Completed</text>
+    <text x="760" y="588" fill="#FF6F91">Failed</text>
+  </g>
+  <rect x="298" y="476" width="16" height="16" rx="5" fill="#48BFE3"/>
+  <rect x="298" y="524" width="16" height="16" rx="5" fill="#80FFDB"/>
+  <rect x="298" y="572" width="16" height="16" rx="5" fill="#FF6F91"/>
+</svg>

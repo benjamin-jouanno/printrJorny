@@ -106,6 +106,12 @@ export class AppComponent implements OnDestroy {
   get isProjectsListView(): boolean {
     return this.activeView === 'projects';
   }
+
+  @HostBinding('class.profile-entry-view')
+  get isProfileEntryView(): boolean {
+    return !this.activeProfileId;
+  }
+
   activeMaterial = 'PLA Matte Black';
   filamentInventory: IFilament[] = [];
   projects: IProject[] = [];
@@ -432,8 +438,27 @@ export class AppComponent implements OnDestroy {
     this.isProjectFormOpen = true;
   }
 
+  openEditSelectedProjectForm(): void {
+    const project = this.selectedProject;
+
+    if (!project) {
+      return;
+    }
+
+    this.cancelProjectNameEdit();
+    this.projectForm = {
+      ...project,
+      tasks: project.tasks.map(task => ({
+        ...task,
+        prints: task.prints.map(print => ({ ...print }))
+      }))
+    };
+    this.isProjectFormOpen = true;
+  }
+
   closeProjectForm(): void {
     this.isProjectFormOpen = false;
+    this.projectForm = this.createEmptyProject();
   }
 
   saveProject(): void {
@@ -449,10 +474,12 @@ export class AppComponent implements OnDestroy {
       name,
       startDate,
       description: this.projectForm.description.trim(),
-      tasks: []
+      tasks: this.projectForm.tasks
     });
 
-    this.projects = [project, ...this.projects];
+    this.projects = this.projectForm.id
+      ? this.projects.map(item => item.id === project.id ? project : item)
+      : [project, ...this.projects];
     this.persistProjects();
     this.closeProjectForm();
   }

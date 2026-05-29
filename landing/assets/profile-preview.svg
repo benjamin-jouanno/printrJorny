@@ -1,0 +1,28 @@
+<svg width="720" height="420" viewBox="0 0 720 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="420" rx="24" fill="#08111D"/>
+  <rect x="1" y="1" width="718" height="418" rx="23" stroke="#1EBBE5" stroke-opacity=".25" stroke-width="2"/>
+  <text x="48" y="68" fill="#F4F7FB" font-family="Inter,Arial" font-size="26" font-weight="900">Create your profile</text>
+  <text x="48" y="102" fill="#A9B6C9" font-family="Inter,Arial" font-size="15" font-weight="700">Set up your printer and profile in seconds.</text>
+  <rect x="48" y="140" width="280" height="220" rx="18" fill="#0E1B2B" stroke="#26364B"/>
+  <circle cx="188" cy="210" r="48" fill="url(#avatar)"/>
+  <text x="172" y="220" fill="#071018" font-family="Inter,Arial" font-size="24" font-weight="900">ID</text>
+  <rect x="86" y="288" width="204" height="38" rx="10" fill="#12243A" stroke="#2DDCFF" stroke-opacity=".35"/>
+  <text x="126" y="313" fill="#EAF6FF" font-family="Inter,Arial" font-size="14" font-weight="800">Choose picture</text>
+  <rect x="372" y="140" width="300" height="54" rx="12" fill="#111E2E" stroke="#334458"/>
+  <text x="392" y="174" fill="#A9B6C9" font-family="Inter,Arial" font-size="15" font-weight="700">Full name</text>
+  <rect x="372" y="220" width="300" height="54" rx="12" fill="#111E2E" stroke="#334458"/>
+  <text x="392" y="254" fill="#A9B6C9" font-family="Inter,Arial" font-size="15" font-weight="700">Select your printer</text>
+  <path d="M640 240l10 10 10-10" stroke="#80FFDB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="372" y="306" width="300" height="54" rx="12" fill="url(#button)"/>
+  <text x="462" y="340" fill="#071018" font-family="Inter,Arial" font-size="16" font-weight="900">Create profile</text>
+  <defs>
+    <linearGradient id="avatar" x1="140" y1="162" x2="236" y2="258" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#80FFDB"/>
+      <stop offset="1" stop-color="#48BFE3"/>
+    </linearGradient>
+    <linearGradient id="button" x1="372" y1="306" x2="672" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#80FFDB"/>
+      <stop offset="1" stop-color="#2E9BFF"/>
+    </linearGradient>
+  </defs>
+</svg>

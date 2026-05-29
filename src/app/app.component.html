@@ -1,6 +1,6 @@
 <header class="app-titlebar" (mousedown)="startWindowDrag($event)">
   <div class="titlebar-brand">
-    <span class="titlebar-printer-icon" aria-hidden="true"></span>
+    <img class="titlebar-app-icon" src="assets/app_icon.svg" alt="" aria-hidden="true" />
     <span>Printr Jorny</span>
   </div>
 
@@ -219,8 +219,8 @@
     <section class="notification-modal project-form-modal" (click)="$event.stopPropagation()">
       <div class="project-form-header">
         <div>
-          <p class="modal-eyebrow">New project</p>
-          <h2>Create project</h2>
+          <p class="modal-eyebrow">{{ projectForm.id ? 'Edit project' : 'New project' }}</p>
+          <h2>{{ projectForm.id ? 'Update project' : 'Create project' }}</h2>
         </div>
         <button type="button" class="close-button" aria-label="Close project form" (click)="closeProjectForm()">x</button>
       </div>
@@ -259,7 +259,9 @@
 
         <div class="modal-actions">
           <button type="button" class="secondary-modal-button" (click)="closeProjectForm()">Cancel</button>
-          <button type="submit" class="primary-modal-button" [disabled]="projectNgForm.invalid">Create project</button>
+          <button type="submit" class="primary-modal-button" [disabled]="projectNgForm.invalid">
+            {{ projectForm.id ? 'Save project' : 'Create project' }}
+          </button>
         </div>
       </form>
     </section>
@@ -660,6 +662,7 @@
         <div class="projects-actions">
           <button type="button" class="danger-modal-button compact-danger-button" (click)="deleteSelectedProject()">Delete project</button>
           <button type="button" class="secondary-modal-button compact-project-button" (click)="exportSelectedProject()">Export project</button>
+          <button type="button" class="secondary-modal-button compact-project-button" (click)="openEditSelectedProjectForm()">Edit project</button>
           <button type="button" class="secondary-modal-button" (click)="showProjectsView()">Back to projects</button>
         </div>
       </div>

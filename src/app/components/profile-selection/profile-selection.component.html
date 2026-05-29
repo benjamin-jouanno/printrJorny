@@ -1,44 +1,80 @@
 <main class="profile-selection-page">
+  <div class="profile-space-bg" aria-hidden="true">
+    <span class="space-planet profile-planet-one"></span>
+    <span class="space-planet profile-planet-two"></span>
+    <span class="space-planet profile-planet-three"></span>
+    <span class="space-comet profile-comet-one"></span>
+    <span class="space-comet profile-comet-two"></span>
+    <span class="space-comet profile-comet-three"></span>
+    <span class="space-comet profile-comet-four"></span>
+  </div>
+
   <section class="profile-picker" *ngIf="!shouldShowCreationForm">
-    <p class="brand-title">Printr Jorny</p>
-
-    <h1 class="picker-heading">Select a profile</h1>
-
-    <div class="profile-grid">
-      <button
-        type="button"
-        class="profile-card"
-        *ngFor="let profile of profiles"
-        (click)="chooseProfile(profile)"
-      >
-        <span class="profile-avatar" aria-hidden="true">
-          <img *ngIf="profile.profilePicture; else profileInitials" [src]="profile.profilePicture" alt="" />
-          <ng-template #profileInitials>{{ getInitials(profile) }}</ng-template>
-        </span>
-        <span class="profile-card-info">
-          <strong>{{ profile.userName }}</strong>
-          <small>{{ profile.printerModel }}</small>
-          <span class="profile-stat">{{ getPrintCount(profile) }} prints tracked</span>
-        </span>
-        <span
-          class="delete-profile-button"
-          role="button"
-          tabindex="0"
-          aria-label="Delete profile"
-          (click)="removeProfile($event, profile)"
-          (keydown.enter)="removeProfile($event, profile)"
-        >
-          <span class="trash-icon" aria-hidden="true"></span>
-        </span>
-      </button>
+    <div class="picker-orbit" aria-hidden="true">
+      <span class="orbit-dot orbit-dot-one"></span>
+      <span class="orbit-dot orbit-dot-two"></span>
     </div>
 
-    <div class="create-profile-row">
-      <button type="button" class="create-profile-button" (click)="isCreatingProfile = true">Create new profile</button>
+    <div class="profile-picker-content">
+      <div class="picker-heading-group">
+        <h1 class="brand-title">Printr Jorny</h1>
+        <p class="picker-heading">Select a profile</p>
+      </div>
+
+      <div class="profile-stage">
+      <button type="button" class="profile-add-card" (click)="isCreatingProfile = true">
+        <span class="material-icons-round add-card-icon" aria-hidden="true">add</span>
+        <span>Add profile</span>
+      </button>
+
+        <div class="profile-grid">
+          <button
+            type="button"
+            class="profile-card"
+            *ngFor="let profile of profiles"
+            (click)="chooseProfile(profile)"
+          >
+            <span class="profile-avatar" aria-hidden="true">
+              <img *ngIf="profile.profilePicture; else profileInitials" [src]="profile.profilePicture" alt="" />
+              <ng-template #profileInitials>{{ getInitials(profile) }}</ng-template>
+            </span>
+            <span class="profile-card-info">
+              <strong>{{ profile.userName }}</strong>
+              <small>{{ profile.printerModel }}</small>
+              <span class="profile-stat">{{ getPrintCount(profile) }} prints tracked</span>
+            </span>
+            <span
+              class="delete-profile-button"
+              role="button"
+              tabindex="0"
+              aria-label="Delete profile"
+              (click)="removeProfile($event, profile)"
+              (keydown.enter)="removeProfile($event, profile)"
+          >
+            <span class="material-icons-round trash-icon" aria-hidden="true">delete</span>
+          </span>
+          </button>
+        </div>
+
+      <button type="button" class="profile-add-card profile-add-card-secondary" (click)="isCreatingProfile = true">
+        <span class="material-icons-round add-card-icon" aria-hidden="true">add</span>
+        <span>Add profile</span>
+      </button>
+      </div>
+
+      <div class="create-profile-row">
+      <button type="button" class="create-profile-button" (click)="isCreatingProfile = true">
+        <span class="material-icons-round action-icon" aria-hidden="true">add_circle</span>
+        <span>Create new profile</span>
+      </button>
       <label class="import-profile-button">
         <input type="file" accept=".printrjorny,application/json" (change)="onProfileFileSelected($event)" />
+        <span class="material-icons-round action-icon" aria-hidden="true">file_download</span>
         <span>Import profile</span>
       </label>
+      </div>
+
+      <p class="profile-helper"><span aria-hidden="true">i</span> You can add or switch profiles anytime.</p>
     </div>
 
     <div class="modal-backdrop" *ngIf="profilePendingDeletion" (click)="cancelProfileDeletion()">
