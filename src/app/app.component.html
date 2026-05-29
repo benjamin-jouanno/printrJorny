@@ -68,9 +68,71 @@
 
   <filament-form
     *ngIf="isFilamentFormOpen"
+    [filament]="filamentFormItem"
     (save)="saveFilament($event)"
     (cancel)="closeFilamentForm()"
   ></filament-form>
+
+  <div class="modal-backdrop" *ngIf="selectedFilament" (click)="closeFilamentDetails()">
+    <section class="notification-modal filament-details-modal" (click)="$event.stopPropagation()">
+      <div class="filament-details-header">
+        <div class="filament-details-title">
+          <span class="filament-detail-cube" [style.--filament-color]="selectedFilament.color" aria-hidden="true"></span>
+          <div>
+            <p class="modal-eyebrow">Filament details</p>
+            <h2>{{ selectedFilament.name }}</h2>
+          </div>
+        </div>
+        <button type="button" class="close-button" aria-label="Close filament details" (click)="closeFilamentDetails()">x</button>
+      </div>
+
+      <div class="filament-detail-grid">
+        <article>
+          <small>Brand</small>
+          <strong>{{ selectedFilament.brand }}</strong>
+        </article>
+        <article>
+          <small>Color</small>
+          <strong class="filament-color-value">
+            <span [style.background]="selectedFilament.color" aria-hidden="true"></span>
+            {{ selectedFilament.color }}
+          </strong>
+        </article>
+        <article>
+          <small>Remaining</small>
+          <strong>{{ selectedFilament.quantityGrams | number:'1.0-2' }} g</strong>
+        </article>
+        <article>
+          <small>Initial quantity</small>
+          <strong>{{ selectedFilament.initialQuantityGrams | number:'1.0-2' }} g</strong>
+        </article>
+      </div>
+
+      <div class="filament-detail-progress">
+        <span>
+          <i [style.width.%]="getFilamentQuantityPercent(selectedFilament)"></i>
+        </span>
+        <strong>{{ getFilamentQuantityPercent(selectedFilament) }}%</strong>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="openEditFilamentForm(selectedFilament)">Edit filament</button>
+        <button type="button" class="danger-modal-button" (click)="requestDeleteFilament(selectedFilament)">Delete filament</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="filamentPendingDeletion" (click)="cancelDeleteFilament()">
+    <section class="notification-modal" (click)="$event.stopPropagation()">
+      <p class="modal-eyebrow danger">Delete filament</p>
+      <h2>{{ filamentPendingDeletion.name }}</h2>
+      <p class="modal-copy">This filament will be removed from your inventory. Existing print history entries will keep their saved filament name.</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-modal-button" (click)="cancelDeleteFilament()">Cancel</button>
+        <button type="button" class="danger-modal-button" (click)="confirmDeleteFilament()">Delete filament</button>
+      </div>
+    </section>
+  </div>
 
   <div class="modal-backdrop" *ngIf="isPrinterSettingsOpen" (click)="closePrinterSettings()">
     <section class="notification-modal printer-details-modal" (click)="$event.stopPropagation()">
@@ -529,7 +591,11 @@
         [themeMode]="themeMode"
       ></dashboard-stats>
 
-      <filament-type [filaments]="filamentInventory" (addFilament)="openCreateFilamentForm()"></filament-type>
+      <filament-type
+        [filaments]="filamentInventory"
+        (addFilament)="openCreateFilamentForm()"
+        (selectFilament)="openFilamentDetails($event)"
+      ></filament-type>
     </section>
 
     <aside class="right-rail">
@@ -665,6 +731,23 @@
             </ng-template>
           </div>
           <span>{{ project.startDate | date:'d MMMM y' }} · {{ project.tasks.length }} tasks</span>
+        </div>
+        <div class="project-summary-stats" aria-label="Project print summary">
+          <article class="project-summary-stat">
+            <span class="project-summary-icon cost-icon" aria-hidden="true">€</span>
+            <strong>€{{ getProjectTotalCost(project) | number:'1.0-2' }}</strong>
+            <small>Total cost</small>
+          </article>
+          <article class="project-summary-stat">
+            <span class="material-icons-round project-summary-icon" aria-hidden="true">inventory_2</span>
+            <strong>{{ getProjectTotalFilament(project) | number:'1.0-2' }} g</strong>
+            <small>Filament used</small>
+          </article>
+          <article class="project-summary-stat">
+            <span class="material-icons-round project-summary-icon" aria-hidden="true">schedule</span>
+            <strong>{{ getProjectTotalPrintingTime(project) }}</strong>
+            <small>Printing time</small>
+          </article>
         </div>
         <div class="projects-actions">
           <button type="button" class="danger-modal-button compact-danger-button" (click)="deleteSelectedProject()">Delete project</button>

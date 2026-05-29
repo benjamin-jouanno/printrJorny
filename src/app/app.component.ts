@@ -63,6 +63,8 @@ export class AppComponent implements OnDestroy {
   profilePrintCounts: Record<string, number> = {};
   selectedPrint: IPrint | null = null;
   printFormItem: IPrint | null = null;
+  selectedFilament: IFilament | null = null;
+  filamentFormItem: IFilament | null = null;
   isPrintFormOpen = false;
   isFilamentFormOpen = false;
   isProfileFormOpen = false;
@@ -72,6 +74,7 @@ export class AppComponent implements OnDestroy {
   emptyFilamentNotification: IFilament | null = null;
   printPendingDeletion: IPrint | null = null;
   projectPendingDeletion: IProject | null = null;
+  filamentPendingDeletion: IFilament | null = null;
   projectTaskPendingDeletion: IProjectTask | null = null;
   projectTaskPendingStatusChange: IPendingTaskStatusChange | null = null;
   headerInfo: IHeader = {
@@ -157,6 +160,26 @@ export class AppComponent implements OnDestroy {
 
   get hasPendingTaskDuration(): boolean {
     return Number(this.pendingTaskDurationHours) > 0 || Number(this.pendingTaskDurationMinutes) > 0;
+  }
+
+  getProjectTotalCost(project: IProject): number {
+    return this.getProjectLinkedPrints(project).reduce((total, print) => total + (Number(print.cost) || 0), 0);
+  }
+
+  getProjectTotalFilament(project: IProject): number {
+    return this.getProjectLinkedPrints(project).reduce((total, print) => total + (Number(print.filament) || 0), 0);
+  }
+
+  getProjectTotalPrintingTime(project: IProject): string {
+    const totalMinutes = this.getProjectLinkedPrints(project).reduce((total, print) => total + this.getDurationInMinutes(print.time), 0);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (!hours && !minutes) {
+      return '0h 00m';
+    }
+
+    return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
   }
 
   constructor() {
@@ -903,6 +926,14 @@ export class AppComponent implements OnDestroy {
     return this.selectedProject?.tasks.find(task => task.id === taskId) || null;
   }
 
+  private getProjectLinkedPrints(project: IProject): IPrint[] {
+    return project.tasks.flatMap(task => task.prints || []);
+  }
+
+  private getDurationInMinutes(time: string): number {
+    return (this.getDurationPart(time, 'h') * 60) + this.getDurationPart(time, 'm');
+  }
+
   private getDurationPart(time: string, unit: 'h' | 'm'): number {
     const match = time.match(unit === 'h' ? /(\d+)\s*h/i : /(\d+)\s*m/i);
     return match ? Number(match[1]) : 0;
@@ -976,23 +1007,85 @@ export class AppComponent implements OnDestroy {
   }
 
   openCreateFilamentForm(): void {
+    this.filamentFormItem = null;
     this.isFilamentFormOpen = true;
+    this.selectedFilament = null;
+  }
+
+  openFilamentDetails(filament: IFilament): void {
+    this.selectedFilament = filament;
+  }
+
+  closeFilamentDetails(): void {
+    this.selectedFilament = null;
+  }
+
+  openEditFilamentForm(filament: IFilament): void {
+    this.filamentFormItem = filament;
+    this.isFilamentFormOpen = true;
+    this.selectedFilament = null;
   }
 
   closeFilamentForm(): void {
     this.isFilamentFormOpen = false;
+    this.filamentFormItem = null;
   }
 
   saveFilament(filament: Omit<IFilament, 'id'>): void {
-    this.filamentInventory = [
-      ...this.filamentInventory,
-      {
+    if (this.filamentFormItem) {
+      const updatedFilament: IFilament = {
         ...filament,
-        id: this.createFilamentId()
-      }
-    ];
+        id: this.filamentFormItem.id
+      };
+
+      this.filamentInventory = this.filamentInventory.map(item => item.id === updatedFilament.id ? updatedFilament : item);
+      this.printingHistory = this.printingHistory.map(print => print.filamentId === updatedFilament.id ? {
+        ...print,
+        filamentName: updatedFilament.name,
+        filamentColor: updatedFilament.color
+      } : print);
+      this.persistPrintingHistory();
+    } else {
+      this.filamentInventory = [
+        ...this.filamentInventory,
+        {
+          ...filament,
+          id: this.createFilamentId()
+        }
+      ];
+    }
+
     this.persistFilamentInventory();
     this.closeFilamentForm();
+  }
+
+  getFilamentQuantityPercent(filament: IFilament): number {
+    const initialQuantity = filament.initialQuantityGrams || filament.quantityGrams;
+
+    if (!initialQuantity) {
+      return 0;
+    }
+
+    return Math.max(0, Math.min(100, Math.round((filament.quantityGrams / initialQuantity) * 100)));
+  }
+
+  requestDeleteFilament(filament: IFilament): void {
+    this.filamentPendingDeletion = filament;
+    this.selectedFilament = null;
+  }
+
+  cancelDeleteFilament(): void {
+    this.filamentPendingDeletion = null;
+  }
+
+  confirmDeleteFilament(): void {
+    if (!this.filamentPendingDeletion) {
+      return;
+    }
+
+    this.filamentInventory = this.filamentInventory.filter(item => item.id !== this.filamentPendingDeletion?.id);
+    this.persistFilamentInventory();
+    this.filamentPendingDeletion = null;
   }
 
   openCreatePrintForm(): void {

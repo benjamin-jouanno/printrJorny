@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IFilament } from '../../interfaces/filament.interface';
@@ -10,7 +10,8 @@ import { IFilament } from '../../interfaces/filament.interface';
   templateUrl: './filament-form.component.html',
   styleUrls: ['./filament-form.component.css']
 })
-export class FilamentFormComponent {
+export class FilamentFormComponent implements OnChanges {
+  @Input() filament: IFilament | null = null;
   @Output() save = new EventEmitter<Omit<IFilament, 'id'>>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -46,6 +47,10 @@ export class FilamentFormComponent {
   quantityGrams = 1000;
   isFilamentMenuOpen = false;
 
+  get isEditing(): boolean {
+    return !!this.filament;
+  }
+
   get selectedFilamentLabel(): string {
     const option = this.findSelectedFilament();
 
@@ -65,6 +70,25 @@ export class FilamentFormComponent {
     this.closeFilamentMenu();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['filament']) {
+      return;
+    }
+
+    if (!this.filament) {
+      this.selectedFilament = '';
+      this.color = '#80ffdb';
+      this.quantityGrams = 1000;
+      this.closeFilamentMenu();
+      return;
+    }
+
+    this.selectedFilament = this.findFilamentOptionName(this.filament);
+    this.color = this.filament.color;
+    this.quantityGrams = this.filament.quantityGrams;
+    this.closeFilamentMenu();
+  }
+
   saveFilament(): void {
     const option = this.findSelectedFilament();
 
@@ -76,9 +100,21 @@ export class FilamentFormComponent {
       brand: option.brand,
       name: `${option.brand} - ${option.name}`,
       color: this.color,
-      initialQuantityGrams: Number(this.quantityGrams),
+      initialQuantityGrams: this.filament ? Math.max(this.filament.initialQuantityGrams, Number(this.quantityGrams)) : Number(this.quantityGrams),
       quantityGrams: Number(this.quantityGrams)
     });
+  }
+
+  private findFilamentOptionName(filament: IFilament): string {
+    for (const group of this.filamentBrands) {
+      const option = group.names.find(name => filament.name === `${group.brand} - ${name}` || filament.name === name);
+
+      if (option) {
+        return option;
+      }
+    }
+
+    return filament.name.replace(`${filament.brand} - `, '');
   }
 
   private findSelectedFilament(): { brand: string; name: string } | null {

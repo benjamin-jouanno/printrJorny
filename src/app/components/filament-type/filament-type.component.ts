@@ -12,6 +12,7 @@ import { IFilament } from '../../interfaces/filament.interface';
 export class FilamentTypeComponent {
   @Input() filaments: IFilament[] = [];
   @Output() addFilament = new EventEmitter<void>();
+  @Output() selectFilament = new EventEmitter<IFilament>();
 
   getTotalRemaining(): number {
     return this.filaments.reduce((total, filament) => total + filament.quantityGrams, 0);
