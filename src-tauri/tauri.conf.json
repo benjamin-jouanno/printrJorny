@@ -13,8 +13,10 @@
     "windows": [
       {
         "title": "printr-jorny",
-        "width": 800,
-        "height": 600,
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1180,
+        "minHeight": 760,
         "decorations": false
       }
     ],
@@ -31,6 +33,17 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico",
+        "headerImage": "installer-assets/nsis-header.bmp",
+        "uninstallerHeaderImage": "installer-assets/nsis-header.bmp",
+        "sidebarImage": "installer-assets/nsis-sidebar.bmp",
+        "installMode": "currentUser",
+        "languages": ["English"]
+      }
+    }
   }
 }
