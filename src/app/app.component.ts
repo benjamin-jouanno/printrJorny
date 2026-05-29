@@ -2,6 +2,7 @@ import { Component, ElementRef, HostBinding, OnDestroy, ViewChild } from '@angul
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { invoke } from '@tauri-apps/api/core';
+import { save } from '@tauri-apps/plugin-dialog';
 import { getCurrentWindow, type Window as TauriWindow } from '@tauri-apps/api/window';
 import { PrtjryHeaderComponent } from './components/prtjry-header/prtjry-header.component';
 import { PrtjryHistoryComponent } from './components/prtjry-history/prtjry-history.component';
@@ -1639,6 +1640,26 @@ export class AppComponent implements OnDestroy {
 
   private async saveJsonFile(data: unknown, fileName: string, description: string, extensions: string[]): Promise<void> {
     const contents = JSON.stringify(data, null, 2);
+
+    if ('__TAURI_INTERNALS__' in window) {
+      const selectedPath = await save({
+        defaultPath: fileName,
+        filters: [
+          {
+            name: description,
+            extensions: extensions.map(extension => extension.replace(/^\./, ''))
+          }
+        ]
+      });
+
+      if (!selectedPath) {
+        return;
+      }
+
+      await invoke('write_export_file', { path: selectedPath, contents });
+      return;
+    }
+
     const showSaveFilePicker = (window as any).showSaveFilePicker;
 
     if (typeof showSaveFilePicker === 'function') {
